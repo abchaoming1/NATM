@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NATM | 2025-2026 销售仪表盘</title>
+    <title>NATM | 2024-2026 销售仪表盘</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -518,10 +518,10 @@
         <section class="hero">
             <div>
                 <p class="eyebrow">NATM Live Dashboard</p>
-                <h1>NATM 2025-2026 销售分析</h1>
+                <h1>NATM 2024-2026 销售分析</h1>
                 <p class="hero-copy">
                     本页直接读取 Google Sheet 中 <code>NFM Sales Data</code> 的 <code>A:F</code> 原始明细，并按基础 SKU 自动聚合。
-                    当前只展示 2025 和 2026，页面刷新后会同步最新在线数据，适合后续放到 GitHub Pages 直接在线查看。
+                    当前覆盖 2024、2025 和 2026，页面刷新后会同步最新在线数据，并自动补齐缺失月份，适合后续放到 GitHub Pages 直接在线查看。
                 </p>
             </div>
             <div class="hero-actions">
@@ -551,7 +551,7 @@
                 <div class="section-head">
                     <div>
                         <h2>年度汇总对比</h2>
-                        <p>对比 2025 全年、2025 同期和 2026 YTD 的销量及销售额。</p>
+                        <p>对比 2024 全年、2025 全年与 2026 YTD，并单独跟踪 2026 同期表现。</p>
                     </div>
                 </div>
                 <div id="yearSummaryGrid" class="mini-grid"></div>
@@ -563,7 +563,7 @@
             <div class="section-head">
                 <div>
                     <h2>月度总览</h2>
-                    <p>覆盖 2025-01 到最新月份，展示总销量、销售额以及月环比/年同比。</p>
+                    <p>覆盖 2024-01 到最新月份，展示总销量、销售额以及月环比/年同比。</p>
                 </div>
             </div>
             <div id="monthlyOverviewChart" class="chart large"></div>
@@ -610,7 +610,7 @@
                 <div class="section-head">
                     <div>
                         <h2>SKU 趋势分析</h2>
-                        <p>选择单个 SKU 查看 2025-2026 月度走势。</p>
+                        <p>选择单个 SKU 查看 2024-2026 月度走势。</p>
                     </div>
                     <div class="toolbar">
                         <label class="field">
@@ -658,7 +658,7 @@
             <div class="section-head">
                 <div>
                     <h2>SKU 汇总表</h2>
-                    <p>对比 2025 全年与 2026 YTD，并按 2026 同期同比展示变化。</p>
+                    <p>对比 2024、2025 全年与 2026 YTD，并同时展示 2025 全年同比和 2026 同期同比。</p>
                 </div>
             </div>
             <div class="table-wrap">
@@ -666,8 +666,12 @@
                     <thead>
                         <tr>
                             <th>SKU</th>
+                            <th>2024 销量</th>
+                            <th>2024 销售额</th>
                             <th>2025 销量</th>
                             <th>2025 销售额</th>
+                            <th>2025 全年销量同比</th>
+                            <th>2025 全年销售额同比</th>
                             <th>2026 YTD 销量</th>
                             <th>2026 YTD 销售额</th>
                             <th>2026 同期销量同比</th>
@@ -686,7 +690,7 @@
             <a href="https://docs.google.com/spreadsheets/d/1-3zBJZvum5M7yLED_ZUbpMugmkWZeTCFZVAvs1F4QqE/edit?gid=828676550#gid=828676550" target="_blank" rel="noreferrer">
                 Google Sheet - NFM Sales Data
             </a>
-            。页面读取的是在线表中 <code>A:F</code> 的明细数据，并只展示 2025 与 2026。
+            。页面读取的是在线表中 <code>A:F</code> 的明细数据，当前展示 2024、2025 与 2026。
             2026 目前按 YTD 展示；若后续在线表补充更多月份，页面会自动延展。
         </div>
     </div>
@@ -694,7 +698,7 @@
         (function() {
             const CONFIG = {
                 csvUrl: "https://docs.google.com/spreadsheets/d/1-3zBJZvum5M7yLED_ZUbpMugmkWZeTCFZVAvs1F4QqE/export?format=csv&gid=828676550",
-                focusYears: [2025, 2026],
+                focusYears: [2024, 2025, 2026],
                 adjustmentLabel: "未归属调整",
                 colors: {
                     qty: "#0f766e",
@@ -917,6 +921,7 @@
                 const monthKeys = buildMonthRange(records);
                 const monthlyTotals = blankMetricMap(monthKeys);
                 const yearlyTotals = {
+                    2024: { qty: 0, sales: 0 },
                     2025: { qty: 0, sales: 0 },
                     2026: { qty: 0, sales: 0 }
                 };
@@ -941,65 +946,76 @@
                 const baseSkus = Object.keys(skuMonthly).sort((a, b) => sortSkus(a, b, skuMonthly, monthKeys));
                 const latestMonthKey = monthKeys[monthKeys.length - 1];
                 const latestMonthNumber = latestMonthKey ? Number(latestMonthKey.slice(5)) : 12;
-                const samePeriod2025Keys = monthKeys.filter(monthKey => monthKey.startsWith("2025-") && Number(monthKey.slice(5)) <= latestMonthNumber);
-                const samePeriod2026Keys = monthKeys.filter(monthKey => monthKey.startsWith("2026-") && Number(monthKey.slice(5)) <= latestMonthNumber);
+                const yearKeys = {
+                    2024: monthKeys.filter(monthKey => monthKey.startsWith("2024-")),
+                    2025: monthKeys.filter(monthKey => monthKey.startsWith("2025-")),
+                    2026: monthKeys.filter(monthKey => monthKey.startsWith("2026-"))
+                };
+                const samePeriod2024Keys = yearKeys[2024].filter(monthKey => Number(monthKey.slice(5)) <= latestMonthNumber);
+                const samePeriod2025Keys = yearKeys[2025].filter(monthKey => Number(monthKey.slice(5)) <= latestMonthNumber);
+                const samePeriod2026Keys = yearKeys[2026].filter(monthKey => Number(monthKey.slice(5)) <= latestMonthNumber);
 
                 return {
                     records: records,
                     monthKeys: monthKeys,
+                    yearKeys: yearKeys,
                     monthlyTotals: monthlyTotals,
                     yearlyTotals: yearlyTotals,
                     skuMonthly: skuMonthly,
                     baseSkus: baseSkus,
                     latestMonthKey: latestMonthKey,
                     latestMonthNumber: latestMonthNumber,
+                    samePeriod2024Keys: samePeriod2024Keys,
                     samePeriod2025Keys: samePeriod2025Keys,
                     samePeriod2026Keys: samePeriod2026Keys,
+                    samePeriod2024: sumMetrics(monthlyTotals, samePeriod2024Keys),
                     samePeriod2025: sumMetrics(monthlyTotals, samePeriod2025Keys),
                     samePeriod2026: sumMetrics(monthlyTotals, samePeriod2026Keys)
                 };
             }
 
             function buildKpiCards(dashboard) {
-                const yoyQty = calculateGrowth(dashboard.samePeriod2026.qty, dashboard.samePeriod2025.qty);
-                const yoySales = calculateGrowth(dashboard.samePeriod2026.sales, dashboard.samePeriod2025.sales);
+                const annualQtyYoY2025 = calculateGrowth(dashboard.yearlyTotals[2025].qty, dashboard.yearlyTotals[2024].qty);
+                const annualSalesYoY2025 = calculateGrowth(dashboard.yearlyTotals[2025].sales, dashboard.yearlyTotals[2024].sales);
+                const ytdQtyYoY2026 = calculateGrowth(dashboard.samePeriod2026.qty, dashboard.samePeriod2025.qty);
+                const ytdSalesYoY2026 = calculateGrowth(dashboard.samePeriod2026.sales, dashboard.samePeriod2025.sales);
 
                 return [
                     {
+                        title: "2024 全年销量",
+                        value: formatNumber(dashboard.yearlyTotals[2024].qty),
+                        foot: "当前年度基线",
+                        delta: null
+                    },
+                    {
+                        title: "2024 全年销售额",
+                        value: formatCurrency(dashboard.yearlyTotals[2024].sales),
+                        foot: "当前年度基线",
+                        delta: null
+                    },
+                    {
                         title: "2025 全年销量",
                         value: formatNumber(dashboard.yearlyTotals[2025].qty),
-                        foot: "按在线表累计后的净销量",
-                        delta: null
+                        foot: "对比 2024 全年",
+                        delta: annualQtyYoY2025
                     },
                     {
                         title: "2025 全年销售额",
                         value: formatCurrency(dashboard.yearlyTotals[2025].sales),
-                        foot: "用于和 2026 YTD 做对比",
-                        delta: null
+                        foot: "对比 2024 全年",
+                        delta: annualSalesYoY2025
                     },
                     {
                         title: "2026 YTD 销量",
                         value: formatNumber(dashboard.samePeriod2026.qty),
-                        foot: "当前按 1-" + dashboard.latestMonthNumber + " 月统计",
-                        delta: yoyQty
+                        foot: "当前按 1-" + dashboard.latestMonthNumber + " 月统计，对比 2025 同期",
+                        delta: ytdQtyYoY2026
                     },
                     {
                         title: "2026 YTD 销售额",
                         value: formatCurrency(dashboard.samePeriod2026.sales),
-                        foot: "当前按 1-" + dashboard.latestMonthNumber + " 月统计",
-                        delta: yoySales
-                    },
-                    {
-                        title: "2026 同期销量同比",
-                        value: formatPercent(yoyQty),
-                        foot: "对比 2025 同期",
-                        delta: yoyQty
-                    },
-                    {
-                        title: "2026 同期销售额同比",
-                        value: formatPercent(yoySales),
-                        foot: "对比 2025 同期",
-                        delta: yoySales
+                        foot: "当前按 1-" + dashboard.latestMonthNumber + " 月统计，对比 2025 同期",
+                        delta: ytdSalesYoY2026
                     }
                 ];
             }
@@ -1061,16 +1077,21 @@
                 const latestTotals = dashboard.monthlyTotals[latest] || { qty: 0, sales: 0 };
                 const previousTotals = dashboard.monthlyTotals[previous] || { qty: 0, sales: 0 };
                 const latestYoYSource = dashboard.monthlyTotals[sameMonthLastYearKey(latest)] || { qty: 0, sales: 0 };
+                const top2024 = topSkuForPeriod(dashboard, dashboard.yearKeys[2024], "sales");
+                const top2025 = topSkuForPeriod(dashboard, dashboard.yearKeys[2025], "sales");
                 const top2026 = topSkuForPeriod(dashboard, dashboard.samePeriod2026Keys, "sales");
-                const top2025 = topSkuForPeriod(
-                    dashboard,
-                    dashboard.monthKeys.filter(monthKey => monthKey.startsWith("2025-")),
-                    "sales"
-                );
 
                 const insightBlocks = [
                     {
-                        title: "2026 YTD 与 2025 同期对比",
+                        title: "2025 全年对比 2024",
+                        body:
+                            "2025 全年净销量为 " + formatNumber(dashboard.yearlyTotals[2025].qty) +
+                            "，销售额为 " + formatCurrency(dashboard.yearlyTotals[2025].sales) +
+                            "；相较 2024 全年，销量同比 " + formatPercent(calculateGrowth(dashboard.yearlyTotals[2025].qty, dashboard.yearlyTotals[2024].qty)) +
+                            "，销售额同比 " + formatPercent(calculateGrowth(dashboard.yearlyTotals[2025].sales, dashboard.yearlyTotals[2024].sales)) + "。"
+                    },
+                    {
+                        title: "2026 YTD 对比 2025 同期",
                         body:
                             "截至 " + latest + "，2026 YTD 净销量为 " + formatNumber(dashboard.samePeriod2026.qty) +
                             "，销售额为 " + formatCurrency(dashboard.samePeriod2026.sales) +
@@ -1090,10 +1111,9 @@
                     {
                         title: "SKU 贡献判断",
                         body:
-                            "2026 YTD 销售额贡献最高的 SKU 是 " + (top2026.sku || "—") +
-                            "，累计 " + formatCurrency(top2026.value || 0) +
-                            "；2025 全年销售额贡献最高的 SKU 是 " + (top2025.sku || "—") +
-                            "，累计 " + formatCurrency(top2025.value || 0) + "。"
+                            "2024 全年销售额贡献最高的 SKU 是 " + (top2024.sku || "—") + "，累计 " + formatCurrency(top2024.value || 0) +
+                            "；2025 全年最高的是 " + (top2025.sku || "—") + "，累计 " + formatCurrency(top2025.value || 0) +
+                            "；2026 YTD 当前最高的是 " + (top2026.sku || "—") + "，累计 " + formatCurrency(top2026.value || 0) + "。"
                     }
                 ];
 
@@ -1108,14 +1128,18 @@
             }
 
             function renderYearSummary(dashboard) {
-                const qtyYoY = calculateGrowth(dashboard.samePeriod2026.qty, dashboard.samePeriod2025.qty);
-                const salesYoY = calculateGrowth(dashboard.samePeriod2026.sales, dashboard.samePeriod2025.sales);
+                const annualQtyYoY2025 = calculateGrowth(dashboard.yearlyTotals[2025].qty, dashboard.yearlyTotals[2024].qty);
+                const annualSalesYoY2025 = calculateGrowth(dashboard.yearlyTotals[2025].sales, dashboard.yearlyTotals[2024].sales);
+                const ytdQtyYoY2026 = calculateGrowth(dashboard.samePeriod2026.qty, dashboard.samePeriod2025.qty);
+                const ytdSalesYoY2026 = calculateGrowth(dashboard.samePeriod2026.sales, dashboard.samePeriod2025.sales);
 
                 yearSummaryGrid.innerHTML = [
-                    { label: "2025 全年销量", value: formatNumber(dashboard.yearlyTotals[2025].qty) },
-                    { label: "2025 全年销售额", value: formatCurrency(dashboard.yearlyTotals[2025].sales) },
-                    { label: "2026 YTD 销量同比", value: formatPercent(qtyYoY) },
-                    { label: "2026 YTD 销售额同比", value: formatPercent(salesYoY) }
+                    { label: "2024 全年销量", value: formatNumber(dashboard.yearlyTotals[2024].qty) },
+                    { label: "2024 全年销售额", value: formatCurrency(dashboard.yearlyTotals[2024].sales) },
+                    { label: "2025 全年销量同比", value: formatPercent(annualQtyYoY2025) },
+                    { label: "2025 全年销售额同比", value: formatPercent(annualSalesYoY2025) },
+                    { label: "2026 YTD 销量同比", value: formatPercent(ytdQtyYoY2026) },
+                    { label: "2026 YTD 销售额同比", value: formatPercent(ytdSalesYoY2026) }
                 ].map(item => {
                     return [
                         "<div class=\"mini-card\">",
@@ -1141,9 +1165,9 @@
                     xAxis: {
                         type: "category",
                         data: [
+                            "2024 全年",
                             "2025 全年",
-                            "2025 1-" + dashboard.latestMonthNumber + "月",
-                            "2026 1-" + dashboard.latestMonthNumber + "月"
+                            "2026 YTD"
                         ],
                         axisLine: { lineStyle: { color: "rgba(23,32,51,0.15)" } },
                         axisLabel: { color: CONFIG.colors.muted }
@@ -1174,8 +1198,8 @@
                             barWidth: 28,
                             itemStyle: { borderRadius: [12, 12, 0, 0] },
                             data: [
+                                dashboard.yearlyTotals[2024].qty,
                                 dashboard.yearlyTotals[2025].qty,
-                                dashboard.samePeriod2025.qty,
                                 dashboard.samePeriod2026.qty
                             ]
                         },
@@ -1187,8 +1211,8 @@
                             symbolSize: 10,
                             lineStyle: { width: 4 },
                             data: [
+                                dashboard.yearlyTotals[2024].sales,
                                 dashboard.yearlyTotals[2025].sales,
-                                dashboard.samePeriod2025.sales,
                                 dashboard.samePeriod2026.sales
                             ]
                         }
@@ -1293,7 +1317,9 @@
                     "<tr>",
                     "<th>SKU</th>",
                     ...monthKeys.map(monthKey => "<th>" + monthKey + "</th>"),
+                    "<th>2024 合计</th>",
                     "<th>2025 合计</th>",
+                    "<th>2025 全年同比</th>",
                     "<th>2026 YTD</th>",
                     "<th>2026 同期同比</th>",
                     "</tr>",
@@ -1309,19 +1335,26 @@
                         }).join("");
                         const total2025 = sumMetrics(
                             dashboard.skuMonthly[sku],
-                            monthKeys.filter(monthKey => monthKey.startsWith("2025-"))
+                            dashboard.yearKeys[2025]
+                        )[metric];
+                        const total2024 = sumMetrics(
+                            dashboard.skuMonthly[sku],
+                            dashboard.yearKeys[2024]
                         )[metric];
                         const total2026 = sumMetrics(
                             dashboard.skuMonthly[sku],
-                            monthKeys.filter(monthKey => monthKey.startsWith("2026-"))
+                            dashboard.yearKeys[2026]
                         )[metric];
+                        const annual2025YoY = calculateGrowth(total2025, total2024);
                         const samePeriod2025 = sumMetrics(dashboard.skuMonthly[sku], dashboard.samePeriod2025Keys)[metric];
                         const samePeriod2026 = sumMetrics(dashboard.skuMonthly[sku], dashboard.samePeriod2026Keys)[metric];
                         return [
                             "<tr>",
                             "<td>" + sku + "</td>",
                             monthCells,
+                            "<td>" + (metric === "sales" ? formatCurrency(total2024) : formatNumber(total2024)) + "</td>",
                             "<td>" + (metric === "sales" ? formatCurrency(total2025) : formatNumber(total2025)) + "</td>",
+                            "<td>" + renderDelta(annual2025YoY) + "</td>",
                             "<td>" + (metric === "sales" ? formatCurrency(total2026) : formatNumber(total2026)) + "</td>",
                             "<td>" + renderDelta(calculateGrowth(samePeriod2026, samePeriod2025)) + "</td>",
                             "</tr>"
@@ -1452,22 +1485,32 @@
             function renderSkuSummaryTable(dashboard) {
                 const latest = dashboard.latestMonthKey;
                 skuSummaryBody.innerHTML = dashboard.baseSkus.map(sku => {
+                    const total2024 = sumMetrics(
+                        dashboard.skuMonthly[sku],
+                        dashboard.yearKeys[2024]
+                    );
                     const total2025 = sumMetrics(
                         dashboard.skuMonthly[sku],
-                        dashboard.monthKeys.filter(monthKey => monthKey.startsWith("2025-"))
+                        dashboard.yearKeys[2025]
                     );
                     const total2026 = sumMetrics(
                         dashboard.skuMonthly[sku],
-                        dashboard.monthKeys.filter(monthKey => monthKey.startsWith("2026-"))
+                        dashboard.yearKeys[2026]
                     );
+                    const annual2025QtyYoY = calculateGrowth(total2025.qty, total2024.qty);
+                    const annual2025SalesYoY = calculateGrowth(total2025.sales, total2024.sales);
                     const samePeriod2025 = sumMetrics(dashboard.skuMonthly[sku], dashboard.samePeriod2025Keys);
                     const samePeriod2026 = sumMetrics(dashboard.skuMonthly[sku], dashboard.samePeriod2026Keys);
                     const latestMonthValue = dashboard.skuMonthly[sku][latest] || { qty: 0, sales: 0 };
                     return [
                         "<tr>",
                         "<td>" + sku + "</td>",
+                        "<td>" + formatNumber(total2024.qty) + "</td>",
+                        "<td>" + formatCurrency(total2024.sales) + "</td>",
                         "<td>" + formatNumber(total2025.qty) + "</td>",
                         "<td>" + formatCurrency(total2025.sales) + "</td>",
+                        "<td>" + renderDelta(annual2025QtyYoY) + "</td>",
+                        "<td>" + renderDelta(annual2025SalesYoY) + "</td>",
                         "<td>" + formatNumber(total2026.qty) + "</td>",
                         "<td>" + formatCurrency(total2026.sales) + "</td>",
                         "<td>" + renderDelta(calculateGrowth(samePeriod2026.qty, samePeriod2025.qty)) + "</td>",
