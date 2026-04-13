@@ -55,8 +55,9 @@
         dataRangeLabel: document.getElementById("dataRangeLabel")
     };
 
-    function csvUrlForSheet(sheetName) {
-        return "https://docs.google.com/spreadsheets/d/" + CONFIG.workbookId + "/gviz/tq?tqx=out:csv&sheet=" + encodeURIComponent(sheetName);
+    function csvUrlForSheet(sheetName, cacheKey) {
+        const key = cacheKey || Date.now();
+        return "https://docs.google.com/spreadsheets/d/" + CONFIG.workbookId + "/gviz/tq?tqx=out:csv&sheet=" + encodeURIComponent(sheetName) + "&_=" + encodeURIComponent(String(key));
     }
 
     function parseNumber(value) {
@@ -1068,8 +1069,8 @@
         els.skuSummaryBody.innerHTML = "";
     }
 
-    async function fetchChannelDashboard(channel) {
-        const response = await fetch(csvUrlForSheet(channel.sheet), { cache: "no-store" });
+    async function fetchChannelDashboard(channel, cacheKey) {
+        const response = await fetch(csvUrlForSheet(channel.sheet, cacheKey), { cache: "no-store" });
         if (!response.ok) {
             throw new Error(channel.label + " HTTP " + response.status);
         }
@@ -1092,8 +1093,9 @@
         els.refreshBtn.disabled = true;
 
         try {
+            const cacheKey = Date.now();
             const dashboards = {};
-            const results = await Promise.all(CONFIG.channels.map(fetchChannelDashboard));
+            const results = await Promise.all(CONFIG.channels.map(channel => fetchChannelDashboard(channel, cacheKey)));
             results.forEach(dashboard => {
                 dashboards[dashboard.channel.key] = dashboard;
             });
