@@ -451,6 +451,148 @@
             line-height: 1.8;
         }
 
+        .channel-grid {
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        }
+
+        .channel-card {
+            position: relative;
+            padding: 22px;
+            border-radius: 22px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.84));
+            border: 1px solid rgba(23, 32, 51, 0.08);
+            box-shadow: 0 14px 28px rgba(41, 53, 72, 0.08);
+            cursor: pointer;
+            transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+        }
+
+        .channel-card::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 5px;
+            border-radius: 22px 0 0 22px;
+            background: var(--channel-accent, var(--teal));
+        }
+
+        .channel-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 18px 32px rgba(41, 53, 72, 0.12);
+        }
+
+        .channel-card.active {
+            border-color: var(--channel-accent, var(--teal));
+            box-shadow: 0 20px 36px rgba(41, 53, 72, 0.14);
+        }
+
+        .channel-card-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .channel-card-title {
+            margin: 0;
+            font-family: "Barlow Condensed", sans-serif;
+            font-size: 30px;
+            line-height: 1;
+            letter-spacing: 0.04em;
+        }
+
+        .channel-card-caption {
+            margin: 8px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .channel-chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 7px 12px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--channel-accent, var(--teal));
+            background: var(--channel-soft, var(--teal-soft));
+        }
+
+        .channel-card-kpi {
+            margin: 18px 0 0;
+            font-family: "Barlow Condensed", sans-serif;
+            font-size: 40px;
+            line-height: 1;
+        }
+
+        .channel-card-meta,
+        .channel-card-foot {
+            margin-top: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .channel-card-foot {
+            padding-top: 12px;
+            border-top: 1px solid rgba(23, 32, 51, 0.08);
+        }
+
+        .channel-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .channel-tab {
+            flex: 1 1 180px;
+            min-width: 180px;
+            display: grid;
+            gap: 6px;
+            padding: 16px 18px;
+            border-radius: 18px;
+            border: 1px solid rgba(23, 32, 51, 0.08);
+            background: rgba(255, 255, 255, 0.72);
+            color: var(--ink);
+            text-align: left;
+            cursor: pointer;
+            transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+        }
+
+        .channel-tab:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 12px 20px rgba(41, 53, 72, 0.08);
+        }
+
+        .channel-tab.active {
+            color: #fff;
+            border-color: transparent;
+            background: linear-gradient(135deg, var(--channel-accent, var(--teal)) 0%, #172033 100%);
+            box-shadow: 0 16px 28px rgba(18, 34, 60, 0.18);
+        }
+
+        .channel-tab-label {
+            font-family: "Barlow Condensed", sans-serif;
+            font-size: 28px;
+            line-height: 1;
+            letter-spacing: 0.04em;
+        }
+
+        .channel-tab-meta {
+            font-size: 12px;
+            line-height: 1.6;
+            opacity: 0.8;
+        }
+
         .error-state {
             padding: 18px;
             border-radius: 18px;
@@ -499,6 +641,19 @@
                 padding: 18px;
             }
 
+            .channel-card,
+            .channel-tab {
+                padding: 16px;
+            }
+
+            .channel-card-kpi {
+                font-size: 34px;
+            }
+
+            .channel-tab {
+                min-width: 140px;
+            }
+
             .chart.medium {
                 height: 320px;
             }
@@ -533,6 +688,71 @@
                     <div>金额单位：USD</div>
                 </div>
             </div>
+        </section>
+
+        <section class="panel solid">
+            <div class="section-head">
+                <div>
+                    <h2>NATM 渠道总览</h2>
+                    <p>统一查看 NFM、RCW、Abt 与 BSM 四个渠道的 2024 全年、2025 全年和 2026 YTD 表现，并支持一键切换到单渠道深度分析。</p>
+                </div>
+            </div>
+            <div id="channelOverviewGrid" class="grid channel-grid"></div>
+        </section>
+
+        <section class="grid split compare-layout">
+            <div class="panel solid">
+                <div class="section-head">
+                    <div>
+                        <h2>渠道年度对比</h2>
+                        <p>按同一口径横向比较四个 NATM 渠道的年度销量和销售额，便于快速识别主力渠道与增长重心。</p>
+                    </div>
+                    <div class="metric-toggle" id="compareMetricToggle">
+                        <button class="metric-btn active" data-metric="sales">销售额</button>
+                        <button class="metric-btn" data-metric="qty">销量</button>
+                    </div>
+                </div>
+                <div id="channelCompareChart" class="chart medium"></div>
+            </div>
+            <div class="panel solid">
+                <div class="section-head">
+                    <div>
+                        <h2>渠道汇总表</h2>
+                        <p>汇总 2024、2025、2026 YTD 的销量与销售额，并同步展示 2025 全年同比及 2026 同期同比。</p>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table id="channelSummaryTable">
+                        <thead>
+                            <tr>
+                                <th>渠道</th>
+                                <th>2024 销量</th>
+                                <th>2024 销售额</th>
+                                <th>2025 销量</th>
+                                <th>2025 销售额</th>
+                                <th>2025 销量同比</th>
+                                <th>2025 销售额同比</th>
+                                <th>2026 YTD 销量</th>
+                                <th>2026 YTD 销售额</th>
+                                <th>2026 销量同比</th>
+                                <th>2026 销售额同比</th>
+                                <th>最新月份</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel solid">
+            <div class="section-head">
+                <div>
+                    <h2>当前分析渠道</h2>
+                    <p>点击切换下方渠道标签，下面的 KPI、月度走势、SKU 矩阵和明细表会联动切换到对应渠道。</p>
+                </div>
+            </div>
+            <div id="channelTabs" class="channel-tabs"></div>
         </section>
 
         <section id="kpiGrid" class="grid kpi-grid"></section>
@@ -695,7 +915,14 @@
         </div>
     </div>
     <script>
+        window.NATM_MULTI_CHANNEL = true;
+    </script>
+    <script src="app.js"></script>
+    <script>
         (function() {
+            if (window.NATM_MULTI_CHANNEL) {
+                return;
+            }
             const CONFIG = {
                 csvUrl: "https://docs.google.com/spreadsheets/d/1-3zBJZvum5M7yLED_ZUbpMugmkWZeTCFZVAvs1F4QqE/export?format=csv&gid=828676550",
                 focusYears: [2024, 2025, 2026],
