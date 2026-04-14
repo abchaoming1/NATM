@@ -1728,6 +1728,7 @@
 
         els.channelSummaryBody.innerHTML = CONFIG.channels.map(channel => {
             const dashboard = state.dashboards[channel.key];
+            const target2026 = CONFIG.channelTargets[channel.key] || { qty: 0, sales: 0 };
             const annualQtyYoY2025 = calculateGrowth(dashboard.yearlyTotals[2025].qty, dashboard.yearlyTotals[2024].qty);
             const annualSalesYoY2025 = calculateGrowth(dashboard.yearlyTotals[2025].sales, dashboard.yearlyTotals[2024].sales);
             const ytdQtyYoY2026 = calculateGrowth(dashboard.samePeriodByYear[2026].qty, dashboard.samePeriodByYear[2025].qty);
@@ -1741,6 +1742,8 @@
                 "<td>" + formatCurrency(dashboard.yearlyTotals[2025].sales) + "</td>",
                 "<td>" + renderDelta(annualQtyYoY2025) + "</td>",
                 "<td>" + renderDelta(annualSalesYoY2025) + "</td>",
+                "<td>" + formatNumber(target2026.qty) + "</td>",
+                "<td>" + formatCurrency(target2026.sales) + "</td>",
                 "<td>" + formatNumber(dashboard.samePeriodByYear[2026].qty) + "</td>",
                 "<td>" + formatCurrency(dashboard.samePeriodByYear[2026].sales) + "</td>",
                 "<td>" + renderDelta(ytdQtyYoY2026) + "</td>",
