@@ -71,7 +71,7 @@
                 { channelKey: "bsm", currentSku: "T920", nextSku: "T921" }
             ],
             targetCombos: [
-                { channelKey: "nfm", skus: ["E320", "T920", "S803", "S710", "S820", "S821"] },
+                { channelKey: "nfm", skus: ["E320", "T921", "S803", "S710", "S820", "S821"] },
                 { channelKey: "rcw", skus: ["S820", "S821", "T921", "E320", "S710"] },
                 { channelKey: "bsm", skus: ["E320", "T921", "S803", "S710", "S820", "S821"] }
             ],
