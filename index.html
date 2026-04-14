@@ -835,6 +835,78 @@
             height: 320px;
         }
 
+        .summary-total-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .summary-total-card {
+            padding: 18px;
+            border-radius: 18px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 243, 235, 0.96));
+            border: 1px solid rgba(23, 32, 51, 0.08);
+            box-shadow: 0 12px 24px rgba(41, 53, 72, 0.08);
+        }
+
+        .summary-total-eyebrow {
+            margin: 0;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .summary-total-title {
+            margin: 8px 0 0;
+            font-size: 18px;
+            line-height: 1.4;
+        }
+
+        .summary-total-pairs {
+            display: grid;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .summary-total-pair {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: baseline;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(23, 32, 51, 0.08);
+        }
+
+        .summary-total-pair:last-child {
+            padding-bottom: 0;
+            border-bottom: 0;
+        }
+
+        .summary-total-pair span {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .summary-total-pair strong {
+            color: var(--ink);
+            font-family: "Barlow Condensed", sans-serif;
+            font-size: 26px;
+            line-height: 1;
+            letter-spacing: 0.02em;
+        }
+
+        .summary-total-meta {
+            display: grid;
+            gap: 6px;
+            margin-top: 14px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
         .profile-card {
             padding: 22px;
             border-radius: 22px;
@@ -992,7 +1064,7 @@
         }
 
         .execution-grid {
-            grid-template-columns: repeat(4, minmax(0, 1fr));
+            grid-template-columns: repeat(3, minmax(0, 1fr));
         }
 
         .plan-mix-grid {
@@ -1061,6 +1133,71 @@
             margin-top: 16px;
             padding-top: 16px;
             border-top: 1px solid rgba(23, 32, 51, 0.08);
+        }
+
+        .info-row-list {
+            display: grid;
+            gap: 14px;
+        }
+
+        .note-row {
+            padding: 14px 16px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.82);
+            border: 1px solid rgba(23, 32, 51, 0.08);
+        }
+
+        .note-row-head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .note-row-head strong {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--ink);
+        }
+
+        .note-row-copy,
+        .note-row-meta,
+        .info-footnote,
+        .promo-compare-copy {
+            margin: 10px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .note-stat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .note-stat {
+            padding: 10px 12px;
+            border-radius: 14px;
+            background: rgba(246, 240, 230, 0.82);
+            border: 1px solid rgba(23, 32, 51, 0.06);
+        }
+
+        .note-stat span {
+            display: block;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .note-stat strong {
+            display: block;
+            margin-top: 6px;
+            color: var(--ink);
+            font-family: "Barlow Condensed", sans-serif;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: 0.02em;
         }
 
         .compact-table {
@@ -1215,7 +1352,8 @@
             .business-support-grid,
             .channel-note-grid,
             .execution-grid,
-            .plan-mix-grid {
+            .plan-mix-grid,
+            .summary-total-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -1284,6 +1422,7 @@
                 <a class="page-nav-link" href="#activeChannelSection">当前分析渠道</a>
                 <a class="page-nav-link" href="#insightSection">核心结论与年度对比</a>
                 <a class="page-nav-link" href="#executionSection">业务推进看板</a>
+                <a class="page-nav-link" href="#promoSection">促销日历</a>
                 <a class="page-nav-link" href="#monthlySection">月度总览</a>
                 <a class="page-nav-link" href="#matrixSection">SKU矩阵</a>
                 <a class="page-nav-link" href="#skuTrendSection">SKU趋势</a>
@@ -1366,6 +1505,7 @@
                             <p>汇总 2024、2025、2026 YTD 的销量与销售额，并同步展示 2025 全年同比及 2026 同期同比。</p>
                         </div>
                     </div>
+                    <div id="natmSummaryGrid" class="summary-total-grid"></div>
                     <div class="table-wrap">
                         <table id="channelSummaryTable">
                             <thead>
@@ -1429,10 +1569,20 @@
             <div class="section-head">
                 <div>
                     <h2>业务推进看板</h2>
-                    <p>补充促销节奏、营销事件、内部推进状态与会议沉淀，方便后续把销售分析和业务动作放在同一页跟进。</p>
+                    <p>聚焦营销事件、当前进度与会议历史，方便后续把销售分析和业务动作放在同一页持续跟进。</p>
                 </div>
             </div>
             <div id="executionGrid" class="execution-grid"></div>
+        </section>
+
+        <section id="promoSection" class="panel solid">
+            <div class="section-head">
+                <div>
+                    <h2>促销日历</h2>
+                    <p>把渠道促销节奏单独拉出来，后续可以直接与下方月度总览对照查看销量、销售额和 Top SKU 的变化。</p>
+                </div>
+            </div>
+            <div id="promoCalendarPanel"></div>
         </section>
 
         <section id="monthlySection" class="panel solid">
@@ -1574,7 +1724,7 @@
     </div>
     <script>
         window.NATM_MULTI_CHANNEL = true;
-        window.NATM_APP_VERSION = "2026-04-14-8";
+        window.NATM_APP_VERSION = "2026-04-14-9";
         document.write('<script src="app.js?v=' + encodeURIComponent(window.NATM_APP_VERSION) + '&t=' + Date.now() + '"><\/script>');
     </script>
     <script>

@@ -117,6 +117,49 @@
                 body: "暂时空着"
             }
         ],
+        growthGoalText: "目标同比增长 30%~40% 及以上，底线 30%，标准 40%，挑战 50%+。",
+        channelTargets: {
+            nfm: { qty: 5000, sales: 500000 },
+            rcw: { qty: 3500, sales: 175000 },
+            abt: { qty: 1600, sales: 185000 },
+            bsm: { qty: 3800, sales: 420000 }
+        },
+        channelResearch: {
+            nfm: {
+                profileTitle: "区域目的地大店，家庭整单购物心智强",
+                profileBody: "NFM 官方资料显示其以家具、家电、电子一站式大卖场运营，四个核心卖场拥有超大 showroom 与完整 electronics assortment；结合 PPT 里“大店流量高、停留时间长、耳机专区成熟”的结论，更适合做体验驱动成交。",
+                persona: "以家庭决策型客群为主，包含搬家、装修、整屋升级以及会在同一次进店中顺带比较音频产品的中高客单消费者。",
+                opportunityTitle: "把试听体验和家庭升级场景绑定，放大高客单转化",
+                opportunityBody: "继续用 POP + 主销英雄 SKU 稳住露出，同时把 OpenDots 2、T921 这类新品放在“家居升级 / TV / 健身 / 户外”联动场景里做转化，争取从单纯陈列升级到体验成交。"
+            },
+            rcw: {
+                profileTitle: "西部区域家居电器零售商，偏家庭计划型购买",
+                profileBody: "RC Willey 官网定位是服务西部市场的 home furnishings、appliances 与 electronics 零售商；结合 PPT 中“门店空间大、顾客停留久、独立店销售表现不错”的信息，这类店更像 destination store，而不是纯快进快出的电子卖场。",
+                persona: "更偏郊区家庭、换新型用户和成套购买用户，重视 financing、门店服务和可视化陈列，愿意在店内做横向比较后再下单。",
+                opportunityTitle: "围绕西部家庭客群做稳定扩店和结构升级",
+                opportunityBody: "RCW 的增长空间在于把现有成功门店打法复制到更多门店与更多核心 SKU 上，用更清晰的 POP、培训和价格带分层，把 Shokz 从补充型音频 SKU 变成被主动推荐的功能型耳机。"
+            },
+            abt: {
+                profileTitle: "单店高服务模型，专业咨询和高 ASP 更关键",
+                profileBody: "Abt 官方公开信息强调其 Glenview 单店、90+ 年历史、公开 tour、培训体系与 award-winning customer service；它不是广撒网渠道，更像高服务密度的精品大店。",
+                persona: "以研究型、信任导购型、愿意为服务和专业建议买单的 Chicagoland 用户为主，对产品故事、功能差异和售后体验更敏感。",
+                opportunityTitle: "走精品化和顾问式成交，优先做高质量产出",
+                opportunityBody: "Abt 更适合做少而精的结构优化，集中火力推高 ASP 主力款和具备明确卖点的新型号，通过导购教育、场景话术和本地化活动，拉高单点产出而不是盲目铺量。"
+            },
+            bsm: {
+                profileTitle: "东南部价格驱动大卖场，促销和现货感知更强",
+                profileBody: "BrandsMart USA 官网强调 huge selection、Audio & Headphones、110% Price Match、会员与 financing；结合 PPT 中“人流量高、竞品多、靠近 Costco / Sam / Best Buy”的判断，这一渠道更偏高流量、强促销、强对比购物环境。",
+                persona: "价格敏感型、促销响应型和家庭换新型用户占比较高，重视即时可得、价格优势和清晰的卖点提示，容易在大促节点集中释放销量。",
+                opportunityTitle: "用促销节点和主力价位带放大爆发力",
+                opportunityBody: "BSM 需要把 POP 更新、主推 SKU、价格带和大促节奏绑在一起，重点做高流量月份的主力款曝光与补货，争取把自然陈列流量转成更高的销量和销售额贡献。"
+            }
+        },
+        promoCalendar: [
+            { month: "6月", note: "POP 更新切换，跟踪 E320 / T921 替换后的首轮 sell-through" },
+            { month: "7月", note: "渠道对齐与跟进，复盘 POP 执行、补货和门店反馈" },
+            { month: "8月", note: "八月计划待补充，预留新品节奏和渠道动作窗口" },
+            { month: "9月+", note: "结合节庆和下半年促销节奏，继续补充重点活动节点" }
+        ],
         executionModules: [
             {
                 kicker: "执行节奏",
@@ -174,12 +217,14 @@
         businessSupportGrid: document.getElementById("businessSupportGrid"),
         channelOverviewGrid: document.getElementById("channelOverviewGrid"),
         channelStrategyGrid: document.getElementById("channelStrategyGrid"),
+        natmSummaryGrid: document.getElementById("natmSummaryGrid"),
         channelSummaryBody: document.querySelector("#channelSummaryTable tbody"),
         channelTabs: document.getElementById("channelTabs"),
         kpiGrid: document.getElementById("kpiGrid"),
         insightPanel: document.getElementById("insightPanel"),
         yearSummaryGrid: document.getElementById("yearSummaryGrid"),
         executionGrid: document.getElementById("executionGrid"),
+        promoCalendarPanel: document.getElementById("promoCalendarPanel"),
         monthlySummaryBody: document.querySelector("#monthlySummaryTable tbody"),
         skuMatrixTable: document.getElementById("skuMatrixTable"),
         skuSelect: document.getElementById("skuSelect"),
@@ -820,7 +865,34 @@
         ].join("");
     }
 
+    function renderInfoRow(row) {
+        const channel = row.channelKey ? getChannelConfig(row.channelKey) : null;
+        return [
+            "<div class=\"note-row\"" + (channel ? " style=\"" + channelStyle(channel) + "\"" : "") + ">",
+            "<div class=\"note-row-head\">",
+            channel ? "<span class=\"profile-tag\">" + escapeHtml(channel.label) + "</span>" : "",
+            row.title ? "<strong>" + escapeHtml(row.title) + "</strong>" : "",
+            "</div>",
+            row.metrics && row.metrics.length ? [
+                "<div class=\"note-stat-grid\">",
+                row.metrics.map(metric => {
+                    return [
+                        "<div class=\"note-stat\">",
+                        "<span>" + escapeHtml(metric.label) + "</span>",
+                        "<strong>" + escapeHtml(metric.value) + "</strong>",
+                        "</div>"
+                    ].join("");
+                }).join(""),
+                "</div>"
+            ].join("") : "",
+            row.text ? "<p class=\"note-row-copy\">" + escapeHtml(row.text) + "</p>" : "",
+            row.meta ? "<p class=\"note-row-meta\">" + escapeHtml(row.meta) + "</p>" : "",
+            "</div>"
+        ].join("");
+    }
+
     function renderInfoCard(module) {
+        const badge = module.badge || (module.rows && module.rows.length ? "已更新" : "待补充");
         return [
             "<article class=\"info-card\">",
             "<div class=\"info-card-head\">",
@@ -829,9 +901,14 @@
             "<h3 class=\"info-card-title\">" + escapeHtml(module.title) + "</h3>",
             module.description ? "<p class=\"info-card-copy\">" + escapeHtml(module.description) + "</p>" : "",
             "</div>",
-            "<span class=\"info-badge\">待补充</span>",
+            "<span class=\"info-badge\">" + escapeHtml(badge) + "</span>",
             "</div>",
-            "<p class=\"placeholder-copy\">" + escapeHtml(module.body || "暂时空着") + "</p>",
+            module.rows && module.rows.length ? [
+                "<div class=\"info-row-list\">",
+                module.rows.map(renderInfoRow).join(""),
+                "</div>"
+            ].join("") : "<p class=\"placeholder-copy\">" + escapeHtml(module.body || "暂时空着") + "</p>",
+            module.footnote ? "<p class=\"info-footnote\">" + escapeHtml(module.footnote) + "</p>" : "",
             "</article>"
         ].join("");
     }
@@ -909,23 +986,199 @@
         ].map(renderInfoCard).join("");
     }
 
+    function buildChannelStrategyModules() {
+        return [
+            {
+                kicker: "渠道洞察",
+                title: "渠道特点及用户画像",
+                description: "结合 NATM 介绍 PPT 与四家官网公开信息整理，用户画像为基于店型、品类与服务模型的业务推断。",
+                badge: "Research",
+                rows: CONFIG.channels.map(channel => {
+                    const research = CONFIG.channelResearch[channel.key];
+                    return {
+                        channelKey: channel.key,
+                        title: research.profileTitle,
+                        text: research.profileBody,
+                        meta: "用户画像：" + research.persona
+                    };
+                }),
+                footnote: "公开信息主要来自 NFM、RC Willey、Abt、BrandsMart USA 官网；用户画像为结合 PPT 与店型结构的推断。"
+            },
+            {
+                kicker: "增长方向",
+                title: "核心机会",
+                description: "按渠道定位去拆 2026 年最值得优先推进的增长动作，帮助后续把 POP、新品与营销资源放到正确的地方。",
+                badge: "Action",
+                rows: CONFIG.channels.map(channel => {
+                    const research = CONFIG.channelResearch[channel.key];
+                    return {
+                        channelKey: channel.key,
+                        title: research.opportunityTitle,
+                        text: research.opportunityBody
+                    };
+                })
+            },
+            {
+                kicker: "年度管理",
+                title: "今年目标",
+                description: "四个渠道统一按“至少 +30%，标准 +40%，挑战 +50%+”管理，并锁定 2026 的销量与销售额目标值。",
+                badge: "2026",
+                rows: CONFIG.channels.map(channel => {
+                    const target = CONFIG.channelTargets[channel.key];
+                    const dashboard = state.dashboards[channel.key];
+                    const qtyGrowth = dashboard ? calculateGrowth(target.qty, dashboard.yearlyTotals[2025].qty) : null;
+                    const salesGrowth = dashboard ? calculateGrowth(target.sales, dashboard.yearlyTotals[2025].sales) : null;
+                    return {
+                        channelKey: channel.key,
+                        title: CONFIG.growthGoalText,
+                        metrics: [
+                            { label: "目标销量", value: formatNumber(target.qty) },
+                            { label: "目标销售额", value: formatCurrency(target.sales) }
+                        ],
+                        text: "目标口径统一按至少 +30%、标准 +40%、挑战 +50%+推进。",
+                        meta: dashboard
+                            ? "相对 2025 实际：销量 " + formatPercent(qtyGrowth, false) + "，销售额 " + formatPercent(salesGrowth, false) + "。"
+                            : "数据加载后自动回填相对 2025 的目标同比。"
+                    };
+                })
+            }
+        ];
+    }
+
     function renderChannelStrategyGrid() {
         if (!els.channelStrategyGrid) {
             return;
         }
-        els.channelStrategyGrid.innerHTML = CONFIG.channelNotes.map(renderInfoCard).join("");
+        els.channelStrategyGrid.innerHTML = buildChannelStrategyModules().map(renderInfoCard).join("");
+    }
+
+    function renderPromoCalendarPanel() {
+        if (!els.promoCalendarPanel) {
+            return;
+        }
+        els.promoCalendarPanel.innerHTML = [
+            "<div class=\"calendar-strip\">",
+            CONFIG.promoCalendar.map(item => {
+                return "<div class=\"calendar-chip\"><strong>" + escapeHtml(item.month) + "</strong><span>" + escapeHtml(item.note) + "</span></div>";
+            }).join(""),
+            "</div>",
+            "<p class=\"promo-compare-copy\">建议把这一块与下方月度总览一起看，重点观察促销节点前后 1-2 个月的销量、销售额与 Top SKU 变化。</p>"
+        ].join("");
+    }
+
+    function sumChannelMetrics(resolver) {
+        return CONFIG.channels.reduce((totals, channel) => {
+            const metrics = resolver(channel) || {};
+            totals.qty += Number(metrics.qty) || 0;
+            totals.sales += Number(metrics.sales) || 0;
+            return totals;
+        }, { qty: 0, sales: 0 });
+    }
+
+    function buildNatmSummary() {
+        const actual2024 = sumChannelMetrics(channel => {
+            const dashboard = state.dashboards[channel.key];
+            return dashboard ? dashboard.yearlyTotals[2024] : null;
+        });
+        const actual2025 = sumChannelMetrics(channel => {
+            const dashboard = state.dashboards[channel.key];
+            return dashboard ? dashboard.yearlyTotals[2025] : null;
+        });
+        const target2026 = sumChannelMetrics(channel => CONFIG.channelTargets[channel.key]);
+
+        return {
+            actual2024: actual2024,
+            actual2025: actual2025,
+            target2026: target2026,
+            qtyYoY2025: calculateGrowth(actual2025.qty, actual2024.qty),
+            salesYoY2025: calculateGrowth(actual2025.sales, actual2024.sales),
+            qtyTargetGrowth: calculateGrowth(target2026.qty, actual2025.qty),
+            salesTargetGrowth: calculateGrowth(target2026.sales, actual2025.sales)
+        };
+    }
+
+    function renderNatmSummaryPanel() {
+        if (!els.natmSummaryGrid) {
+            return;
+        }
+        if (!Object.keys(state.dashboards).length) {
+            els.natmSummaryGrid.innerHTML = "";
+            return;
+        }
+
+        const summary = buildNatmSummary();
+        const cards = [
+            {
+                eyebrow: "2024 Actual",
+                title: "2024 NATM 总盘子",
+                pairs: [
+                    { label: "总销量", value: formatNumber(summary.actual2024.qty) },
+                    { label: "总销售额", value: formatCurrency(summary.actual2024.sales) }
+                ],
+                meta: ["四个渠道全年实际表现"]
+            },
+            {
+                eyebrow: "2025 Actual",
+                title: "2025 NATM 总盘子",
+                pairs: [
+                    { label: "总销量", value: formatNumber(summary.actual2025.qty) },
+                    { label: "总销售额", value: formatCurrency(summary.actual2025.sales) }
+                ],
+                meta: [
+                    "销量同比 " + formatPercent(summary.qtyYoY2025, false),
+                    "销售额同比 " + formatPercent(summary.salesYoY2025, false)
+                ]
+            },
+            {
+                eyebrow: "2026 Target",
+                title: "2026 NATM 目标",
+                pairs: [
+                    { label: "目标销量", value: formatNumber(summary.target2026.qty) },
+                    { label: "目标销售额", value: formatCurrency(summary.target2026.sales) }
+                ],
+                meta: [
+                    "目标销量同比 " + formatPercent(summary.qtyTargetGrowth, false) + " vs 2025",
+                    "目标销售额同比 " + formatPercent(summary.salesTargetGrowth, false) + " vs 2025"
+                ]
+            },
+            {
+                eyebrow: "Goal Range",
+                title: "2026 目标口径",
+                pairs: [
+                    { label: "统一原则", value: "至少 +30%" },
+                    { label: "标准 / 挑战", value: "+40% / +50%+" }
+                ],
+                meta: [CONFIG.growthGoalText]
+            }
+        ];
+
+        els.natmSummaryGrid.innerHTML = cards.map(card => {
+            return [
+                "<article class=\"summary-total-card\">",
+                "<p class=\"summary-total-eyebrow\">" + escapeHtml(card.eyebrow) + "</p>",
+                "<h4 class=\"summary-total-title\">" + escapeHtml(card.title) + "</h4>",
+                "<div class=\"summary-total-pairs\">",
+                card.pairs.map(pair => {
+                    return [
+                        "<div class=\"summary-total-pair\">",
+                        "<span>" + escapeHtml(pair.label) + "</span>",
+                        "<strong>" + escapeHtml(pair.value) + "</strong>",
+                        "</div>"
+                    ].join("");
+                }).join(""),
+                "</div>",
+                "<div class=\"summary-total-meta\">",
+                card.meta.map(item => "<span>" + escapeHtml(item) + "</span>").join(""),
+                "</div>",
+                "</article>"
+            ].join("");
+        }).join("");
     }
 
     function renderExecutionGrid() {
         if (!els.executionGrid) {
             return;
         }
-        const promoMonths = [
-            { month: "6月", note: "POP 更新切换" },
-            { month: "7月", note: "渠道对齐 / 跟进" },
-            { month: "8月", note: "计划待补充" },
-            { month: "9月", note: "节奏待补充" }
-        ];
         const marketingTimeline = [
             { date: "Now", title: "POP 更新计划已建", text: "已把 6/4 替换动作与目标 POP 组合整理进页面。" },
             { date: "Next", title: "营销事件待补充", text: "后续补充每个渠道的营销动作、节奏与资源需求。" },
@@ -941,14 +1194,6 @@
         ];
 
         els.executionGrid.innerHTML = [
-            "<article class=\"info-card\">",
-            "<div class=\"info-card-head\"><div><p class=\"info-kicker\">促销节奏</p><h3 class=\"info-card-title\">促销日历</h3><p class=\"info-card-copy\">先用时间卡片搭好全年节奏框架，后续直接往月份里填活动节点。</p></div><span class=\"info-badge\">Calendar</span></div>",
-            "<div class=\"calendar-strip\">",
-            promoMonths.map(item => {
-                return "<div class=\"calendar-chip\"><strong>" + escapeHtml(item.month) + "</strong><span>" + escapeHtml(item.note) + "</span></div>";
-            }).join(""),
-            "</div>",
-            "</article>",
             "<article class=\"info-card\">",
             "<div class=\"info-card-head\"><div><p class=\"info-kicker\">营销推进</p><h3 class=\"info-card-title\">营销事件时间线</h3><p class=\"info-card-copy\">改成时间线视图，后续加活动时会比普通卡片更直观。</p></div><span class=\"info-badge\">Timeline</span></div>",
             "<div class=\"timeline-list\">",
@@ -983,6 +1228,7 @@
         renderBusinessSupportGrid();
         renderChannelStrategyGrid();
         renderExecutionGrid();
+        renderPromoCalendarPanel();
     }
 
     function renderBusinessOverview() {
@@ -1146,6 +1392,8 @@
                 };
             })
         });
+
+        renderNatmSummaryPanel();
 
         els.channelSummaryBody.innerHTML = CONFIG.channels.map(channel => {
             const dashboard = state.dashboards[channel.key];
@@ -1681,6 +1929,9 @@
         const markup = "<div class=\"error-state\">数据加载失败：" + message + "</div>";
         els.businessOverviewGrid.innerHTML = markup;
         els.channelOverviewGrid.innerHTML = markup;
+        if (els.natmSummaryGrid) {
+            els.natmSummaryGrid.innerHTML = "";
+        }
         els.channelSummaryBody.innerHTML = "";
         els.channelTabs.innerHTML = "";
         els.kpiGrid.innerHTML = markup;
