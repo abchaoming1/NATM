@@ -168,6 +168,7 @@
         heroCopy: document.querySelector(".hero-copy"),
         footer: document.querySelector(".footer"),
         businessOverviewGrid: document.getElementById("businessOverviewGrid"),
+        fullProductMixPanel: document.getElementById("fullProductMixPanel"),
         popPlanPanel: document.getElementById("popPlanPanel"),
         launchPlanPanel: document.getElementById("launchPlanPanel"),
         businessSupportGrid: document.getElementById("businessSupportGrid"),
@@ -747,6 +748,77 @@
         ].join("");
     }
 
+    function renderFullProductMixPanel() {
+        if (!els.fullProductMixPanel) {
+            return;
+        }
+
+        els.fullProductMixPanel.innerHTML = [
+            "<article class=\"info-card\">",
+            "<div class=\"info-card-head\">",
+            "<div>",
+            "<p class=\"info-kicker\">完整结构</p>",
+            "<h3 class=\"info-card-title\">完整产品结构</h3>",
+            "<p class=\"info-card-copy\">按四个 NATM 渠道展示 2025-09 至今所有实际卖出的 SKU 结构，保留完整销量、销售额与占比，方便后续继续分析结构变化。</p>",
+            "</div>",
+            "<span class=\"info-badge\">Full Mix</span>",
+            "</div>",
+            "<div class=\"table-wrap\">",
+            "<table class=\"full-mix-table\">",
+            "<thead>",
+            "<tr>",
+            "<th>渠道</th>",
+            "<th>排名</th>",
+            "<th>SKU</th>",
+            "<th>属性</th>",
+            "<th>销量</th>",
+            "<th>销量占比</th>",
+            "<th>销售额</th>",
+            "<th>销售额占比</th>",
+            "</tr>",
+            "</thead>",
+            "<tbody>",
+            CONFIG.channels.map(channel => {
+                const dashboard = state.dashboards[channel.key];
+                const profile = CONFIG.channelProfiles[channel.key];
+                const popSkuSet = new Set(profile.popSkus);
+                const items = dashboard ? dashboard.productMixSinceStart.items : [];
+                const channelLabel = profile.displayName || channel.label;
+
+                if (!items.length) {
+                    return [
+                        "<tr class=\"mix-group-row\"><td colspan=\"8\">" + escapeHtml(channelLabel) + "</td></tr>",
+                        "<tr><td>" + escapeHtml(channelLabel) + "</td><td colspan=\"7\">暂无卖出SKU结构记录</td></tr>"
+                    ].join("");
+                }
+
+                return [
+                    "<tr class=\"mix-group-row\"><td colspan=\"8\">" + escapeHtml(channelLabel) + "</td></tr>",
+                    items.map((item, index) => {
+                        const qtyShare = item.qtyShare !== null ? formatPercent(item.qtyShare, true) : "—";
+                        const salesShare = item.salesShare !== null ? formatPercent(item.salesShare, true) : "—";
+                        return [
+                            "<tr>",
+                            "<td>" + escapeHtml(channelLabel) + "</td>",
+                            "<td>" + renderRankIndex(index + 1) + "</td>",
+                            "<td><strong>" + escapeHtml(item.sku) + "</strong></td>",
+                            "<td>" + renderMixBadge(popSkuSet.has(item.sku)) + "</td>",
+                            "<td>" + formatNumber(item.qty) + "</td>",
+                            "<td>" + qtyShare + "</td>",
+                            "<td>" + formatCurrency(item.sales) + "</td>",
+                            "<td>" + salesShare + "</td>",
+                            "</tr>"
+                        ].join("");
+                    }).join("")
+                ].join("");
+            }).join(""),
+            "</tbody>",
+            "</table>",
+            "</div>",
+            "</article>"
+        ].join("");
+    }
+
     function renderInfoCard(module) {
         return [
             "<article class=\"info-card\">",
@@ -904,6 +976,7 @@
     }
 
     function renderStaticSections() {
+        renderFullProductMixPanel();
         renderPopPlanPanel();
         renderLaunchPlanPanel();
         renderBusinessSupportGrid();
@@ -914,6 +987,13 @@
     function renderBusinessOverview() {
         els.businessOverviewGrid.innerHTML = [
             "<table class=\"business-matrix\">",
+            "<colgroup>",
+            "<col class=\"col-channel\">",
+            "<col class=\"col-business\">",
+            "<col class=\"col-price\">",
+            "<col class=\"col-pop\">",
+            "<col class=\"col-overview\">",
+            "</colgroup>",
             "<thead>",
             "<tr>",
             "<th>渠道</th>",
@@ -921,7 +1001,6 @@
             "<th>出货价</th>",
             "<th>当前POP产品情况</th>",
             "<th>产品结构概览</th>",
-            "<th>产品结构Top SKU</th>",
             "</tr>",
             "</thead>",
             "<tbody>",
@@ -967,15 +1046,11 @@
                 "<div class=\"business-cell\">",
                 "<div class=\"business-metric-grid\">",
                 renderBusinessMetricCard("卖出SKU", String(productMix.items.length)),
-                renderBusinessMetricCard("POP覆盖", popCoverageText),
+                renderBusinessMetricCard("POP覆盖", profile.popSkus.length ? (String(popInSales.length) + "/" + String(profile.popSkus.length)) : "无POP"),
                 renderBusinessMetricCard("累计销量", formatNumber(productMix.totalQty)),
                 renderBusinessMetricCard("销售额", formatCurrency(productMix.totalSales)),
                 "</div>",
-                "<p class=\"profile-mix-note\">统计口径：2025-09 至 " + escapeHtml(dashboard.latestMonthKey) + "。</p>",
-                "</div>",
-                "</td>",
-                "<td>",
-                "<div class=\"business-cell\">",
+                "<p class=\"profile-mix-note\">统计口径：2025-09 至 " + escapeHtml(dashboard.latestMonthKey) + "。 " + popCoverageText + "</p>",
                 renderBusinessRankTable(productMix.items, popSkuSet),
                 "</div>",
                 "</td>",
@@ -1664,6 +1739,7 @@
         }
     }
 
+    try {
     document.getElementById("compareMetricToggle").addEventListener("click", event => {
         const button = event.target.closest(".metric-btn");
         if (!button) {
@@ -1749,4 +1825,17 @@
     hydrateStaticCopy();
     renderStaticSections();
     loadData();
+    } catch (error) {
+        console.error("NATM init failed", error);
+        if (els.statusBadge) {
+            els.statusBadge.textContent = "初始化失败";
+            els.statusBadge.className = "status-badge error";
+        }
+        if (els.lastUpdated) {
+            els.lastUpdated.textContent = "上次刷新：初始化失败";
+        }
+        if (els.businessOverviewGrid) {
+            els.businessOverviewGrid.innerHTML = "<div class=\"error-state\">页面初始化失败：" + escapeHtml(error.message || "未知错误") + "</div>";
+        }
+    }
 })();

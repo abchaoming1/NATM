@@ -662,18 +662,41 @@
         }
 
         .business-matrix {
-            min-width: 1460px;
+            width: 100%;
+            min-width: 0;
+            table-layout: fixed;
+        }
+
+        .business-matrix col.col-channel {
+            width: 11%;
+        }
+
+        .business-matrix col.col-business {
+            width: 22%;
+        }
+
+        .business-matrix col.col-price {
+            width: 14%;
+        }
+
+        .business-matrix col.col-pop {
+            width: 17%;
+        }
+
+        .business-matrix col.col-overview {
+            width: 36%;
         }
 
         .business-matrix th,
         .business-matrix td {
             vertical-align: top;
+            white-space: normal;
         }
 
         .business-channel-cell {
             display: grid;
             gap: 10px;
-            min-width: 120px;
+            min-width: 0;
         }
 
         .business-channel-name {
@@ -694,11 +717,16 @@
         .business-cell {
             display: grid;
             gap: 10px;
-            min-width: 198px;
+            min-width: 0;
         }
 
         .business-cell.compact {
-            min-width: 164px;
+            min-width: 0;
+        }
+
+        .business-cell .profile-copy {
+            font-size: 12px;
+            line-height: 1.7;
         }
 
         .business-metric-grid {
@@ -728,6 +756,7 @@
             font-size: 14px;
             line-height: 1.6;
             color: var(--ink);
+            word-break: break-word;
         }
 
         .mini-rank-wrap {
@@ -758,6 +787,16 @@
             font-weight: 700;
             color: var(--channel-accent, var(--teal));
             background: var(--channel-soft, var(--teal-soft));
+        }
+
+        .full-mix-table {
+            min-width: 980px;
+        }
+
+        .mix-group-row td {
+            background: rgba(246, 240, 230, 0.88);
+            font-weight: 700;
+            color: var(--ink);
         }
 
         .summary-stack {
@@ -1281,6 +1320,7 @@
             </div>
             <div id="businessOverviewGrid" class="business-table-wrap business-grid"></div>
             <div class="section-stack">
+                <div id="fullProductMixPanel"></div>
                 <div id="popPlanPanel"></div>
                 <div id="launchPlanPanel"></div>
                 <div id="businessSupportGrid" class="business-support-grid"></div>
@@ -1533,7 +1573,7 @@
     </div>
     <script>
         window.NATM_MULTI_CHANNEL = true;
-        window.NATM_APP_VERSION = "2026-04-14-6";
+        window.NATM_APP_VERSION = "2026-04-14-7";
         document.write('<script src="app.js?v=' + encodeURIComponent(window.NATM_APP_VERSION) + '&t=' + Date.now() + '"><\/script>');
     </script>
     <script>
