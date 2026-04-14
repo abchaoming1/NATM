@@ -1122,49 +1122,50 @@
     }
 
     function buildChannelStrategyModules() {
+        const activeChannel = getChannelConfig(state.activeChannelKey);
+        const research = CONFIG.channelResearch[activeChannel.key] || {};
+        const target = CONFIG.channelTargets[activeChannel.key] || { qty: 0, sales: 0 };
+        const dashboard = state.dashboards[activeChannel.key];
+        const qtyGrowth = dashboard ? calculateGrowth(target.qty, dashboard.yearlyTotals[2025].qty) : null;
+        const salesGrowth = dashboard ? calculateGrowth(target.sales, dashboard.yearlyTotals[2025].sales) : null;
+
         return [
             {
                 kicker: "渠道洞察",
                 title: "渠道特点及用户画像",
-                description: "结合 NATM 介绍 PPT 与四家官网公开信息整理，用户画像为基于店型、品类与服务模型的业务推断。",
-                badge: "Research",
-                rows: CONFIG.channels.map(channel => {
-                    const research = CONFIG.channelResearch[channel.key];
-                    return {
-                        channelKey: channel.key,
+                description: "当前展示 " + activeChannel.label + " 的渠道特点与用户画像；点击上方渠道卡片可切换。",
+                badge: activeChannel.label,
+                rows: [
+                    {
+                        channelKey: activeChannel.key,
                         title: research.profileTitle,
                         text: research.profileBody,
                         meta: "用户画像：" + research.persona
-                    };
-                }),
+                    }
+                ],
                 footnote: "公开信息主要来自 NFM、RC Willey、Abt、BrandsMart USA 官网；用户画像为结合 PPT 与店型结构的推断。"
             },
             {
                 kicker: "增长方向",
                 title: "核心机会",
-                description: "按渠道定位去拆 2026 年最值得优先推进的增长动作，帮助后续把 POP、新品与营销资源放到正确的地方。",
-                badge: "Action",
-                rows: CONFIG.channels.map(channel => {
-                    const research = CONFIG.channelResearch[channel.key];
-                    return {
-                        channelKey: channel.key,
+                description: "当前展示 " + activeChannel.label + " 的优先增长动作，后续可继续按渠道逐条细化。",
+                badge: activeChannel.label,
+                rows: [
+                    {
+                        channelKey: activeChannel.key,
                         title: research.opportunityTitle,
                         text: research.opportunityBody
-                    };
-                })
+                    }
+                ]
             },
             {
                 kicker: "年度管理",
                 title: "今年目标",
-                description: "四个渠道统一按“至少 +30%，标准 +40%，挑战 +50%+”管理，并锁定 2026 的销量与销售额目标值。",
+                description: "当前展示 " + activeChannel.label + " 的 2026 年目标值和相对 2025 实际的目标同比。",
                 badge: "2026",
-                rows: CONFIG.channels.map(channel => {
-                    const target = CONFIG.channelTargets[channel.key];
-                    const dashboard = state.dashboards[channel.key];
-                    const qtyGrowth = dashboard ? calculateGrowth(target.qty, dashboard.yearlyTotals[2025].qty) : null;
-                    const salesGrowth = dashboard ? calculateGrowth(target.sales, dashboard.yearlyTotals[2025].sales) : null;
-                    return {
-                        channelKey: channel.key,
+                rows: [
+                    {
+                        channelKey: activeChannel.key,
                         title: CONFIG.growthGoalText,
                         metrics: [
                             { label: "目标销量", value: formatNumber(target.qty) },
@@ -1174,8 +1175,8 @@
                         meta: dashboard
                             ? "相对 2025 实际：销量 " + formatPercent(qtyGrowth, false) + "，销售额 " + formatPercent(salesGrowth, false) + "。"
                             : "数据加载后自动回填相对 2025 的目标同比。"
-                    };
-                })
+                    }
+                ]
             }
         ];
     }
