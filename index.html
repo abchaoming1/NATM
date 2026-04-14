@@ -1586,23 +1586,10 @@
             <div class="section-head">
                 <div>
                     <h2>渠道汇总表</h2>
-                    <p>把四个 NATM 渠道的年度对比和明细汇总放在同一个模块里，先看整体对比，再看表格明细。</p>
+                    <p>把四个 NATM 渠道的明细汇总和年度对比放在同一个模块里，先看总盘子与目标，再看年度对比。</p>
                 </div>
             </div>
             <div class="summary-stack">
-                <div class="summary-subsection">
-                    <div class="subsection-head">
-                        <div>
-                            <h3>渠道年度对比</h3>
-                            <p>按同一口径横向比较四个 NATM 渠道的年度销量和销售额，便于快速识别主力渠道与增长重心。</p>
-                        </div>
-                        <div class="metric-toggle" id="compareMetricToggle">
-                            <button class="metric-btn active" data-metric="sales">销售额</button>
-                            <button class="metric-btn" data-metric="qty">销量</button>
-                        </div>
-                    </div>
-                    <div id="channelCompareChart" class="chart summary-compare-chart"></div>
-                </div>
                 <div class="summary-subsection">
                     <div class="subsection-head">
                         <div>
@@ -1632,6 +1619,19 @@
                             <tbody></tbody>
                         </table>
                     </div>
+                </div>
+                <div class="summary-subsection">
+                    <div class="subsection-head">
+                        <div>
+                            <h3>渠道年度对比</h3>
+                            <p>按同一口径横向比较四个 NATM 渠道的年度销量和销售额，便于快速识别主力渠道与增长重心。</p>
+                        </div>
+                        <div class="metric-toggle" id="compareMetricToggle">
+                            <button class="metric-btn active" data-metric="sales">销售额</button>
+                            <button class="metric-btn" data-metric="qty">销量</button>
+                        </div>
+                    </div>
+                    <div id="channelCompareChart" class="chart summary-compare-chart"></div>
                 </div>
             </div>
         </section>
@@ -1829,7 +1829,7 @@
     </div>
     <script>
         window.NATM_MULTI_CHANNEL = true;
-        window.NATM_APP_VERSION = "2026-04-14-13";
+        window.NATM_APP_VERSION = "2026-04-14-14";
         document.write('<script src="app.js?v=' + encodeURIComponent(window.NATM_APP_VERSION) + '&t=' + Date.now() + '"><\/script>');
     </script>
     <script>
