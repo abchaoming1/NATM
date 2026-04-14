@@ -6,6 +6,7 @@
         workbookUrl: "https://docs.google.com/spreadsheets/d/" + WORKBOOK_ID + "/edit?gid=1543835087#gid=1543835087",
         focusYears: [2024, 2025, 2026],
         startYear: 2024,
+        structureStartMonth: "2025-09",
         adjustmentLabel: "未归属调整",
         channels: [
             { key: "nfm", label: "NFM", sheet: "NFM  Sales Data", accent: "#0f766e" },
@@ -13,6 +14,52 @@
             { key: "abt", label: "Abt", sheet: "Abt Sales Data", accent: "#1d4ed8" },
             { key: "bsm", label: "BSM", sheet: "BSM Sales Data", accent: "#b42318" }
         ],
+        channelProfiles: {
+            nfm: {
+                displayName: "NFM",
+                businessTags: ["SO订单", "RMA退货", "EDI: TBD", "其他支持"],
+                buyer: "anna.murphy@nfm.com / joe.feregrino@nfm.com (senior)",
+                account: "jennifer.priebe@nfm.com (SO下单) / Detriee.Powe@bm1.brandsmart.com (invoice)",
+                shipPrice2025: "DFI后为 0.6*0.98*0.95",
+                shipPrice2026: "更正后 0.6*(1-0.05-0.02)",
+                setup: "沿用当前流程，无额外新品 setup 备注",
+                popSize: "120cm",
+                popSkus: ["E310", "T920", "S803", "S710", "S820", "S821"]
+            },
+            rcw: {
+                displayName: "RCW",
+                businessTags: ["其他支持"],
+                buyer: "david.mcloney@rcwilley.com",
+                account: "/",
+                shipPrice2025: "0.6",
+                shipPrice2026: "0.6",
+                setup: "联系 rep 及 buyer",
+                popSize: "4*30cm",
+                popSkus: ["S820", "S821", "T920", "E310", "S710"]
+            },
+            abt: {
+                displayName: "Abt",
+                businessTags: ["SO订单", "RMA退货", "其他支持"],
+                buyer: "brozycki@abt.com",
+                account: "soraya.matus@abt.com (RMA退货)",
+                shipPrice2025: "0.6",
+                shipPrice2026: "0.6",
+                setup: "给 buyer 发送 Roadmap 即可",
+                popSize: "暂无",
+                popSkus: []
+            },
+            bsm: {
+                displayName: "BSM",
+                businessTags: ["SO订单", "RMA退货", "其他支持"],
+                buyer: "gerard.sarvis@bm1.brandsmart.com",
+                account: "Susan.Bailey@bm1.brandsmart.com (RMA退货)",
+                shipPrice2025: "0.6",
+                shipPrice2026: "0.6",
+                setup: "给 buyer 发送 Roadmap 即可",
+                popSize: "120cm",
+                popSkus: ["E310", "T920", "S803", "S710", "S820", "S821"]
+            }
+        },
         colors: {
             qty: "#0f766e",
             sales: "#1d4ed8",
@@ -37,6 +84,7 @@
         heroTitle: document.querySelector(".hero h1"),
         heroCopy: document.querySelector(".hero-copy"),
         footer: document.querySelector(".footer"),
+        businessOverviewGrid: document.getElementById("businessOverviewGrid"),
         channelOverviewGrid: document.getElementById("channelOverviewGrid"),
         channelSummaryBody: document.querySelector("#channelSummaryTable tbody"),
         channelTabs: document.getElementById("channelTabs"),
@@ -208,6 +256,63 @@
         }, { qty: 0, sales: 0 });
     }
 
+    function escapeHtml(value) {
+        return String(value || "").replace(/[&<>"']/g, function(char) {
+            return {
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                "\"": "&quot;",
+                "'": "&#39;"
+            }[char];
+        });
+    }
+
+    function monthKeysSince(monthKeys, startMonthKey) {
+        const startIndex = monthIndex(startMonthKey);
+        return (monthKeys || []).filter(monthKey => monthIndex(monthKey) >= startIndex);
+    }
+
+    function buildProductMix(skuMonthly, monthKeys, startMonthKey) {
+        const relevantKeys = monthKeysSince(monthKeys, startMonthKey);
+        const items = Object.keys(skuMonthly).map(sku => {
+            const totals = sumMetrics(skuMonthly[sku], relevantKeys);
+            return {
+                sku: sku,
+                qty: totals.qty,
+                sales: totals.sales
+            };
+        }).filter(item => {
+            return item.sku !== CONFIG.adjustmentLabel &&
+                /^[A-Z]\d{3}$/i.test(item.sku) &&
+                (item.qty > 0 || item.sales > 0);
+        }).sort((left, right) => {
+            if (right.sales !== left.sales) {
+                return right.sales - left.sales;
+            }
+            if (right.qty !== left.qty) {
+                return right.qty - left.qty;
+            }
+            return left.sku.localeCompare(right.sku);
+        });
+
+        const totalSales = items.reduce((sum, item) => sum + Math.max(item.sales, 0), 0);
+        const totalQty = items.reduce((sum, item) => sum + Math.max(item.qty, 0), 0);
+
+        items.forEach(item => {
+            item.salesShare = totalSales > 0 ? item.sales / totalSales : null;
+            item.qtyShare = totalQty > 0 ? item.qty / totalQty : null;
+        });
+
+        return {
+            startMonthKey: startMonthKey,
+            monthKeys: relevantKeys,
+            items: items,
+            totalSales: totalSales,
+            totalQty: totalQty
+        };
+    }
+
     function normalizeRecord(row) {
         const year = Number.parseInt(String(row.Year || "").trim(), 10);
         const month = Number.parseInt(String(row.Month || "").trim(), 10);
@@ -372,6 +477,8 @@
             samePeriodByYear[year] = sumMetrics(monthlyTotals, samePeriodKeys[year]);
         });
 
+        const productMixSinceStart = buildProductMix(skuMonthly, monthKeys, CONFIG.structureStartMonth);
+
         return {
             channel: channel,
             records: records,
@@ -392,7 +499,8 @@
             latestTopSku: findTopSkuForMonths(skuMonthly, [latestMonthKey]),
             ytdTopSku: findTopSkuForMonths(skuMonthly, samePeriodKeys[2026]),
             annualTopSku2025: findTopSkuForMonths(skuMonthly, yearKeys[2025]),
-            bestGrowthSku2026: findBestGrowthSku(skuMonthly, samePeriodKeys[2026], samePeriodKeys[2025])
+            bestGrowthSku2026: findBestGrowthSku(skuMonthly, samePeriodKeys[2026], samePeriodKeys[2025]),
+            productMixSinceStart: productMixSinceStart
         };
     }
 
@@ -442,6 +550,75 @@
                 option.text = option.value === "sales" ? "销售额" : "销量";
             });
         }
+    }
+
+    function renderProfileTags(values, className) {
+        if (!values || !values.length) {
+            return "<span class=\"profile-tag muted\">暂无</span>";
+        }
+        return values.map(value => {
+            return "<span class=\"profile-tag" + (className ? " " + className : "") + "\">" + escapeHtml(value) + "</span>";
+        }).join("");
+    }
+
+    function renderProductMixTags(items, popSkuSet) {
+        if (!items.length) {
+            return "<span class=\"profile-tag muted\">2025-09 至今暂无卖出记录</span>";
+        }
+        return items.map(item => {
+            const isPopSku = popSkuSet.has(item.sku);
+            const shareText = item.salesShare !== null ? formatPercent(item.salesShare, true) : "—";
+            return "<span class=\"profile-tag" + (isPopSku ? "" : " muted") + "\">" + escapeHtml(item.sku) + " " + formatCurrency(item.sales) + " · " + shareText + "</span>";
+        }).join("");
+    }
+
+    function renderBusinessOverview() {
+        els.businessOverviewGrid.innerHTML = CONFIG.channels.map(channel => {
+            const profile = CONFIG.channelProfiles[channel.key];
+            const dashboard = state.dashboards[channel.key];
+            const productMix = dashboard.productMixSinceStart;
+            const popSkuSet = new Set(profile.popSkus);
+            const soldSkuSet = new Set(productMix.items.map(item => item.sku));
+            const popInSales = profile.popSkus.filter(sku => soldSkuSet.has(sku));
+            const nonPopSold = productMix.items.filter(item => !popSkuSet.has(item.sku)).map(item => item.sku);
+            const popCoverageText = profile.popSkus.length ? ("POP 覆盖 " + popInSales.length + "/" + profile.popSkus.length) : "当前无 POP 组合";
+
+            return [
+                "<article class=\"profile-card\" style=\"" + channelStyle(channel) + "\">",
+                "<div class=\"profile-card-head\">",
+                "<div>",
+                "<h3 class=\"profile-card-title\">" + escapeHtml(profile.displayName || channel.label) + "</h3>",
+                "<p class=\"profile-card-sub\">商务对接 + 出货价 + POP产品情况 + 2025-09 至今产品结构</p>",
+                "</div>",
+                "<span class=\"channel-chip\">NATM</span>",
+                "</div>",
+                "<div class=\"profile-block\">",
+                "<p class=\"profile-label\">商务对接</p>",
+                "<div class=\"profile-tag-list\">" + renderProfileTags(profile.businessTags) + "</div>",
+                "<p class=\"profile-copy\"><strong>Buyer：</strong>" + escapeHtml(profile.buyer) + "</p>",
+                "<p class=\"profile-copy\"><strong>Account：</strong>" + escapeHtml(profile.account) + "</p>",
+                "<p class=\"profile-copy\"><strong>Setup：</strong>" + escapeHtml(profile.setup) + "</p>",
+                "</div>",
+                "<div class=\"profile-block\">",
+                "<p class=\"profile-label\">出货价</p>",
+                "<div class=\"profile-price-grid\">",
+                "<article class=\"profile-price\"><p class=\"profile-price-label\">2025 出货价</p><p class=\"profile-price-value\">" + escapeHtml(profile.shipPrice2025) + "</p></article>",
+                "<article class=\"profile-price\"><p class=\"profile-price-label\">2026 出货价</p><p class=\"profile-price-value\">" + escapeHtml(profile.shipPrice2026) + "</p></article>",
+                "</div>",
+                "</div>",
+                "<div class=\"profile-block\">",
+                "<p class=\"profile-label\">POP产品情况</p>",
+                "<p class=\"profile-copy\"><strong>POP尺寸：</strong>" + escapeHtml(profile.popSize) + "</p>",
+                "<div class=\"profile-tag-list\">" + renderProfileTags(profile.popSkus) + "</div>",
+                "</div>",
+                "<div class=\"profile-block\">",
+                "<p class=\"profile-label\">产品结构</p>",
+                "<p class=\"profile-mix-note\">2025-09 至 " + escapeHtml(dashboard.latestMonthKey) + "，累计卖出 " + productMix.items.length + " 个 SKU，销量 " + formatNumber(productMix.totalQty) + "，销售额 " + formatCurrency(productMix.totalSales) + "。" + popCoverageText + (nonPopSold.length ? "，非POP卖出：" + escapeHtml(nonPopSold.join(" / ")) : "") + "</p>",
+                "<div class=\"profile-tag-list\">" + renderProductMixTags(productMix.items, popSkuSet) + "</div>",
+                "</div>",
+                "</article>"
+            ].join("");
+        }).join("");
     }
 
     function renderChannelOverview() {
@@ -1044,6 +1221,7 @@
     }
 
     function renderAll() {
+        renderBusinessOverview();
         renderChannelOverview();
         renderChannelComparison();
         renderChannelTabs();
@@ -1057,6 +1235,7 @@
 
     function showError(message) {
         const markup = "<div class=\"error-state\">数据加载失败：" + message + "</div>";
+        els.businessOverviewGrid.innerHTML = markup;
         els.channelOverviewGrid.innerHTML = markup;
         els.channelSummaryBody.innerHTML = "";
         els.channelTabs.innerHTML = "";
