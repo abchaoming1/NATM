@@ -508,6 +508,7 @@
             const lastYear = monthlyTotals[sameMonthLastYearKey(monthKey)] || { qty: 0, sales: 0 };
             return {
                 monthKey: monthKey,
+                remainingInventory: null,
                 qty: current.qty,
                 sales: current.sales,
                 qtyMoM: calculateGrowth(current.qty, previous.qty),
@@ -1472,6 +1473,7 @@
             return [
                 "<tr>",
                 "<td>" + row.monthKey + "</td>",
+                "<td><span class=\"delta neutral\">待补充</span></td>",
                 "<td>" + formatNumber(row.qty) + "</td>",
                 "<td>" + formatCurrency(row.sales) + "</td>",
                 "<td>" + renderDelta(row.qtyMoM) + "</td>",
