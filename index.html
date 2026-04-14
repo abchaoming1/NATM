@@ -799,6 +799,41 @@
             color: var(--ink);
         }
 
+        .mix-base-row td {
+            background: rgba(255, 255, 255, 0.72);
+        }
+
+        .mix-detail-row td {
+            background: rgba(248, 249, 251, 0.78);
+        }
+
+        .mix-badge-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .mix-badge.level {
+            color: var(--muted);
+            background: rgba(23, 32, 51, 0.06);
+        }
+
+        .mix-sku-sub {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding-left: 18px;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .mix-sku-sub::before {
+            content: "└";
+            color: rgba(23, 32, 51, 0.38);
+            font-weight: 700;
+        }
+
         .summary-stack {
             display: grid;
             gap: 22px;
@@ -1724,7 +1759,7 @@
     </div>
     <script>
         window.NATM_MULTI_CHANNEL = true;
-        window.NATM_APP_VERSION = "2026-04-14-10";
+        window.NATM_APP_VERSION = "2026-04-14-11";
         document.write('<script src="app.js?v=' + encodeURIComponent(window.NATM_APP_VERSION) + '&t=' + Date.now() + '"><\/script>');
     </script>
     <script>

@@ -436,7 +436,21 @@
         return (monthKeys || []).filter(monthKey => monthIndex(monthKey) >= startIndex);
     }
 
-    function buildProductMix(skuMonthly, monthKeys, startMonthKey) {
+    function isBaseProductSku(sku) {
+        return /^[A-Z]\d{3}$/i.test(String(sku || "").trim());
+    }
+
+    function compareProductMixItems(left, right) {
+        if (right.sales !== left.sales) {
+            return right.sales - left.sales;
+        }
+        if (right.qty !== left.qty) {
+            return right.qty - left.qty;
+        }
+        return String(left.sku || "").localeCompare(String(right.sku || ""));
+    }
+
+    function buildProductMix(records, skuMonthly, monthKeys, startMonthKey) {
         const relevantKeys = monthKeysSince(monthKeys, startMonthKey);
         const items = Object.keys(skuMonthly).map(sku => {
             const totals = sumMetrics(skuMonthly[sku], relevantKeys);
@@ -447,17 +461,9 @@
             };
         }).filter(item => {
             return item.sku !== CONFIG.adjustmentLabel &&
-                /^[A-Z]\d{3}$/i.test(item.sku) &&
+                isBaseProductSku(item.sku) &&
                 (item.qty > 0 || item.sales > 0);
-        }).sort((left, right) => {
-            if (right.sales !== left.sales) {
-                return right.sales - left.sales;
-            }
-            if (right.qty !== left.qty) {
-                return right.qty - left.qty;
-            }
-            return left.sku.localeCompare(right.sku);
-        });
+        }).sort(compareProductMixItems);
 
         const totalSales = items.reduce((sum, item) => sum + Math.max(item.sales, 0), 0);
         const totalQty = items.reduce((sum, item) => sum + Math.max(item.qty, 0), 0);
@@ -467,10 +473,73 @@
             item.qtyShare = totalQty > 0 ? item.qty / totalQty : null;
         });
 
+        const relevantKeySet = new Set(relevantKeys);
+        const specificByBase = {};
+
+        (records || []).forEach(record => {
+            if (!relevantKeySet.has(record.monthKey) || !isBaseProductSku(record.sku)) {
+                return;
+            }
+            if (record.sku === CONFIG.adjustmentLabel || (record.qty === 0 && record.sales === 0)) {
+                return;
+            }
+
+            const specificSku = String(record.specificSku || "").trim();
+            if (!specificSku || specificSku === record.sku || baseSku(specificSku) !== record.sku) {
+                return;
+            }
+
+            if (!specificByBase[record.sku]) {
+                specificByBase[record.sku] = {};
+            }
+            if (!specificByBase[record.sku][specificSku]) {
+                specificByBase[record.sku][specificSku] = {
+                    sku: specificSku,
+                    qty: 0,
+                    sales: 0
+                };
+            }
+
+            specificByBase[record.sku][specificSku].qty += record.qty;
+            specificByBase[record.sku][specificSku].sales += record.sales;
+        });
+
+        const detailedRows = [];
+
+        items.forEach((item, index) => {
+            const specificItems = Object.values(specificByBase[item.sku] || {}).sort(compareProductMixItems).map(specificItem => {
+                return {
+                    level: "specific",
+                    baseSku: item.sku,
+                    sku: specificItem.sku,
+                    qty: specificItem.qty,
+                    sales: specificItem.sales,
+                    qtyShare: totalQty > 0 ? specificItem.qty / totalQty : null,
+                    salesShare: totalSales > 0 ? specificItem.sales / totalSales : null
+                };
+            });
+
+            item.specificItems = specificItems;
+            detailedRows.push({
+                level: "base",
+                rank: index + 1,
+                baseSku: item.sku,
+                sku: item.sku,
+                qty: item.qty,
+                sales: item.sales,
+                qtyShare: item.qtyShare,
+                salesShare: item.salesShare
+            });
+            specificItems.forEach(specificItem => {
+                detailedRows.push(specificItem);
+            });
+        });
+
         return {
             startMonthKey: startMonthKey,
             monthKeys: relevantKeys,
             items: items,
+            detailedRows: detailedRows,
             totalSales: totalSales,
             totalQty: totalQty
         };
@@ -484,18 +553,22 @@
         }
 
         const rawSku = String(row.SKU || "").trim();
+        const specificSku = String(row["Specific SKU"] || "").trim();
         const qty = parseNumber(row["Total Quantity Sold"]);
         const sales = parseNumber(row["Total Sales"]);
-        if (!rawSku && qty === 0 && sales === 0) {
+        if (!rawSku && !specificSku && qty === 0 && sales === 0) {
             return null;
         }
+
+        const primarySku = rawSku || specificSku;
 
         return {
             year: year,
             month: month,
             monthKey: toMonthKey(year, month),
-            rawSku: rawSku,
-            sku: baseSku(rawSku),
+            rawSku: primarySku,
+            sku: baseSku(primarySku),
+            specificSku: specificSku || primarySku,
             qty: qty,
             sales: sales
         };
@@ -641,7 +714,7 @@
             samePeriodByYear[year] = sumMetrics(monthlyTotals, samePeriodKeys[year]);
         });
 
-        const productMixSinceStart = buildProductMix(skuMonthly, monthKeys, CONFIG.structureStartMonth);
+        const productMixSinceStart = buildProductMix(records, skuMonthly, monthKeys, CONFIG.structureStartMonth);
 
         return {
             channel: channel,
@@ -786,6 +859,16 @@
         return "<span class=\"rank-index\">" + String(index) + "</span>";
     }
 
+    function renderMixLevelCell(level, isPopSku) {
+        const levelLabel = level === "specific" ? "细分SKU" : "大类SKU";
+        return [
+            "<div class=\"mix-badge-group\">",
+            "<span class=\"mix-badge level\">" + escapeHtml(levelLabel) + "</span>",
+            renderMixBadge(isPopSku),
+            "</div>"
+        ].join("");
+    }
+
     function renderBusinessRankTable(items, popSkuSet) {
         const topItems = (items || []).slice(0, 5);
         if (!topItems.length) {
@@ -834,7 +917,7 @@
             "<div>",
             "<p class=\"info-kicker\">完整结构</p>",
             "<h3 class=\"info-card-title\">完整产品结构</h3>",
-            "<p class=\"info-card-copy\">按四个 NATM 渠道展示 2025-09 至今所有实际卖出的 SKU 结构，保留完整销量、销售额与占比，方便后续继续分析结构变化。</p>",
+            "<p class=\"info-card-copy\">按四个 NATM 渠道展示 2025-09 至今所有实际卖出的产品结构，同时保留大类 SKU 与 Specific SKU 两层记录，方便同时看总盘子和细分版本表现。</p>",
             "</div>",
             "<span class=\"info-badge\">Full Mix</span>",
             "</div>",
@@ -845,7 +928,7 @@
             "<th>渠道</th>",
             "<th>排名</th>",
             "<th>SKU</th>",
-            "<th>属性</th>",
+            "<th>记录层级</th>",
             "<th>销量</th>",
             "<th>销量占比</th>",
             "<th>销售额</th>",
@@ -857,10 +940,10 @@
                 const dashboard = state.dashboards[channel.key];
                 const profile = CONFIG.channelProfiles[channel.key];
                 const popSkuSet = new Set(profile.popSkus);
-                const items = dashboard ? dashboard.productMixSinceStart.items : [];
+                const rows = dashboard ? dashboard.productMixSinceStart.detailedRows : [];
                 const channelLabel = profile.displayName || channel.label;
 
-                if (!items.length) {
+                if (!rows.length) {
                     return [
                         "<tr class=\"mix-group-row\"><td colspan=\"8\">" + escapeHtml(channelLabel) + "</td></tr>",
                         "<tr><td>" + escapeHtml(channelLabel) + "</td><td colspan=\"7\">暂无卖出SKU结构记录</td></tr>"
@@ -869,18 +952,23 @@
 
                 return [
                     "<tr class=\"mix-group-row\"><td colspan=\"8\">" + escapeHtml(channelLabel) + "</td></tr>",
-                    items.map((item, index) => {
-                        const qtyShare = item.qtyShare !== null ? formatPercent(item.qtyShare, true) : "—";
-                        const salesShare = item.salesShare !== null ? formatPercent(item.salesShare, true) : "—";
+                    rows.map(row => {
+                        const qtyShare = row.qtyShare !== null ? formatPercent(row.qtyShare, true) : "—";
+                        const salesShare = row.salesShare !== null ? formatPercent(row.salesShare, true) : "—";
+                        const isPopSku = popSkuSet.has(row.baseSku || row.sku);
+                        const rowClass = row.level === "specific" ? "mix-detail-row" : "mix-base-row";
+                        const skuCell = row.level === "specific"
+                            ? "<span class=\"mix-sku-sub\">" + escapeHtml(row.sku) + "</span>"
+                            : "<strong>" + escapeHtml(row.sku) + "</strong>";
                         return [
-                            "<tr>",
-                            "<td>" + escapeHtml(channelLabel) + "</td>",
-                            "<td>" + renderRankIndex(index + 1) + "</td>",
-                            "<td><strong>" + escapeHtml(item.sku) + "</strong></td>",
-                            "<td>" + renderMixBadge(popSkuSet.has(item.sku)) + "</td>",
-                            "<td>" + formatNumber(item.qty) + "</td>",
+                            "<tr class=\"" + rowClass + "\">",
+                            "<td>" + (row.level === "base" ? escapeHtml(channelLabel) : "") + "</td>",
+                            "<td>" + (row.level === "base" ? renderRankIndex(row.rank) : "") + "</td>",
+                            "<td>" + skuCell + "</td>",
+                            "<td>" + renderMixLevelCell(row.level, isPopSku) + "</td>",
+                            "<td>" + formatNumber(row.qty) + "</td>",
                             "<td>" + qtyShare + "</td>",
-                            "<td>" + formatCurrency(item.sales) + "</td>",
+                            "<td>" + formatCurrency(row.sales) + "</td>",
                             "<td>" + salesShare + "</td>",
                             "</tr>"
                         ].join("");
