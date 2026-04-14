@@ -75,14 +75,29 @@
                 { channelKey: "rcw", skus: ["S820", "S821", "T921", "E320", "S710"] },
                 { channelKey: "bsm", skus: ["E320", "T921", "S803", "S710", "S820", "S821"] }
             ],
-            augustPlan: "暂时空着"
+            augustReplacements: [
+                { channelKey: "nfm", currentSku: "S803", nextSku: "NCE（OpenRun 2）" },
+                { channelKey: "bsm", currentSku: "S803", nextSku: "NCE（OpenRun 2）" }
+            ]
         },
         businessPlaceholders: {
             launchPlan: {
                 kicker: "产品结构",
                 title: "产品结构上市更新计划",
-                description: "预留给后续上新节奏、切换窗口、负责人和渠道落地时间。",
-                body: "暂时空着"
+                description: "整理耳夹线与骨导线的上市节奏、价格方案和 GTM 争取时间点，方便和渠道 POP / 送样节奏一起看。",
+                badge: "Roadmap",
+                rows: [
+                    {
+                        title: "耳夹线",
+                        text: "6月发布 OpenDots 2（代号 being），定价预计 $199，OpenDots 同步退市。",
+                        meta: "8月上旬计划发布 OpenDots Air（代号 looking），定价预计 $129；GTM 正在争取 6 月和 OpenDots 2 一起上市。"
+                    },
+                    {
+                        title: "骨导线",
+                        text: "8月下旬计划发布 OpenRun 2（代号 NCE），GTM 正在争取提前到 6 月发布。",
+                        meta: "当前优先口径采用方案 B：OpenRun 降价到 $99，OpenRun 2 定价为 $129。"
+                    }
+                ]
             },
             costMargin: {
                 kicker: "产品结构",
@@ -92,9 +107,23 @@
             },
             sampling: {
                 kicker: "渠道推进",
-                title: "渠道送样情况",
-                description: "后续补充各渠道送样型号、寄送时间、反馈进度与责任人。",
-                body: "暂时空着"
+                title: "样品提需及渠道送样情况",
+                description: "同步记录四个渠道新品的提需、是否已和 buyer 对接，以及当前仍缺失的送样动作。",
+                badge: "Samples",
+                rows: [
+                    {
+                        title: "当前送样情况",
+                        text: "目前四个渠道均未有 OpenDots 2、OpenFit Pro、OpenDots Air 和 OpenRun 2 的送样情况。"
+                    },
+                    {
+                        title: "当前样品提需",
+                        text: "四个渠道刚好都有 OpenDots Air 的黑色、紫色各一个，总计 4+4=8 个；提需已完成，但暂未和 buyer 产生联系，也尚未推进送样。"
+                    },
+                    {
+                        title: "待补项目",
+                        text: "当前还缺 OpenDots 2 的提需和 OpenRun 2 的提需，后续需要一并补齐并推进到 buyer 沟通。"
+                    }
+                ]
             }
         },
         channelNotes: [
@@ -130,7 +159,7 @@
                 profileBody: "NFM 官方资料显示其以家具、家电、电子一站式大卖场运营，四个核心卖场拥有超大 showroom 与完整 electronics assortment；结合 PPT 里“大店流量高、停留时间长、耳机专区成熟”的结论，更适合做体验驱动成交。",
                 persona: "以家庭决策型客群为主，包含搬家、装修、整屋升级以及会在同一次进店中顺带比较音频产品的中高客单消费者。",
                 opportunityTitle: "把试听体验和家庭升级场景绑定，放大高客单转化",
-                opportunityBody: "继续用 POP + 主销英雄 SKU 稳住露出，同时把 OpenDots 2、T921 这类新品放在“家居升级 / TV / 健身 / 户外”联动场景里做转化，争取从单纯陈列升级到体验成交。"
+                opportunityBody: "继续用 POP + 主销英雄 SKU 稳住露出，同时把 OpenDots 2、T921 这类新品放在“家居升级 / TV / 健身 / 户外”联动场景里做转化，争取从单纯陈列升级到体验成交。七八月还有一个 POP 快闪店机会，目前由 Kristen 策划、Raymond 辅助推进。"
             },
             rcw: {
                 profileTitle: "西部区域家居电器零售商，偏家庭计划型购买",
@@ -157,7 +186,7 @@
         promoCalendar: [
             { month: "6月", note: "POP 更新切换，跟踪 E320 / T921 替换后的首轮 sell-through" },
             { month: "7月", note: "渠道对齐与跟进，复盘 POP 执行、补货和门店反馈" },
-            { month: "8月", note: "八月计划待补充，预留新品节奏和渠道动作窗口" },
+            { month: "8月", note: "关注 NFM POP 快闪店机会，以及 OpenDots Air / OpenRun 2 的上市与 POP 更新窗口" },
             { month: "9月+", note: "结合节庆和下半年促销节奏，继续补充重点活动节点" }
         ],
         executionModules: [
@@ -963,8 +992,26 @@
             "</div>",
             "</div>",
             "<div class=\"info-section\">",
-            "<p class=\"info-label\">八月计划</p>",
-            "<p class=\"placeholder-copy\">" + escapeHtml(plan.augustPlan || "暂时空着") + "</p>",
+            "<p class=\"info-label\">八月底计划</p>",
+            plan.augustReplacements && plan.augustReplacements.length ? [
+                "<div class=\"table-wrap\">",
+                "<table class=\"compact-table\">",
+                "<thead><tr><th>渠道</th><th>当前SKU</th><th>更新后SKU</th></tr></thead>",
+                "<tbody>",
+                plan.augustReplacements.map(item => {
+                    const channel = getChannelConfig(item.channelKey);
+                    return [
+                        "<tr>",
+                        "<td><strong>" + escapeHtml(channel.label) + "</strong></td>",
+                        "<td>" + escapeHtml(item.currentSku) + "</td>",
+                        "<td>" + escapeHtml(item.nextSku) + "</td>",
+                        "</tr>"
+                    ].join("");
+                }).join(""),
+                "</tbody>",
+                "</table>",
+                "</div>"
+            ].join("") : "<p class=\"placeholder-copy\">暂时空着</p>",
             "</div>",
             "</article>"
         ].join("");
