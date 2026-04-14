@@ -1,5 +1,85 @@
 (function() {
     const WORKBOOK_ID = "1-3zBJZvum5M7yLED_ZUbpMugmkWZeTCFZVAvs1F4QqE";
+    const PROMO_CALENDARS = {
+        nfm: {
+            source: "20260414 Shokz Q2 Promotion Calendar-NFM.xlsx",
+            rows: [
+                { month: "April", date: "4.29-5.10", product: "OpenRun Pro2", discount: 0.2, priceAsIs: 179.95, priceToBe: 139.95, saving: 40, rebate: 22.32, models: ["S820-ST-BK", "S820-ST-OR", "S821-MN-BK", "S821-MN-OR"] },
+                { month: "April", date: "4.29-5.10", product: "OpenRun", discount: 0.3, priceAsIs: 129.95, priceToBe: 89.95, saving: 40, rebate: 22.32, models: ["S803-MN-BK", "S803-MN-BL", "S803-ST-BK", "S803-ST-BL", "S803-ST-RD"] },
+                { month: "April", date: "4.29-5.10", product: "OpenFit 2+", discount: 0.15, priceAsIs: 199.95, priceToBe: 169.95, saving: 30, rebate: 16.74, models: ["T921-ST-BK", "T921-ST-GY"] },
+                { month: "April", date: "4.29-5.10", product: "OpenDots ONE", discount: 0.2, priceAsIs: 199.95, priceToBe: 159.95, saving: 40, rebate: 22.32, models: ["E310-ST-BK", "E310-ST-BG"] },
+                { month: "May", date: "5.18-5.25", product: "OpenFit Air", discount: 0.3, priceAsIs: 119.95, priceToBe: 79.95, saving: 40, rebate: 22.32, models: ["T511-ST-BK", "T511-ST-WT", "T511-ST-PK"] },
+                { month: "May", date: "5.18-5.25", product: "OpenMove", discount: 0.3, priceAsIs: 79.95, priceToBe: 54.95, saving: 25, rebate: 13.95, models: ["S661-ST-BL", "S661-ST-GY", "S661-ST-PK", "S661-ST-WT"] }
+            ]
+        },
+        rcw: {
+            source: "20260414 Shokz Q2 Promotion Calendar-RCW.xlsx",
+            rows: [
+                { month: "April", date: "4.29-5.10", product: "OpenRun Pro2", discount: 0.2, priceAsIs: 179.95, priceToBe: 139.95, saving: 40, rebate: 24, models: ["S820-ST-BK", "S820-ST-OR", "S821-MN-BK", "S821-MN-OR"] },
+                { month: "April", date: "4.29-5.10", product: "OpenRun", discount: 0.3, priceAsIs: 129.95, priceToBe: 89.95, saving: 40, rebate: 24, models: ["S803-MN-BK", "S803-MN-BL", "S803-ST-BK", "S803-ST-BL", "S803-ST-RD"] },
+                { month: "April", date: "4.29-5.10", product: "OpenFit 2+", discount: 0.15, priceAsIs: 199.95, priceToBe: 169.95, saving: 30, rebate: 18, models: ["T921-ST-BK", "T921-ST-GY"] },
+                { month: "April", date: "4.29-5.10", product: "OpenDots ONE", discount: 0.2, priceAsIs: 199.95, priceToBe: 159.95, saving: 40, rebate: 24, models: ["E310-ST-BK", "E310-ST-BG"] },
+                { month: "May", date: "5.18-5.25", product: "OpenFit Air", discount: 0.3, priceAsIs: 119.95, priceToBe: 79.95, saving: 40, rebate: 24, models: ["T511-ST-BK", "T511-ST-WT", "T511-ST-PK"] },
+                { month: "May", date: "5.18-5.25", product: "OpenMove", discount: 0.3, priceAsIs: 79.95, priceToBe: 54.95, saving: 25, rebate: 15, models: ["S661-ST-BL", "S661-ST-GY", "S661-ST-PK", "S661-ST-WT"] }
+            ]
+        },
+        abt: {
+            source: "20260414 Shokz Q2 Promotion Calendar-Abt.xlsx",
+            rows: [
+                { month: "April", date: "4.29-5.10", product: "OpenRun Pro2", discount: 0.2, priceAsIs: 179.95, priceToBe: 139.95, saving: 40, rebate: 24, models: ["S820-ST-BK", "S820-ST-OR", "S821-MN-BK", "S821-MN-OR"] },
+                { month: "April", date: "4.29-5.10", product: "OpenRun", discount: 0.3, priceAsIs: 129.95, priceToBe: 89.95, saving: 40, rebate: 24, models: ["S803-MN-BK", "S803-MN-BL", "S803-ST-BK", "S803-ST-BL", "S803-ST-RD"] },
+                { month: "April", date: "4.29-5.10", product: "OpenFit 2+", discount: 0.15, priceAsIs: 199.95, priceToBe: 169.95, saving: 30, rebate: 18, models: ["T921-ST-BK", "T921-ST-GY"] },
+                { month: "April", date: "4.29-5.10", product: "OpenDots ONE", discount: 0.2, priceAsIs: 199.95, priceToBe: 159.95, saving: 40, rebate: 24, models: ["E310-ST-BK", "E310-ST-BG"] },
+                { month: "May", date: "5.18-5.25", product: "OpenFit Air", discount: 0.3, priceAsIs: 119.95, priceToBe: 79.95, saving: 40, rebate: 24, models: ["T511-ST-BK", "T511-ST-WT", "T511-ST-PK"] },
+                { month: "May", date: "5.18-5.25", product: "OpenMove", discount: 0.3, priceAsIs: 79.95, priceToBe: 54.95, saving: 25, rebate: 15, models: ["S661-ST-BL", "S661-ST-GY", "S661-ST-PK", "S661-ST-WT"] }
+            ]
+        },
+        bsm: {
+            source: "20260411 Shokz Q2 Promotion Calendar-BSM.xlsx",
+            rows: [
+                { month: "Jan", date: "1.1-1.14", product: "OpenRun Pro", discount: 0.3, priceAsIs: 159.95, priceToBe: 109.95, saving: 50, rebate: 30, models: ["S810STBK", "S810STBL", "S810STPK", "S811MNBG", "S811MNBK"] },
+                { month: "Jan", date: "1.1-1.14", product: "OpenSwim Pro", discount: 0.15, priceAsIs: 179.95, priceToBe: 149.95, saving: 30, rebate: 18, models: ["S710STRD", "S710STGY"] },
+                { month: "Jan", date: "1.7-1.20", product: "OpenFit", discount: 0.15, priceAsIs: 159.95, priceToBe: 134.95, saving: 25, rebate: 15, models: ["T910STBG", "T910STBK"] },
+                { month: "Jan", date: "1.7-1.20", product: "OpenFit2", discount: 0.15, priceAsIs: 179.95, priceToBe: 149.95, saving: 30, rebate: 18, models: ["T920STBG", "T920STBK"] },
+                { month: "Feb", date: "1.26-2.3", product: "OpenMove", discount: 0, priceAsIs: 79.95, priceToBe: 49.95, saving: 30, rebate: 18, models: ["S661STBL", "S661STGY", "S661STPK", "S661STWT"] },
+                { month: "Feb", date: "2.4-2.14", product: "OpenRun Pro2", discount: 0.15, priceAsIs: 179.95, priceToBe: 149.95, saving: 30, rebate: 18, models: ["S820STBK", "S820STOR", "S821MNBK", "S821MNOR"] },
+                { month: "Feb", date: "2.4-2.14", product: "OpenFit Air", discount: 0.3, priceAsIs: 119.95, priceToBe: 79.95, saving: 40, rebate: 24, models: ["T511STBK", "T511STWT", "T511STPK"] },
+                { month: "Feb", date: "2.4-2.14", product: "OpenSwim Pro", discount: 0.2, priceAsIs: 179.95, priceToBe: 139.95, saving: 40, rebate: 24, models: ["S710STRD", "S710STGY"] },
+                { month: "Feb", date: "2.4-2.14", product: "OpenRun", discount: 0.3, priceAsIs: 129.95, priceToBe: 89.95, saving: 40, rebate: 24, models: ["S803MNBK", "S803MNBL", "S803STBK", "S803STBL", "S803STRD"] },
+                { month: "Feb", date: "2.4-2.14", product: "OpenFit2", discount: 0.15, priceAsIs: 179.95, priceToBe: 149.95, saving: 30, rebate: 18, models: ["T920STBG", "T920STBK"] },
+                { month: "Feb", date: "2.4-2.14", product: "OpenDots ONE", discount: 0.15, priceAsIs: 199.95, priceToBe: 169.95, saving: 30, rebate: 18, models: ["E310STBK", "E310STBG"] },
+                { month: "Feb", date: "2.4-2.14", product: "OpenMove", discount: 0.3, priceAsIs: 79.95, priceToBe: 54.95, saving: 25, rebate: 15, models: ["S661STBL", "S661STGY", "S661STPK", "S661STWT"] },
+                { month: "Mar", date: "3.4-3.17", product: "OpenRun Pro", discount: 0.2, priceAsIs: 159.95, priceToBe: 124.95, saving: 35, rebate: 21, models: ["S810STBK", "S810STBL", "S810STPK", "S811MNBG", "S811MNBK"] },
+                { month: "Mar", date: "3.25-4.7", product: "OpenRun Pro2", discount: 0.2, priceAsIs: 179.95, priceToBe: 139.95, saving: 40, rebate: 24, models: ["S820STBK", "S820STOR", "S821MNBK", "S821MNOR"] },
+                { month: "Mar", date: "3.25-4.7", product: "OpenFit Air", discount: 0.3, priceAsIs: 119.95, priceToBe: 79.95, saving: 40, rebate: 24, models: ["T511STBK", "T511STWT", "T511STPK"] },
+                { month: "Mar", date: "3.25-4.7", product: "OpenSwim Pro", discount: 0.2, priceAsIs: 179.95, priceToBe: 139.95, saving: 40, rebate: 24, models: ["S710STRD", "S710STGY"] },
+                { month: "Mar", date: "3.25-4.7", product: "OpenRun", discount: 0.3, priceAsIs: 129.95, priceToBe: 89.95, saving: 40, rebate: 24, models: ["S803MNBK", "S803MNBL", "S803STBK", "S803STBL", "S803STRD"] },
+                { month: "Mar", date: "3.25-4.7", product: "OpenDots ONE", discount: 0.2, priceAsIs: 199.95, priceToBe: 159.95, saving: 40, rebate: 24, models: ["E310STBK", "E310STBG"] },
+                { month: "Mar", date: "3.25-4.7", product: "OpenMove", discount: 0.3, priceAsIs: 79.95, priceToBe: 54.95, saving: 25, rebate: 15, models: ["S661STBL", "S661STGY", "S661STPK", "S661STWT"] },
+                { month: "April", date: "4.29-5.10", product: "OpenRun Pro2", discount: 0.2, priceAsIs: 179.95, priceToBe: 139.95, saving: 40, rebate: 24, models: ["S820STBK", "S820STOR", "S821MNBK", "S821MNOR"] },
+                { month: "April", date: "4.29-5.10", product: "OpenRun", discount: 0.3, priceAsIs: 129.95, priceToBe: 89.95, saving: 40, rebate: 24, models: ["S803MNBK", "S803MNBL", "S803STBK", "S803STBL", "S803STRD"] },
+                { month: "April", date: "4.29-5.10", product: "OpenFit 2+", discount: 0.15, priceAsIs: 199.95, priceToBe: 169.95, saving: 30, rebate: 18, models: ["T921STBK", "T921STGY"] },
+                { month: "April", date: "4.29-5.10", product: "OpenDots ONE", discount: 0.2, priceAsIs: 199.95, priceToBe: 159.95, saving: 40, rebate: 24, models: ["E310STBK", "E310STBG"] },
+                { month: "May", date: "5.18-5.25", product: "OpenFit Air", discount: 0.3, priceAsIs: 119.95, priceToBe: 79.95, saving: 40, rebate: 24, models: ["T511STBK", "T511STWT", "T511STPK"] },
+                { month: "May", date: "5.18-5.25", product: "OpenMove", discount: 0.3, priceAsIs: 79.95, priceToBe: 54.95, saving: 25, rebate: 15, models: ["S661STBL", "S661STGY", "S661STPK", "S661STWT"] }
+            ]
+        }
+    };
+    const PROMO_MONTH_ORDER = {
+        Jan: 1,
+        Feb: 2,
+        Mar: 3,
+        April: 4,
+        May: 5,
+        June: 6,
+        July: 7,
+        August: 8,
+        Sep: 9,
+        Sept: 9,
+        Oct: 10,
+        Nov: 11,
+        Dec: 12
+    };
 
     const CONFIG = {
         workbookId: WORKBOOK_ID,
@@ -189,6 +269,7 @@
             { month: "8月", note: "关注 NFM POP 快闪店机会，以及 OpenDots Air / OpenRun 2 的上市与 POP 更新窗口" },
             { month: "9月+", note: "结合节庆和下半年促销节奏，继续补充重点活动节点" }
         ],
+        promoCalendars: PROMO_CALENDARS,
         executionModules: [
             {
                 kicker: "执行节奏",
@@ -306,6 +387,36 @@
         const pct = (absolute ? Math.abs(value) : value) * 100;
         const prefix = absolute ? "" : (pct > 0 ? "+" : "");
         return prefix + pct.toFixed(1) + "%";
+    }
+
+    function promoMonthValue(monthLabel) {
+        return PROMO_MONTH_ORDER[String(monthLabel || "").trim()] || 99;
+    }
+
+    function promoDateValue(dateLabel) {
+        const match = String(dateLabel || "").trim().match(/^(\d+)(?:\.(\d+))?/);
+        if (!match) {
+            return 9999;
+        }
+        return Number(match[1]) * 100 + Number(match[2] || 0);
+    }
+
+    function sortPromoRows(rows) {
+        return (rows || []).slice().sort((left, right) => {
+            return promoMonthValue(left.month) - promoMonthValue(right.month)
+                || promoDateValue(left.date) - promoDateValue(right.date);
+        });
+    }
+
+    function renderPromoModels(models) {
+        if (!models || !models.length) {
+            return "—";
+        }
+        return [
+            "<div class=\"profile-tag-list\">",
+            models.map(model => "<span class=\"profile-tag muted\">" + escapeHtml(model) + "</span>").join(""),
+            "</div>"
+        ].join("");
     }
 
     function growthClass(value) {
@@ -1212,6 +1323,62 @@
             }).join(""),
             "</div>",
             "<p class=\"promo-compare-copy\">建议把这一块与下方月度总览一起看，重点观察促销节点前后 1-2 个月的销量、销售额与 Top SKU 变化。</p>"
+        ].join("");
+    }
+
+    function renderPromoCalendarPanel() {
+        if (!els.promoCalendarPanel) {
+            return;
+        }
+        els.promoCalendarPanel.innerHTML = [
+            "<p class=\"promo-panel-intro\">已根据四个渠道的 promo calendar Excel 汇总成表格，按渠道折叠展示，便于直接和下方月度总览对照查看。</p>",
+            "<div class=\"mix-accordion\">",
+            CONFIG.channels.map(channel => {
+                const calendar = CONFIG.promoCalendars[channel.key] || { source: "", rows: [] };
+                const rows = sortPromoRows(calendar.rows);
+                const months = Array.from(new Set(rows.map(row => row.month)));
+                const coverage = months.length ? months[0] + (months.length > 1 ? " - " + months[months.length - 1] : "") : "—";
+                const modelCount = rows.reduce((total, row) => total + row.models.length, 0);
+                const openAttr = state.activeChannelKey === channel.key ? " open" : "";
+
+                return [
+                    "<details class=\"mix-accordion-item\"" + openAttr + " style=\"" + channelStyle(channel) + "\">",
+                    "<summary class=\"mix-accordion-summary\">",
+                    "<div class=\"mix-accordion-title\"><strong>" + escapeHtml(channel.label) + "</strong><span class=\"channel-chip\">Promo</span></div>",
+                    "<div class=\"mix-accordion-meta\"><span>覆盖 " + escapeHtml(coverage) + "</span><span>" + formatNumber(rows.length) + " 条促销</span><span>" + formatNumber(modelCount) + " 个型号</span></div>",
+                    "</summary>",
+                    "<div class=\"mix-accordion-body\">",
+                    rows.length ? [
+                        "<div class=\"table-wrap\">",
+                        "<table class=\"promo-calendar-table\">",
+                        "<thead><tr><th>月份</th><th>档期</th><th>产品</th><th>折扣</th><th>原价</th><th>活动价</th><th>Promo Saving</th><th>Rebate</th><th>涉及型号</th></tr></thead>",
+                        "<tbody>",
+                        rows.map(row => {
+                            return [
+                                "<tr>",
+                                "<td><strong>" + escapeHtml(row.month) + "</strong></td>",
+                                "<td>" + escapeHtml(row.date) + "</td>",
+                                "<td>" + escapeHtml(row.product) + "</td>",
+                                "<td>" + formatPercent(row.discount, true) + "</td>",
+                                "<td>" + formatCurrency(row.priceAsIs, 2) + "</td>",
+                                "<td>" + formatCurrency(row.priceToBe, 2) + "</td>",
+                                "<td>" + formatCurrency(row.saving, 2) + "</td>",
+                                "<td>" + formatCurrency(row.rebate, 2) + "</td>",
+                                "<td class=\"promo-model-cell\">" + renderPromoModels(row.models) + "</td>",
+                                "</tr>"
+                            ].join("");
+                        }).join(""),
+                        "</tbody>",
+                        "</table>",
+                        "</div>"
+                    ].join("") : "<p class=\"placeholder-copy\">暂无促销日历数据</p>",
+                    calendar.source ? "<p class=\"table-note\">来源：" + escapeHtml(calendar.source) + "</p>" : "",
+                    "</div>",
+                    "</details>"
+                ].join("");
+            }).join(""),
+            "</div>",
+            "<p class=\"promo-compare-copy\">建议把这块与下方月度总览一起看，重点对照促销档期前后 1-2 个月的销量、销售额和 Top SKU 变化。</p>"
         ].join("");
     }
 
