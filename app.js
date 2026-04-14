@@ -60,6 +60,89 @@
                 popSkus: ["E310", "T920", "S803", "S710", "S820", "S821"]
             }
         },
+        popNextStepPlan: {
+            effectiveDate: "6/4",
+            replacements: [
+                { channelKey: "nfm", currentSku: "E310", nextSku: "E320（OpenDots 2）" },
+                { channelKey: "rcw", currentSku: "E310", nextSku: "E320（OpenDots 2）" },
+                { channelKey: "bsm", currentSku: "E310", nextSku: "E320（OpenDots 2）" },
+                { channelKey: "nfm", currentSku: "T920", nextSku: "T921" },
+                { channelKey: "rcw", currentSku: "T920", nextSku: "T921" },
+                { channelKey: "bsm", currentSku: "T920", nextSku: "T921" }
+            ],
+            targetCombos: [
+                { channelKey: "nfm", skus: ["E320", "T920", "S803", "S710", "S820", "S821"] },
+                { channelKey: "rcw", skus: ["S820", "S821", "T921", "E320", "S710"] },
+                { channelKey: "bsm", skus: ["E320", "T921", "S803", "S710", "S820", "S821"] }
+            ],
+            augustPlan: "暂时空着"
+        },
+        businessPlaceholders: {
+            launchPlan: {
+                kicker: "产品结构",
+                title: "产品结构上市更新计划",
+                description: "预留给后续上新节奏、切换窗口、负责人和渠道落地时间。",
+                body: "暂时空着"
+            },
+            costMargin: {
+                kicker: "产品结构",
+                title: "产品结构及成本及毛利率",
+                description: "后续补充各渠道主推型号的成本、出货价、毛利率和结构变化。",
+                body: "暂时空着"
+            },
+            sampling: {
+                kicker: "渠道推进",
+                title: "渠道送样情况",
+                description: "后续补充各渠道送样型号、寄送时间、反馈进度与责任人。",
+                body: "暂时空着"
+            }
+        },
+        channelNotes: [
+            {
+                kicker: "渠道洞察",
+                title: "渠道特点及用户画像",
+                description: "沉淀四个渠道的价格带、门店特征、典型消费者和购买场景。",
+                body: "暂时空着"
+            },
+            {
+                kicker: "增长方向",
+                title: "核心机会",
+                description: "补充 2026 年渠道扩张、POP 更新、重点机型切换和增量机会。",
+                body: "暂时空着"
+            },
+            {
+                kicker: "年度管理",
+                title: "今年目标",
+                description: "后续放年度销售目标、重点项目节点和阶段性里程碑。",
+                body: "暂时空着"
+            }
+        ],
+        executionModules: [
+            {
+                kicker: "执行节奏",
+                title: "促销日历",
+                description: "后续整理 NATM 渠道重点促销档期、节点安排和资源节奏。",
+                body: "暂时空着"
+            },
+            {
+                kicker: "营销推进",
+                title: "营销事件时间线",
+                description: "后续沉淀营销事件、门店动作、活动上线和复盘时间线。",
+                body: "暂时空着"
+            },
+            {
+                kicker: "项目管理",
+                title: "当前进度",
+                description: "后续更新各项重点事项的状态、负责人和下一步动作。",
+                body: "暂时空着"
+            },
+            {
+                kicker: "协同记录",
+                title: "会议历史",
+                description: "后续补充渠道会议纪要、关键决议和待跟进事项。",
+                body: "暂时空着"
+            }
+        ],
         colors: {
             qty: "#0f766e",
             sales: "#1d4ed8",
@@ -85,12 +168,17 @@
         heroCopy: document.querySelector(".hero-copy"),
         footer: document.querySelector(".footer"),
         businessOverviewGrid: document.getElementById("businessOverviewGrid"),
+        popPlanPanel: document.getElementById("popPlanPanel"),
+        launchPlanPanel: document.getElementById("launchPlanPanel"),
+        businessSupportGrid: document.getElementById("businessSupportGrid"),
         channelOverviewGrid: document.getElementById("channelOverviewGrid"),
+        channelStrategyGrid: document.getElementById("channelStrategyGrid"),
         channelSummaryBody: document.querySelector("#channelSummaryTable tbody"),
         channelTabs: document.getElementById("channelTabs"),
         kpiGrid: document.getElementById("kpiGrid"),
         insightPanel: document.getElementById("insightPanel"),
         yearSummaryGrid: document.getElementById("yearSummaryGrid"),
+        executionGrid: document.getElementById("executionGrid"),
         monthlySummaryBody: document.querySelector("#monthlySummaryTable tbody"),
         skuMatrixTable: document.getElementById("skuMatrixTable"),
         skuSelect: document.getElementById("skuSelect"),
@@ -508,6 +596,14 @@
         return state.dashboards[state.activeChannelKey] || null;
     }
 
+    function getChannelConfig(channelKey) {
+        return CONFIG.channels.find(channel => channel.key === channelKey) || {
+            key: channelKey,
+            label: String(channelKey || "").toUpperCase(),
+            accent: CONFIG.colors.qty
+        };
+    }
+
     function channelStyle(channel) {
         return "--channel-accent:" + channel.accent + ";--channel-soft:" + hexToRgba(channel.accent, 0.14) + ";";
     }
@@ -599,6 +695,117 @@
             "</table>",
             "</div>"
         ].join("");
+    }
+
+    function renderInfoCard(module) {
+        return [
+            "<article class=\"info-card\">",
+            "<div class=\"info-card-head\">",
+            "<div>",
+            module.kicker ? "<p class=\"info-kicker\">" + escapeHtml(module.kicker) + "</p>" : "",
+            "<h3 class=\"info-card-title\">" + escapeHtml(module.title) + "</h3>",
+            module.description ? "<p class=\"info-card-copy\">" + escapeHtml(module.description) + "</p>" : "",
+            "</div>",
+            "<span class=\"info-badge\">待补充</span>",
+            "</div>",
+            "<p class=\"placeholder-copy\">" + escapeHtml(module.body || "暂时空着") + "</p>",
+            "</article>"
+        ].join("");
+    }
+
+    function renderPopPlanPanel() {
+        if (!els.popPlanPanel) {
+            return;
+        }
+        const plan = CONFIG.popNextStepPlan;
+        els.popPlanPanel.innerHTML = [
+            "<article class=\"info-card\">",
+            "<div class=\"info-card-head\">",
+            "<div>",
+            "<p class=\"info-kicker\">POP 更新</p>",
+            "<h3 class=\"info-card-title\">POP下一步更新计划</h3>",
+            "<p class=\"info-card-copy\">先记录 6/4 已确认的 POP 替换动作和目标 POP 组合，八月计划后续继续补充。</p>",
+            "</div>",
+            "<span class=\"info-badge\">" + escapeHtml(plan.effectiveDate) + "</span>",
+            "</div>",
+            "<div class=\"info-section\">",
+            "<p class=\"info-label\">6/4</p>",
+            "<div class=\"table-wrap\">",
+            "<table class=\"compact-table\">",
+            "<thead><tr><th>渠道</th><th>当前SKU</th><th>更新后SKU</th></tr></thead>",
+            "<tbody>",
+            plan.replacements.map(item => {
+                const channel = getChannelConfig(item.channelKey);
+                return [
+                    "<tr>",
+                    "<td><strong>" + escapeHtml(channel.label) + "</strong></td>",
+                    "<td>" + escapeHtml(item.currentSku) + "</td>",
+                    "<td>" + escapeHtml(item.nextSku) + "</td>",
+                    "</tr>"
+                ].join("");
+            }).join(""),
+            "</tbody>",
+            "</table>",
+            "</div>",
+            "</div>",
+            "<div class=\"info-section\">",
+            "<p class=\"info-label\">POP产品组合</p>",
+            "<div class=\"plan-mix-grid\">",
+            plan.targetCombos.map(group => {
+                const channel = getChannelConfig(group.channelKey);
+                return [
+                    "<article class=\"plan-mini-card\" style=\"" + channelStyle(channel) + "\">",
+                    "<h4 class=\"plan-mini-title\">" + escapeHtml(channel.label) + "</h4>",
+                    "<div class=\"profile-tag-list\">" + renderProfileTags(group.skus) + "</div>",
+                    "</article>"
+                ].join("");
+            }).join(""),
+            "</div>",
+            "</div>",
+            "<div class=\"info-section\">",
+            "<p class=\"info-label\">八月计划</p>",
+            "<p class=\"placeholder-copy\">" + escapeHtml(plan.augustPlan || "暂时空着") + "</p>",
+            "</div>",
+            "</article>"
+        ].join("");
+    }
+
+    function renderLaunchPlanPanel() {
+        if (els.launchPlanPanel) {
+            els.launchPlanPanel.innerHTML = renderInfoCard(CONFIG.businessPlaceholders.launchPlan);
+        }
+    }
+
+    function renderBusinessSupportGrid() {
+        if (!els.businessSupportGrid) {
+            return;
+        }
+        els.businessSupportGrid.innerHTML = [
+            CONFIG.businessPlaceholders.costMargin,
+            CONFIG.businessPlaceholders.sampling
+        ].map(renderInfoCard).join("");
+    }
+
+    function renderChannelStrategyGrid() {
+        if (!els.channelStrategyGrid) {
+            return;
+        }
+        els.channelStrategyGrid.innerHTML = CONFIG.channelNotes.map(renderInfoCard).join("");
+    }
+
+    function renderExecutionGrid() {
+        if (!els.executionGrid) {
+            return;
+        }
+        els.executionGrid.innerHTML = CONFIG.executionModules.map(renderInfoCard).join("");
+    }
+
+    function renderStaticSections() {
+        renderPopPlanPanel();
+        renderLaunchPlanPanel();
+        renderBusinessSupportGrid();
+        renderChannelStrategyGrid();
+        renderExecutionGrid();
     }
 
     function renderBusinessOverview() {
@@ -1249,6 +1456,7 @@
     }
 
     function renderAll() {
+        renderStaticSections();
         renderBusinessOverview();
         renderChannelOverview();
         renderChannelComparison();
@@ -1408,5 +1616,6 @@
     });
 
     hydrateStaticCopy();
+    renderStaticSections();
     loadData();
 })();
