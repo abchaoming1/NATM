@@ -311,6 +311,7 @@
         activeChannelKey: "nfm",
         selectedMetric: "qty",
         compareMetric: "sales",
+        selectedPromoMonth: "all",
         selectedSkuByChannel: {},
         charts: {}
     };
@@ -417,6 +418,19 @@
             models.map(model => "<span class=\"profile-tag muted\">" + escapeHtml(model) + "</span>").join(""),
             "</div>"
         ].join("");
+    }
+
+    function getPromoMonthOptions() {
+        const seen = new Set();
+        return CONFIG.channels.reduce((months, channel) => {
+            (CONFIG.promoCalendars[channel.key] && CONFIG.promoCalendars[channel.key].rows || []).forEach(row => {
+                if (row.month && !seen.has(row.month)) {
+                    seen.add(row.month);
+                    months.push(row.month);
+                }
+            });
+            return months;
+        }, []).sort((left, right) => promoMonthValue(left) - promoMonthValue(right));
     }
 
     function growthClass(value) {
@@ -1316,36 +1330,37 @@
         if (!els.promoCalendarPanel) {
             return;
         }
+        const monthOptions = getPromoMonthOptions();
+        const selectedMonth = state.selectedPromoMonth || "all";
         els.promoCalendarPanel.innerHTML = [
-            "<div class=\"calendar-strip\">",
-            CONFIG.promoCalendar.map(item => {
-                return "<div class=\"calendar-chip\"><strong>" + escapeHtml(item.month) + "</strong><span>" + escapeHtml(item.note) + "</span></div>";
+            "<p class=\"promo-panel-intro\">已根据四个渠道的 promo calendar Excel 汇总成表格，支持按月份筛选，便于直接和下方月度总览对照查看。</p>",
+            "<div class=\"promo-filter-bar\">",
+            ["all"].concat(monthOptions).map(month => {
+                const isActive = month === selectedMonth ? " active" : "";
+                const label = month === "all" ? "All" : month;
+                return "<button class=\"metric-btn" + isActive + "\" type=\"button\" data-promo-month=\"" + escapeHtml(month) + "\">" + escapeHtml(label) + "</button>";
             }).join(""),
             "</div>",
-            "<p class=\"promo-compare-copy\">建议把这一块与下方月度总览一起看，重点观察促销节点前后 1-2 个月的销量、销售额与 Top SKU 变化。</p>"
-        ].join("");
-    }
-
-    function renderPromoCalendarPanel() {
-        if (!els.promoCalendarPanel) {
-            return;
-        }
-        els.promoCalendarPanel.innerHTML = [
-            "<p class=\"promo-panel-intro\">已根据四个渠道的 promo calendar Excel 汇总成表格，按渠道折叠展示，便于直接和下方月度总览对照查看。</p>",
             "<div class=\"mix-accordion\">",
             CONFIG.channels.map(channel => {
                 const calendar = CONFIG.promoCalendars[channel.key] || { source: "", rows: [] };
-                const rows = sortPromoRows(calendar.rows);
-                const months = Array.from(new Set(rows.map(row => row.month)));
-                const coverage = months.length ? months[0] + (months.length > 1 ? " - " + months[months.length - 1] : "") : "—";
+                const allRows = sortPromoRows(calendar.rows);
+                const rows = selectedMonth === "all"
+                    ? allRows
+                    : allRows.filter(row => row.month === selectedMonth);
+                const months = Array.from(new Set(allRows.map(row => row.month)));
+                const coverage = selectedMonth === "all"
+                    ? (months.length ? months[0] + (months.length > 1 ? " - " + months[months.length - 1] : "") : "—")
+                    : selectedMonth;
                 const modelCount = rows.reduce((total, row) => total + row.models.length, 0);
                 const openAttr = state.activeChannelKey === channel.key ? " open" : "";
+                const coverageLabel = selectedMonth === "all" ? "覆盖 " : "筛选 ";
 
                 return [
                     "<details class=\"mix-accordion-item\"" + openAttr + " style=\"" + channelStyle(channel) + "\">",
                     "<summary class=\"mix-accordion-summary\">",
                     "<div class=\"mix-accordion-title\"><strong>" + escapeHtml(channel.label) + "</strong><span class=\"channel-chip\">Promo</span></div>",
-                    "<div class=\"mix-accordion-meta\"><span>覆盖 " + escapeHtml(coverage) + "</span><span>" + formatNumber(rows.length) + " 条促销</span><span>" + formatNumber(modelCount) + " 个型号</span></div>",
+                    "<div class=\"mix-accordion-meta\"><span>" + coverageLabel + escapeHtml(coverage) + "</span><span>" + formatNumber(rows.length) + " 条促销</span><span>" + formatNumber(modelCount) + " 个型号</span></div>",
                     "</summary>",
                     "<div class=\"mix-accordion-body\">",
                     rows.length ? [
@@ -1371,7 +1386,7 @@
                         "</tbody>",
                         "</table>",
                         "</div>"
-                    ].join("") : "<p class=\"placeholder-copy\">暂无促销日历数据</p>",
+                    ].join("") : "<p class=\"placeholder-copy\">" + escapeHtml(channel.label) + " 在 " + escapeHtml(selectedMonth) + " 暂无促销</p>",
                     calendar.source ? "<p class=\"table-note\">来源：" + escapeHtml(calendar.source) + "</p>" : "",
                     "</div>",
                     "</details>"
@@ -2356,6 +2371,19 @@
         }
         state.activeChannelKey = tab.dataset.channel;
         renderAll();
+    });
+
+    els.promoCalendarPanel.addEventListener("click", event => {
+        const button = event.target.closest("[data-promo-month]");
+        if (!button) {
+            return;
+        }
+        const nextMonth = button.dataset.promoMonth || "all";
+        if (state.selectedPromoMonth === nextMonth) {
+            return;
+        }
+        state.selectedPromoMonth = nextMonth;
+        renderPromoCalendarPanel();
     });
 
     els.skuSelect.addEventListener("change", event => {
