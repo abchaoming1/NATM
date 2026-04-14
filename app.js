@@ -697,6 +697,56 @@
         ].join("");
     }
 
+    function renderBusinessMetricCard(label, value) {
+        return [
+            "<article class=\"business-metric-card\">",
+            "<p class=\"business-metric-label\">" + escapeHtml(label) + "</p>",
+            "<p class=\"business-metric-value\">" + escapeHtml(value) + "</p>",
+            "</article>"
+        ].join("");
+    }
+
+    function renderRankIndex(index) {
+        return "<span class=\"rank-index\">" + String(index) + "</span>";
+    }
+
+    function renderBusinessRankTable(items, popSkuSet) {
+        const topItems = (items || []).slice(0, 5);
+        if (!topItems.length) {
+            return "<div class=\"table-note\">暂无卖出SKU结构记录</div>";
+        }
+        return [
+            "<div class=\"mini-rank-wrap\">",
+            "<table class=\"mini-rank-table\">",
+            "<thead>",
+            "<tr>",
+            "<th>排名</th>",
+            "<th>SKU</th>",
+            "<th>属性</th>",
+            "<th>销量占比</th>",
+            "<th>销售额占比</th>",
+            "</tr>",
+            "</thead>",
+            "<tbody>",
+            topItems.map((item, index) => {
+                const qtyShare = item.qtyShare !== null ? formatPercent(item.qtyShare, true) : "—";
+                const salesShare = item.salesShare !== null ? formatPercent(item.salesShare, true) : "—";
+                return [
+                    "<tr>",
+                    "<td>" + renderRankIndex(index + 1) + "</td>",
+                    "<td><strong>" + escapeHtml(item.sku) + "</strong></td>",
+                    "<td>" + renderMixBadge(popSkuSet.has(item.sku)) + "</td>",
+                    "<td>" + qtyShare + "</td>",
+                    "<td>" + salesShare + "</td>",
+                    "</tr>"
+                ].join("");
+            }).join(""),
+            "</tbody>",
+            "</table>",
+            "</div>"
+        ].join("");
+    }
+
     function renderInfoCard(module) {
         return [
             "<article class=\"info-card\">",
@@ -797,7 +847,60 @@
         if (!els.executionGrid) {
             return;
         }
-        els.executionGrid.innerHTML = CONFIG.executionModules.map(renderInfoCard).join("");
+        const promoMonths = [
+            { month: "6月", note: "POP 更新切换" },
+            { month: "7月", note: "渠道对齐 / 跟进" },
+            { month: "8月", note: "计划待补充" },
+            { month: "9月", note: "节奏待补充" }
+        ];
+        const marketingTimeline = [
+            { date: "Now", title: "POP 更新计划已建", text: "已把 6/4 替换动作与目标 POP 组合整理进页面。" },
+            { date: "Next", title: "营销事件待补充", text: "后续补充每个渠道的营销动作、节奏与资源需求。" },
+            { date: "Q3", title: "八月计划待确认", text: "预留给新品节奏、活动节点和后续 POP 调整。" }
+        ];
+        const progressTimeline = [
+            { date: "01", title: "商务信息结构已完成", text: "商务对接、出货价、POP 情况和产品结构已形成统一框架。" },
+            { date: "02", title: "渠道分析框架已预留", text: "渠道特点、核心机会和今年目标模块可继续逐项补充。" },
+            { date: "03", title: "后续补内容即可", text: "当前以结构为主，后续直接逐块填入业务内容即可。" }
+        ];
+        const meetingTimeline = [
+            { date: "TBD", title: "会议历史待补充", text: "后续可按时间沉淀会议纪要、决议和责任事项。" }
+        ];
+
+        els.executionGrid.innerHTML = [
+            "<article class=\"info-card\">",
+            "<div class=\"info-card-head\"><div><p class=\"info-kicker\">促销节奏</p><h3 class=\"info-card-title\">促销日历</h3><p class=\"info-card-copy\">先用时间卡片搭好全年节奏框架，后续直接往月份里填活动节点。</p></div><span class=\"info-badge\">Calendar</span></div>",
+            "<div class=\"calendar-strip\">",
+            promoMonths.map(item => {
+                return "<div class=\"calendar-chip\"><strong>" + escapeHtml(item.month) + "</strong><span>" + escapeHtml(item.note) + "</span></div>";
+            }).join(""),
+            "</div>",
+            "</article>",
+            "<article class=\"info-card\">",
+            "<div class=\"info-card-head\"><div><p class=\"info-kicker\">营销推进</p><h3 class=\"info-card-title\">营销事件时间线</h3><p class=\"info-card-copy\">改成时间线视图，后续加活动时会比普通卡片更直观。</p></div><span class=\"info-badge\">Timeline</span></div>",
+            "<div class=\"timeline-list\">",
+            marketingTimeline.map(item => {
+                return "<div class=\"timeline-item\"><span class=\"timeline-date\">" + escapeHtml(item.date) + "</span><div class=\"timeline-body\"><strong>" + escapeHtml(item.title) + "</strong><span>" + escapeHtml(item.text) + "</span></div></div>";
+            }).join(""),
+            "</div>",
+            "</article>",
+            "<article class=\"info-card\">",
+            "<div class=\"info-card-head\"><div><p class=\"info-kicker\">推进状态</p><h3 class=\"info-card-title\">当前进度</h3><p class=\"info-card-copy\">用步骤式时间线展示现在已经完成的结构和下一步待推进内容。</p></div><span class=\"info-badge\">Progress</span></div>",
+            "<div class=\"timeline-list\">",
+            progressTimeline.map(item => {
+                return "<div class=\"timeline-item\"><span class=\"timeline-date\">" + escapeHtml(item.date) + "</span><div class=\"timeline-body\"><strong>" + escapeHtml(item.title) + "</strong><span>" + escapeHtml(item.text) + "</span></div></div>";
+            }).join(""),
+            "</div>",
+            "</article>",
+            "<article class=\"info-card\">",
+            "<div class=\"info-card-head\"><div><p class=\"info-kicker\">会议沉淀</p><h3 class=\"info-card-title\">会议历史</h3><p class=\"info-card-copy\">先预留会议记录入口，后续可以直接追加会议纪要与 follow-up。</p></div><span class=\"info-badge\">Notes</span></div>",
+            "<div class=\"timeline-list\">",
+            meetingTimeline.map(item => {
+                return "<div class=\"timeline-item\"><span class=\"timeline-date\">" + escapeHtml(item.date) + "</span><div class=\"timeline-body\"><strong>" + escapeHtml(item.title) + "</strong><span>" + escapeHtml(item.text) + "</span></div></div>";
+            }).join(""),
+            "</div>",
+            "</article>"
+        ].join("");
     }
 
     function renderStaticSections() {
@@ -809,7 +912,20 @@
     }
 
     function renderBusinessOverview() {
-        els.businessOverviewGrid.innerHTML = CONFIG.channels.map(channel => {
+        els.businessOverviewGrid.innerHTML = [
+            "<table class=\"business-matrix\">",
+            "<thead>",
+            "<tr>",
+            "<th>渠道</th>",
+            "<th>商务对接</th>",
+            "<th>出货价</th>",
+            "<th>当前POP产品情况</th>",
+            "<th>产品结构概览</th>",
+            "<th>产品结构Top SKU</th>",
+            "</tr>",
+            "</thead>",
+            "<tbody>",
+            CONFIG.channels.map(channel => {
             const profile = CONFIG.channelProfiles[channel.key];
             const dashboard = state.dashboards[channel.key];
             const productMix = dashboard.productMixSinceStart;
@@ -819,41 +935,56 @@
             const popCoverageText = profile.popSkus.length ? ("POP 覆盖 " + popInSales.length + "/" + profile.popSkus.length) : "当前无 POP 组合";
 
             return [
-                "<article class=\"profile-card\" style=\"" + channelStyle(channel) + "\">",
-                "<div class=\"profile-card-head\">",
-                "<div>",
-                "<h3 class=\"profile-card-title\">" + escapeHtml(profile.displayName || channel.label) + "</h3>",
-                "<p class=\"profile-card-sub\">商务对接 + 出货价 + POP产品情况 + 2025-09 至今产品结构</p>",
-                "</div>",
+                "<tr style=\"" + channelStyle(channel) + "\">",
+                "<td>",
+                "<div class=\"business-channel-cell\">",
+                "<div><p class=\"business-channel-name\">" + escapeHtml(profile.displayName || channel.label) + "</p></div>",
                 "<span class=\"channel-chip\">NATM</span>",
+                "<p class=\"business-channel-meta\">最新月份 " + escapeHtml(dashboard.latestMonthKey) + "<br>2026 YTD " + formatCurrency(dashboard.samePeriodByYear[2026].sales) + "</p>",
                 "</div>",
-                "<div class=\"profile-block\">",
-                "<p class=\"profile-label\">商务对接</p>",
+                "</td>",
+                "<td>",
+                "<div class=\"business-cell\">",
                 "<div class=\"profile-tag-list\">" + renderProfileTags(profile.businessTags) + "</div>",
                 "<p class=\"profile-copy\"><strong>Buyer：</strong>" + escapeHtml(profile.buyer) + "</p>",
                 "<p class=\"profile-copy\"><strong>Account：</strong>" + escapeHtml(profile.account) + "</p>",
                 "<p class=\"profile-copy\"><strong>Setup：</strong>" + escapeHtml(profile.setup) + "</p>",
                 "</div>",
-                "<div class=\"profile-block\">",
-                "<p class=\"profile-label\">出货价</p>",
-                "<div class=\"profile-price-grid\">",
-                "<article class=\"profile-price\"><p class=\"profile-price-label\">2025 出货价</p><p class=\"profile-price-value\">" + escapeHtml(profile.shipPrice2025) + "</p></article>",
-                "<article class=\"profile-price\"><p class=\"profile-price-label\">2026 出货价</p><p class=\"profile-price-value\">" + escapeHtml(profile.shipPrice2026) + "</p></article>",
+                "</td>",
+                "<td>",
+                "<div class=\"business-cell compact\">",
+                renderBusinessMetricCard("2025 出货价", profile.shipPrice2025),
+                renderBusinessMetricCard("2026 出货价", profile.shipPrice2026),
                 "</div>",
-                "</div>",
-                "<div class=\"profile-block\">",
-                "<p class=\"profile-label\">POP产品情况</p>",
+                "</td>",
+                "<td>",
+                "<div class=\"business-cell\">",
                 "<p class=\"profile-copy\"><strong>POP尺寸：</strong>" + escapeHtml(profile.popSize) + "</p>",
                 "<div class=\"profile-tag-list\">" + renderProfileTags(profile.popSkus) + "</div>",
                 "</div>",
-                "<div class=\"profile-block\">",
-                "<p class=\"profile-label\">产品结构</p>",
-                "<p class=\"profile-mix-note\">2025-09 至 " + escapeHtml(dashboard.latestMonthKey) + "，累计卖出 " + productMix.items.length + " 个 SKU，销量 " + formatNumber(productMix.totalQty) + "，销售额 " + formatCurrency(productMix.totalSales) + "。" + popCoverageText + "</p>",
-                renderProductMixTable(productMix.items, popSkuSet),
+                "</td>",
+                "<td>",
+                "<div class=\"business-cell\">",
+                "<div class=\"business-metric-grid\">",
+                renderBusinessMetricCard("卖出SKU", String(productMix.items.length)),
+                renderBusinessMetricCard("POP覆盖", popCoverageText),
+                renderBusinessMetricCard("累计销量", formatNumber(productMix.totalQty)),
+                renderBusinessMetricCard("销售额", formatCurrency(productMix.totalSales)),
                 "</div>",
-                "</article>"
+                "<p class=\"profile-mix-note\">统计口径：2025-09 至 " + escapeHtml(dashboard.latestMonthKey) + "。</p>",
+                "</div>",
+                "</td>",
+                "<td>",
+                "<div class=\"business-cell\">",
+                renderBusinessRankTable(productMix.items, popSkuSet),
+                "</div>",
+                "</td>",
+                "</tr>"
             ].join("");
-        }).join("");
+        }).join(""),
+            "</tbody>",
+            "</table>"
+        ].join("");
     }
 
     function renderChannelOverview() {

@@ -31,6 +31,10 @@
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             margin: 0;
             min-height: 100vh;
@@ -51,10 +55,63 @@
             color: var(--blue);
         }
 
+        .layout-shell {
+            width: min(1740px, calc(100vw - 32px));
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 156px minmax(0, 1fr);
+            gap: 20px;
+            align-items: start;
+        }
+
+        .page-nav {
+            position: sticky;
+            top: 22px;
+            padding: 18px 14px;
+            border-radius: 22px;
+            background: rgba(255, 255, 255, 0.72);
+            border: 1px solid rgba(255, 255, 255, 0.68);
+            box-shadow: 0 18px 42px rgba(41, 53, 72, 0.12);
+            backdrop-filter: blur(14px);
+        }
+
+        .page-nav-title {
+            margin: 0 0 12px;
+            font-family: "Barlow Condensed", sans-serif;
+            font-size: 24px;
+            letter-spacing: 0.06em;
+        }
+
+        .page-nav-list {
+            display: grid;
+            gap: 8px;
+        }
+
+        .page-nav-link {
+            display: block;
+            padding: 10px 12px;
+            border-radius: 14px;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 13px;
+            line-height: 1.5;
+            transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+        }
+
+        .page-nav-link:hover {
+            background: rgba(15, 118, 110, 0.09);
+            color: var(--ink);
+            transform: translateX(2px);
+        }
+
         .page-shell {
-            width: min(1480px, calc(100vw - 32px));
+            width: 100%;
             margin: 0 auto;
             padding: 28px 0 44px;
+        }
+
+        section[id] {
+            scroll-margin-top: 18px;
         }
 
         .hero {
@@ -594,7 +651,113 @@
         }
 
         .business-grid {
+            display: block;
+        }
+
+        .business-table-wrap {
+            overflow: auto;
+            border-radius: 22px;
+            border: 1px solid rgba(23, 32, 51, 0.08);
+            background: rgba(255, 255, 255, 0.78);
+        }
+
+        .business-matrix {
+            min-width: 1460px;
+        }
+
+        .business-matrix th,
+        .business-matrix td {
+            vertical-align: top;
+        }
+
+        .business-channel-cell {
+            display: grid;
+            gap: 10px;
+            min-width: 120px;
+        }
+
+        .business-channel-name {
+            margin: 0;
+            font-family: "Barlow Condensed", sans-serif;
+            font-size: 28px;
+            line-height: 1;
+            letter-spacing: 0.04em;
+        }
+
+        .business-channel-meta {
+            margin: 0;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .business-cell {
+            display: grid;
+            gap: 10px;
+            min-width: 198px;
+        }
+
+        .business-cell.compact {
+            min-width: 164px;
+        }
+
+        .business-metric-grid {
+            display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .business-metric-card {
+            padding: 12px 14px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.86);
+            border: 1px solid rgba(23, 32, 51, 0.06);
+        }
+
+        .business-metric-label {
+            margin: 0;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.6;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .business-metric-value {
+            margin: 8px 0 0;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--ink);
+        }
+
+        .mini-rank-wrap {
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(23, 32, 51, 0.08);
+            background: rgba(255, 255, 255, 0.88);
+        }
+
+        .mini-rank-table {
+            min-width: 390px;
+        }
+
+        .mini-rank-table th,
+        .mini-rank-table td {
+            padding: 9px 10px;
+            font-size: 12px;
+        }
+
+        .rank-index {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--channel-accent, var(--teal));
+            background: var(--channel-soft, var(--teal-soft));
         }
 
         .summary-stack {
@@ -836,6 +999,13 @@
             line-height: 1.8;
         }
 
+        .info-label {
+            margin: 0 0 10px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--ink);
+        }
+
         .info-badge {
             display: inline-flex;
             align-items: center;
@@ -878,6 +1048,81 @@
             color: var(--ink);
         }
 
+        .calendar-strip {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .calendar-chip {
+            min-width: 110px;
+            padding: 12px 14px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.82);
+            border: 1px solid rgba(23, 32, 51, 0.06);
+        }
+
+        .calendar-chip strong {
+            display: block;
+            font-size: 13px;
+            color: var(--ink);
+        }
+
+        .calendar-chip span {
+            display: block;
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .timeline-list {
+            display: grid;
+            gap: 14px;
+        }
+
+        .timeline-item {
+            display: grid;
+            grid-template-columns: 62px 1fr;
+            gap: 12px;
+            align-items: start;
+        }
+
+        .timeline-date {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 28px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            color: var(--channel-accent, var(--teal));
+            background: var(--channel-soft, var(--teal-soft));
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .timeline-body {
+            position: relative;
+            padding: 12px 14px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.82);
+            border: 1px solid rgba(23, 32, 51, 0.06);
+        }
+
+        .timeline-body strong {
+            display: block;
+            color: var(--ink);
+            font-size: 13px;
+        }
+
+        .timeline-body span {
+            display: block;
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
         .mix-badge {
             display: inline-flex;
             align-items: center;
@@ -912,6 +1157,14 @@
         }
 
         @media (max-width: 1160px) {
+            .layout-shell {
+                grid-template-columns: 1fr;
+            }
+
+            .page-nav {
+                display: none;
+            }
+
             .split {
                 grid-template-columns: 1fr;
             }
@@ -981,7 +1234,24 @@
     </style>
 </head>
 <body>
-    <div class="page-shell">
+    <div class="layout-shell">
+        <aside class="page-nav">
+            <p class="eyebrow">Quick Jump</p>
+            <p class="page-nav-title">NATM</p>
+            <div class="page-nav-list">
+                <a class="page-nav-link" href="#businessSection">商务与产品组合</a>
+                <a class="page-nav-link" href="#overviewSection">渠道总览</a>
+                <a class="page-nav-link" href="#summarySection">渠道汇总表</a>
+                <a class="page-nav-link" href="#activeChannelSection">当前分析渠道</a>
+                <a class="page-nav-link" href="#insightSection">核心结论与年度对比</a>
+                <a class="page-nav-link" href="#executionSection">业务推进看板</a>
+                <a class="page-nav-link" href="#monthlySection">月度总览</a>
+                <a class="page-nav-link" href="#matrixSection">SKU矩阵</a>
+                <a class="page-nav-link" href="#skuTrendSection">SKU趋势</a>
+                <a class="page-nav-link" href="#skuSummarySection">SKU汇总表</a>
+            </div>
+        </aside>
+        <div class="page-shell">
         <section class="hero">
             <div>
                 <p class="eyebrow">NATM Live Dashboard</p>
@@ -1002,14 +1272,14 @@
             </div>
         </section>
 
-        <section class="panel solid">
+        <section id="businessSection" class="panel solid">
             <div class="section-head">
                 <div>
                     <h2>商务与产品组合</h2>
                     <p>整合四个 NATM 渠道的商务对接、出货价、POP 产品情况，以及 2025 年 9 月至今实际卖出的产品结构，方便在同一页先看渠道商务，再看销售表现。</p>
                 </div>
             </div>
-            <div id="businessOverviewGrid" class="grid business-grid"></div>
+            <div id="businessOverviewGrid" class="business-table-wrap business-grid"></div>
             <div class="section-stack">
                 <div id="popPlanPanel"></div>
                 <div id="launchPlanPanel"></div>
@@ -1017,7 +1287,7 @@
             </div>
         </section>
 
-        <section class="panel solid">
+        <section id="overviewSection" class="panel solid">
             <div class="section-head">
                 <div>
                     <h2>NATM 渠道总览</h2>
@@ -1028,7 +1298,7 @@
             <div id="channelStrategyGrid" class="channel-note-grid"></div>
         </section>
 
-        <section class="panel solid">
+        <section id="summarySection" class="panel solid">
             <div class="section-head">
                 <div>
                     <h2>渠道汇总表</h2>
@@ -1081,7 +1351,7 @@
             </div>
         </section>
 
-        <section class="panel solid">
+        <section id="activeChannelSection" class="panel solid">
             <div class="section-head">
                 <div>
                     <h2>当前分析渠道</h2>
@@ -1093,7 +1363,7 @@
 
         <section id="kpiGrid" class="grid kpi-grid"></section>
 
-        <section class="grid split">
+        <section id="insightSection" class="grid split">
             <div class="panel solid">
                 <div class="section-head">
                     <div>
@@ -1115,7 +1385,7 @@
             </div>
         </section>
 
-        <section class="panel solid">
+        <section id="executionSection" class="panel solid">
             <div class="section-head">
                 <div>
                     <h2>业务推进看板</h2>
@@ -1125,7 +1395,7 @@
             <div id="executionGrid" class="execution-grid"></div>
         </section>
 
-        <section class="panel solid">
+        <section id="monthlySection" class="panel solid">
             <div class="section-head">
                 <div>
                     <h2>月度总览</h2>
@@ -1152,7 +1422,7 @@
             </div>
         </section>
 
-        <section class="panel solid">
+        <section id="matrixSection" class="panel solid">
             <div class="section-head">
                 <div>
                     <h2>SKU 月度矩阵</h2>
@@ -1171,7 +1441,7 @@
             </div>
         </section>
 
-        <section class="grid split">
+        <section id="skuTrendSection" class="grid split">
             <div class="panel solid">
                 <div class="section-head">
                     <div>
@@ -1220,7 +1490,7 @@
             </div>
         </section>
 
-        <section class="panel solid">
+        <section id="skuSummarySection" class="panel solid">
             <div class="section-head">
                 <div>
                     <h2>SKU 汇总表</h2>
@@ -1260,9 +1530,10 @@
             2026 目前按 YTD 展示；若后续在线表补充更多月份，页面会自动延展。
         </div>
     </div>
+    </div>
     <script>
         window.NATM_MULTI_CHANNEL = true;
-        window.NATM_APP_VERSION = "2026-04-14-5";
+        window.NATM_APP_VERSION = "2026-04-14-6";
         document.write('<script src="app.js?v=' + encodeURIComponent(window.NATM_APP_VERSION) + '&t=' + Date.now() + '"><\/script>');
     </script>
     <script>
