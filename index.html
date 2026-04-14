@@ -594,7 +594,43 @@
         }
 
         .business-grid {
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .summary-stack {
+            display: grid;
+            gap: 22px;
+        }
+
+        .summary-subsection + .summary-subsection {
+            padding-top: 22px;
+            border-top: 1px solid rgba(23, 32, 51, 0.08);
+        }
+
+        .subsection-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 14px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+
+        .subsection-head h3 {
+            margin: 0;
+            font-size: 16px;
+            line-height: 1.4;
+        }
+
+        .subsection-head p {
+            margin: 6px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .summary-compare-chart {
+            height: 320px;
         }
 
         .profile-card {
@@ -710,6 +746,42 @@
             line-height: 1.7;
         }
 
+        .profile-table-wrap {
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.82);
+            max-height: 320px;
+        }
+
+        .profile-table {
+            min-width: 520px;
+        }
+
+        .profile-table th,
+        .profile-table td {
+            padding: 10px 12px;
+            font-size: 12px;
+        }
+
+        .profile-table td:first-child strong {
+            color: var(--ink);
+        }
+
+        .mix-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 5px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--channel-accent, var(--teal));
+            background: var(--channel-soft, var(--teal-soft));
+        }
+
+        .mix-badge.out {
+            color: var(--muted);
+            background: rgba(23, 32, 51, 0.06);
+        }
+
         .error-state {
             padding: 18px;
             border-radius: 18px;
@@ -729,6 +801,10 @@
 
         @media (max-width: 1160px) {
             .split {
+                grid-template-columns: 1fr;
+            }
+
+            .business-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -827,47 +903,55 @@
             <div id="channelOverviewGrid" class="grid channel-grid"></div>
         </section>
 
-        <section class="grid split compare-layout">
-            <div class="panel solid">
-                <div class="section-head">
-                    <div>
-                        <h2>渠道年度对比</h2>
-                        <p>按同一口径横向比较四个 NATM 渠道的年度销量和销售额，便于快速识别主力渠道与增长重心。</p>
-                    </div>
-                    <div class="metric-toggle" id="compareMetricToggle">
-                        <button class="metric-btn active" data-metric="sales">销售额</button>
-                        <button class="metric-btn" data-metric="qty">销量</button>
-                    </div>
+        <section class="panel solid">
+            <div class="section-head">
+                <div>
+                    <h2>渠道汇总表</h2>
+                    <p>把四个 NATM 渠道的年度对比和明细汇总放在同一个模块里，先看整体对比，再看表格明细。</p>
                 </div>
-                <div id="channelCompareChart" class="chart medium"></div>
             </div>
-            <div class="panel solid">
-                <div class="section-head">
-                    <div>
-                        <h2>渠道汇总表</h2>
-                        <p>汇总 2024、2025、2026 YTD 的销量与销售额，并同步展示 2025 全年同比及 2026 同期同比。</p>
+            <div class="summary-stack">
+                <div class="summary-subsection">
+                    <div class="subsection-head">
+                        <div>
+                            <h3>渠道年度对比</h3>
+                            <p>按同一口径横向比较四个 NATM 渠道的年度销量和销售额，便于快速识别主力渠道与增长重心。</p>
+                        </div>
+                        <div class="metric-toggle" id="compareMetricToggle">
+                            <button class="metric-btn active" data-metric="sales">销售额</button>
+                            <button class="metric-btn" data-metric="qty">销量</button>
+                        </div>
                     </div>
+                    <div id="channelCompareChart" class="chart summary-compare-chart"></div>
                 </div>
-                <div class="table-wrap">
-                    <table id="channelSummaryTable">
-                        <thead>
-                            <tr>
-                                <th>渠道</th>
-                                <th>2024 销量</th>
-                                <th>2024 销售额</th>
-                                <th>2025 销量</th>
-                                <th>2025 销售额</th>
-                                <th>2025 销量同比</th>
-                                <th>2025 销售额同比</th>
-                                <th>2026 YTD 销量</th>
-                                <th>2026 YTD 销售额</th>
-                                <th>2026 销量同比</th>
-                                <th>2026 销售额同比</th>
-                                <th>最新月份</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+                <div class="summary-subsection">
+                    <div class="subsection-head">
+                        <div>
+                            <h3>渠道明细汇总</h3>
+                            <p>汇总 2024、2025、2026 YTD 的销量与销售额，并同步展示 2025 全年同比及 2026 同期同比。</p>
+                        </div>
+                    </div>
+                    <div class="table-wrap">
+                        <table id="channelSummaryTable">
+                            <thead>
+                                <tr>
+                                    <th>渠道</th>
+                                    <th>2024 销量</th>
+                                    <th>2024 销售额</th>
+                                    <th>2025 销量</th>
+                                    <th>2025 销售额</th>
+                                    <th>2025 销量同比</th>
+                                    <th>2025 销售额同比</th>
+                                    <th>2026 YTD 销量</th>
+                                    <th>2026 YTD 销售额</th>
+                                    <th>2026 销量同比</th>
+                                    <th>2026 销售额同比</th>
+                                    <th>最新月份</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </section>
@@ -1043,7 +1127,7 @@
     </div>
     <script>
         window.NATM_MULTI_CHANNEL = true;
-        window.NATM_APP_VERSION = "2026-04-14-2";
+        window.NATM_APP_VERSION = "2026-04-14-3";
         document.write('<script src="app.js?v=' + encodeURIComponent(window.NATM_APP_VERSION) + '&t=' + Date.now() + '"><\/script>');
     </script>
     <script>

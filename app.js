@@ -561,15 +561,44 @@
         }).join("");
     }
 
-    function renderProductMixTags(items, popSkuSet) {
+    function renderMixBadge(isPopSku) {
+        return "<span class=\"mix-badge" + (isPopSku ? "" : " out") + "\">" + (isPopSku ? "POP" : "非POP") + "</span>";
+    }
+
+    function renderProductMixTable(items, popSkuSet) {
         if (!items.length) {
-            return "<span class=\"profile-tag muted\">2025-09 至今暂无卖出记录</span>";
+            return "<div class=\"table-note\">2025-09 至今暂无卖出记录</div>";
         }
-        return items.map(item => {
-            const isPopSku = popSkuSet.has(item.sku);
-            const shareText = item.salesShare !== null ? formatPercent(item.salesShare, true) : "—";
-            return "<span class=\"profile-tag" + (isPopSku ? "" : " muted") + "\">" + escapeHtml(item.sku) + " " + formatCurrency(item.sales) + " · " + shareText + "</span>";
-        }).join("");
+        return [
+            "<div class=\"table-wrap profile-table-wrap\">",
+            "<table class=\"profile-table\">",
+            "<thead>",
+            "<tr>",
+            "<th>SKU</th>",
+            "<th>属性</th>",
+            "<th>销量</th>",
+            "<th>销售额</th>",
+            "<th>销售额占比</th>",
+            "</tr>",
+            "</thead>",
+            "<tbody>",
+            items.map(item => {
+                const isPopSku = popSkuSet.has(item.sku);
+                const shareText = item.salesShare !== null ? formatPercent(item.salesShare, true) : "—";
+                return [
+                    "<tr>",
+                    "<td><strong>" + escapeHtml(item.sku) + "</strong></td>",
+                    "<td>" + renderMixBadge(isPopSku) + "</td>",
+                    "<td>" + formatNumber(item.qty) + "</td>",
+                    "<td>" + formatCurrency(item.sales) + "</td>",
+                    "<td>" + shareText + "</td>",
+                    "</tr>"
+                ].join("");
+            }).join(""),
+            "</tbody>",
+            "</table>",
+            "</div>"
+        ].join("");
     }
 
     function renderBusinessOverview() {
@@ -580,7 +609,6 @@
             const popSkuSet = new Set(profile.popSkus);
             const soldSkuSet = new Set(productMix.items.map(item => item.sku));
             const popInSales = profile.popSkus.filter(sku => soldSkuSet.has(sku));
-            const nonPopSold = productMix.items.filter(item => !popSkuSet.has(item.sku)).map(item => item.sku);
             const popCoverageText = profile.popSkus.length ? ("POP 覆盖 " + popInSales.length + "/" + profile.popSkus.length) : "当前无 POP 组合";
 
             return [
@@ -613,8 +641,8 @@
                 "</div>",
                 "<div class=\"profile-block\">",
                 "<p class=\"profile-label\">产品结构</p>",
-                "<p class=\"profile-mix-note\">2025-09 至 " + escapeHtml(dashboard.latestMonthKey) + "，累计卖出 " + productMix.items.length + " 个 SKU，销量 " + formatNumber(productMix.totalQty) + "，销售额 " + formatCurrency(productMix.totalSales) + "。" + popCoverageText + (nonPopSold.length ? "，非POP卖出：" + escapeHtml(nonPopSold.join(" / ")) : "") + "</p>",
-                "<div class=\"profile-tag-list\">" + renderProductMixTags(productMix.items, popSkuSet) + "</div>",
+                "<p class=\"profile-mix-note\">2025-09 至 " + escapeHtml(dashboard.latestMonthKey) + "，累计卖出 " + productMix.items.length + " 个 SKU，销量 " + formatNumber(productMix.totalQty) + "，销售额 " + formatCurrency(productMix.totalSales) + "。" + popCoverageText + "</p>",
+                renderProductMixTable(productMix.items, popSkuSet),
                 "</div>",
                 "</article>"
             ].join("");
