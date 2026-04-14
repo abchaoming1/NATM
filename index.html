@@ -789,14 +789,84 @@
             background: var(--channel-soft, var(--teal-soft));
         }
 
-        .full-mix-table {
-            min-width: 980px;
+        .mix-accordion {
+            display: grid;
+            gap: 14px;
         }
 
-        .mix-group-row td {
-            background: rgba(246, 240, 230, 0.88);
+        .mix-accordion-item {
+            border-radius: 18px;
+            border: 1px solid rgba(23, 32, 51, 0.08);
+            background: rgba(255, 255, 255, 0.76);
+            overflow: hidden;
+        }
+
+        .mix-accordion-item[open] {
+            box-shadow: 0 12px 24px rgba(41, 53, 72, 0.08);
+        }
+
+        .mix-accordion-summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            padding: 16px 18px;
+            cursor: pointer;
+            list-style: none;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(246, 240, 230, 0.82));
+        }
+
+        .mix-accordion-summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .mix-accordion-summary::after {
+            content: "+";
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border-radius: 999px;
+            color: var(--channel-accent, var(--teal));
+            background: var(--channel-soft, var(--teal-soft));
+            font-size: 18px;
             font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .mix-accordion-item[open] .mix-accordion-summary::after {
+            content: "−";
+        }
+
+        .mix-accordion-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .mix-accordion-title strong {
+            font-size: 18px;
+            line-height: 1.4;
             color: var(--ink);
+        }
+
+        .mix-accordion-meta {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .mix-accordion-body {
+            padding: 0 18px 18px;
+        }
+
+        .full-mix-table {
+            min-width: 860px;
         }
 
         .mix-base-row td {
@@ -1759,7 +1829,7 @@
     </div>
     <script>
         window.NATM_MULTI_CHANNEL = true;
-        window.NATM_APP_VERSION = "2026-04-14-12";
+        window.NATM_APP_VERSION = "2026-04-14-13";
         document.write('<script src="app.js?v=' + encodeURIComponent(window.NATM_APP_VERSION) + '&t=' + Date.now() + '"><\/script>');
     </script>
     <script>

@@ -917,41 +917,52 @@
             "<div>",
             "<p class=\"info-kicker\">完整结构</p>",
             "<h3 class=\"info-card-title\">完整产品结构</h3>",
-            "<p class=\"info-card-copy\">按四个 NATM 渠道展示 2025-09 至今所有实际卖出的产品结构，同时保留大类 SKU 与 Specific SKU 两层记录，方便同时看总盘子和细分版本表现。</p>",
+            "<p class=\"info-card-copy\">按渠道折叠展示 2025-09 至今所有实际卖出的产品结构，同时保留大类 SKU 与 Specific SKU 两层记录；点击某个渠道即可展开查看完整明细。</p>",
             "</div>",
             "<span class=\"info-badge\">Full Mix</span>",
             "</div>",
-            "<div class=\"table-wrap\">",
-            "<table class=\"full-mix-table\">",
-            "<thead>",
-            "<tr>",
-            "<th>渠道</th>",
-            "<th>排名</th>",
-            "<th>SKU</th>",
-            "<th>记录层级</th>",
-            "<th>销量</th>",
-            "<th>销量占比</th>",
-            "<th>销售额</th>",
-            "<th>销售额占比</th>",
-            "</tr>",
-            "</thead>",
-            "<tbody>",
+            "<div class=\"mix-accordion\">",
             CONFIG.channels.map(channel => {
                 const dashboard = state.dashboards[channel.key];
                 const profile = CONFIG.channelProfiles[channel.key];
                 const popSkuSet = new Set(profile.popSkus);
                 const rows = dashboard ? dashboard.productMixSinceStart.detailedRows : [];
                 const channelLabel = profile.displayName || channel.label;
+                const productMix = dashboard ? dashboard.productMixSinceStart : { totalQty: 0, totalSales: 0 };
+                const openAttr = state.activeChannelKey === channel.key ? " open" : "";
 
                 if (!rows.length) {
                     return [
-                        "<tr class=\"mix-group-row\"><td colspan=\"8\">" + escapeHtml(channelLabel) + "</td></tr>",
-                        "<tr><td>" + escapeHtml(channelLabel) + "</td><td colspan=\"7\">暂无卖出SKU结构记录</td></tr>"
+                        "<details class=\"mix-accordion-item\"" + openAttr + " style=\"" + channelStyle(channel) + "\">",
+                        "<summary class=\"mix-accordion-summary\">",
+                        "<div class=\"mix-accordion-title\"><strong>" + escapeHtml(channelLabel) + "</strong><span class=\"channel-chip\">NATM</span></div>",
+                        "<div class=\"mix-accordion-meta\"><span>暂无卖出 SKU 结构记录</span></div>",
+                        "</summary>",
+                        "</details>"
                     ].join("");
                 }
 
                 return [
-                    "<tr class=\"mix-group-row\"><td colspan=\"8\">" + escapeHtml(channelLabel) + "</td></tr>",
+                    "<details class=\"mix-accordion-item\"" + openAttr + " style=\"" + channelStyle(channel) + "\">",
+                    "<summary class=\"mix-accordion-summary\">",
+                    "<div class=\"mix-accordion-title\"><strong>" + escapeHtml(channelLabel) + "</strong><span class=\"channel-chip\">NATM</span></div>",
+                    "<div class=\"mix-accordion-meta\"><span>总销量 " + formatNumber(productMix.totalQty) + "</span><span>总销售额 " + formatCurrency(productMix.totalSales) + "</span><span>大类 SKU " + formatNumber(dashboard.productMixSinceStart.items.length) + "</span></div>",
+                    "</summary>",
+                    "<div class=\"mix-accordion-body\">",
+                    "<div class=\"table-wrap\">",
+                    "<table class=\"full-mix-table\">",
+                    "<thead>",
+                    "<tr>",
+                    "<th>排名</th>",
+                    "<th>SKU</th>",
+                    "<th>记录层级</th>",
+                    "<th>销量</th>",
+                    "<th>销量占比</th>",
+                    "<th>销售额</th>",
+                    "<th>销售额占比</th>",
+                    "</tr>",
+                    "</thead>",
+                    "<tbody>",
                     rows.map(row => {
                         const qtyShare = row.qtyShare !== null ? formatPercent(row.qtyShare, true) : "—";
                         const salesShare = row.salesShare !== null ? formatPercent(row.salesShare, true) : "—";
@@ -962,7 +973,6 @@
                             : "<strong>" + escapeHtml(row.sku) + "</strong>";
                         return [
                             "<tr class=\"" + rowClass + "\">",
-                            "<td>" + (row.level === "base" ? escapeHtml(channelLabel) : "") + "</td>",
                             "<td>" + (row.level === "base" ? renderRankIndex(row.rank) : "") + "</td>",
                             "<td>" + skuCell + "</td>",
                             "<td>" + renderMixLevelCell(row.level, isPopSku) + "</td>",
@@ -972,11 +982,14 @@
                             "<td>" + salesShare + "</td>",
                             "</tr>"
                         ].join("");
-                    }).join("")
+                    }).join(""),
+                    "</tbody>",
+                    "</table>",
+                    "</div>",
+                    "</div>",
+                    "</details>"
                 ].join("");
             }).join(""),
-            "</tbody>",
-            "</table>",
             "</div>",
             "</article>"
         ].join("");
