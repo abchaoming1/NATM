@@ -1230,6 +1230,7 @@
             margin-top: 22px;
         }
 
+        .top-action-grid,
         .business-support-grid,
         .channel-note-grid,
         .execution-grid,
@@ -1238,6 +1239,7 @@
             gap: 16px;
         }
 
+        .top-action-grid,
         .business-support-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
         }
@@ -1572,6 +1574,7 @@
                 grid-template-columns: 1fr;
             }
 
+            .top-action-grid,
             .business-support-grid,
             .channel-note-grid,
             .execution-grid,
@@ -1639,6 +1642,7 @@
             <p class="eyebrow">Quick Jump</p>
             <p class="page-nav-title">NATM</p>
             <div class="page-nav-list">
+                <a class="page-nav-link" href="#actionSection">固定动作与待办</a>
                 <a class="page-nav-link" href="#businessSection">商务与产品组合</a>
                 <a class="page-nav-link" href="#overviewSection">渠道总览</a>
                 <a class="page-nav-link" href="#summarySection">渠道汇总表</a>
@@ -1671,6 +1675,16 @@
                     <div>金额单位：USD</div>
                 </div>
             </div>
+        </section>
+
+        <section id="actionSection" class="panel solid">
+            <div class="section-head">
+                <div>
+                    <h2>固定动作与待办事项</h2>
+                    <p>把固定节奏和临时待办放在页面最上方，方便每次打开页面先确认动作，再往下看渠道和销售数据。</p>
+                </div>
+            </div>
+            <div id="topActionGrid" class="top-action-grid"></div>
         </section>
 
         <section id="businessSection" class="panel solid">
@@ -1949,7 +1963,7 @@
     </div>
     <script>
         window.NATM_MULTI_CHANNEL = true;
-        window.NATM_APP_VERSION = "2026-04-15-22";
+        window.NATM_APP_VERSION = "2026-04-15-23";
         document.write('<script src="app.js?v=' + encodeURIComponent(window.NATM_APP_VERSION) + '&t=' + Date.now() + '"><\/script>');
     </script>
     <script>

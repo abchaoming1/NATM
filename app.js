@@ -195,6 +195,35 @@
             ]
         },
         businessPlaceholders: {
+            topActions: [
+                {
+                    kicker: "节奏管理",
+                    title: "固定动作",
+                    description: "把 NATM 渠道需要固定推进的动作放在最上面，方便每次打开页面先检查节奏。",
+                    badge: "Routine",
+                    rows: [
+                        {
+                            title: "旧品 EOL 通知",
+                            meta: "节奏：每一个半月"
+                        },
+                        {
+                            title: "新品前 1 个月 SETUP",
+                            meta: "节奏：新品上市前 1 个月"
+                        },
+                        {
+                            title: "更新促销日历",
+                            meta: "节奏：至少提前半个月"
+                        }
+                    ]
+                },
+                {
+                    kicker: "项目管理",
+                    title: "待办事项",
+                    description: "后续把需要持续跟进但还未完成的动作集中补在这里。",
+                    badge: "To-Do",
+                    body: "暂时空着"
+                }
+            ],
             launchPlan: {
                 kicker: "产品结构",
                 title: "产品结构上市更新计划",
@@ -360,6 +389,7 @@
         popPlanPanel: document.getElementById("popPlanPanel"),
         launchPlanPanel: document.getElementById("launchPlanPanel"),
         businessSupportGrid: document.getElementById("businessSupportGrid"),
+        topActionGrid: document.getElementById("topActionGrid"),
         channelOverviewGrid: document.getElementById("channelOverviewGrid"),
         channelStrategyGrid: document.getElementById("channelStrategyGrid"),
         natmSummaryGrid: document.getElementById("natmSummaryGrid"),
@@ -1334,6 +1364,13 @@
         ].map(renderInfoCard).join("");
     }
 
+    function renderTopActionGrid() {
+        if (!els.topActionGrid) {
+            return;
+        }
+        els.topActionGrid.innerHTML = (CONFIG.businessPlaceholders.topActions || []).map(renderInfoCard).join("");
+    }
+
     function buildChannelStrategyModules() {
         const activeChannel = getChannelConfig(state.activeChannelKey);
         const research = CONFIG.channelResearch[activeChannel.key] || {};
@@ -1591,9 +1628,10 @@
             { date: "Q3", title: "八月计划待确认", text: "预留给新品节奏、活动节点和后续 POP 调整。" }
         ];
         const progressTimeline = [
-            { date: "01", title: "商务信息结构已完成", text: "商务对接、出货价、POP 情况和产品结构已形成统一框架。" },
-            { date: "02", title: "渠道分析框架已预留", text: "渠道特点、核心机会和今年目标模块可继续逐项补充。" },
-            { date: "03", title: "后续补内容即可", text: "当前以结构为主，后续直接逐块填入业务内容即可。" }
+            { date: "BSM", title: "提高下单密度", text: "已与 buyer 达成一致，后续提高下单密度；若每个月末仍未下单，可以邮件提醒。" },
+            { date: "RCW", title: "争取从季度下单改成月度下单", text: "当前渠道以季度性下单为主，会影响库存状况；后续可与 buyer 开会建议改为按月下单。" },
+            { date: "RCW", title: "补签独立店与 Rep（Blair）合作合同", text: "现有年度合作合同未包含 RCW，需要单独签署对应合作合同。" },
+            { date: "RCW", title: "尝试整合 POP 形式", text: "目前是 4 台分散的 POP，后续可争取整合为 1 台 90cm POP。" }
         ];
         const meetingTimeline = [
             { date: "TBD", title: "会议历史待补充", text: "后续可按时间沉淀会议纪要、决议和责任事项。" }
@@ -1609,7 +1647,7 @@
             "</div>",
             "</article>",
             "<article class=\"info-card\">",
-            "<div class=\"info-card-head\"><div><p class=\"info-kicker\">推进状态</p><h3 class=\"info-card-title\">当前进度</h3><p class=\"info-card-copy\">用步骤式时间线展示现在已经完成的结构和下一步待推进内容。</p></div><span class=\"info-badge\">Progress</span></div>",
+            "<div class=\"info-card-head\"><div><p class=\"info-kicker\">推进状态</p><h3 class=\"info-card-title\">当前进度</h3><p class=\"info-card-copy\">集中记录各渠道正在推进的动作、问题点和下一步建议。</p></div><span class=\"info-badge\">Progress</span></div>",
             "<div class=\"timeline-list\">",
             progressTimeline.map(item => {
                 return "<div class=\"timeline-item\"><span class=\"timeline-date\">" + escapeHtml(item.date) + "</span><div class=\"timeline-body\"><strong>" + escapeHtml(item.title) + "</strong><span>" + escapeHtml(item.text) + "</span></div></div>";
@@ -1628,6 +1666,7 @@
     }
 
     function renderStaticSections() {
+        renderTopActionGrid();
         renderFullProductMixPanel();
         renderPopPlanPanel();
         renderLaunchPlanPanel();
