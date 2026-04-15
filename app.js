@@ -104,6 +104,7 @@
                 shipPrice2026: "更正后 0.6*(1-0.05-0.02)",
                 setup: "沿用当前流程，无额外新品 setup 备注",
                 popSize: "120cm",
+                popFormatLabel: "120cm",
                 popSkus: ["E310", "T920", "S803", "S710", "S820", "S821"],
                 storeSummary: "4家主门店",
                 storeRegions: [
@@ -122,7 +123,8 @@
                 shipPrice2025: "0.6",
                 shipPrice2026: "0.6",
                 setup: "联系 rep 及 buyer",
-                popSize: "4*30cm",
+                popSize: "单独 standard POP，5*30cm",
+                popFormatLabel: "单独 standard POP，5*30cm",
                 popSkus: ["S820", "S821", "T920", "E310", "S710"],
                 storeSummary: "10家零售门店",
                 storeRegions: [
@@ -146,6 +148,7 @@
                 shipPrice2026: "0.6",
                 setup: "给 buyer 发送 Roadmap 即可",
                 popSize: "暂无",
+                popFormatLabel: "暂无",
                 popSkus: [],
                 storeSummary: "1家单店 Showroom",
                 storeRegions: [
@@ -161,6 +164,7 @@
                 shipPrice2026: "0.6",
                 setup: "给 buyer 发送 Roadmap 即可",
                 popSize: "120cm",
+                popFormatLabel: "120cm",
                 popSkus: ["E310", "T920", "S803", "S710", "S820", "S821"],
                 storeSummary: "11个到店点位",
                 storeRegions: [
@@ -1277,9 +1281,11 @@
             "<div class=\"plan-mix-grid\">",
             plan.targetCombos.map(group => {
                 const channel = getChannelConfig(group.channelKey);
+                const profile = CONFIG.channelProfiles[group.channelKey];
                 return [
                     "<article class=\"plan-mini-card\" style=\"" + channelStyle(channel) + "\">",
                     "<h4 class=\"plan-mini-title\">" + escapeHtml(channel.label) + "</h4>",
+                    profile && profile.popFormatLabel ? "<p class=\"plan-mini-meta\">" + escapeHtml(profile.popFormatLabel) + "</p>" : "",
                     "<div class=\"profile-tag-list\">" + renderProfileTags(group.skus) + "</div>",
                     "</article>"
                 ].join("");
