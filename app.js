@@ -106,6 +106,9 @@
                 popSize: "120cm",
                 popFormatLabel: "120cm",
                 popSkus: ["E310", "T920", "S803", "S710", "S820", "S821"],
+                popVisualSrc: "assets/natm-120cm-pop-example.jpg",
+                popVisualAlt: "NFM 120cm POP reference",
+                popVisualNote: "NFM 当前 POP 以这类 120cm 一体式陈列为主",
                 storeSummary: "4家主门店",
                 storeRegions: [
                     "NE: Omaha",
@@ -166,6 +169,9 @@
                 popSize: "120cm",
                 popFormatLabel: "120cm",
                 popSkus: ["E310", "T920", "S803", "S710", "S820", "S821"],
+                popVisualSrc: "assets/natm-120cm-pop-example.jpg",
+                popVisualAlt: "BSM 120cm POP reference",
+                popVisualNote: "BSM 当前 POP 以这类 120cm 一体式陈列为主",
                 storeSummary: "11个到店点位",
                 storeRegions: [
                     "FL: Miami / Dadeland / South Dade / Sawgrass Mills / West Palm Beach / Deerfield Beach / Dania Pointe / Outlet Center",
