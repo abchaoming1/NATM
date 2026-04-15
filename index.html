@@ -668,11 +668,11 @@
         }
 
         .business-matrix col.col-channel {
-            width: 11%;
+            width: 13%;
         }
 
         .business-matrix col.col-business {
-            width: 22%;
+            width: 20%;
         }
 
         .business-matrix col.col-price {
@@ -712,6 +712,50 @@
             color: var(--muted);
             font-size: 12px;
             line-height: 1.7;
+        }
+
+        .business-store-card {
+            display: grid;
+            gap: 8px;
+            padding: 12px 14px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.72);
+            border: 1px solid rgba(23, 32, 51, 0.08);
+        }
+
+        .business-store-title {
+            margin: 0;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.5;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .business-store-summary {
+            margin: 0;
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1.4;
+            color: var(--ink);
+        }
+
+        .business-store-list {
+            display: grid;
+            gap: 6px;
+        }
+
+        .business-store-line,
+        .business-store-note {
+            margin: 0;
+            font-size: 12px;
+            line-height: 1.6;
+            color: var(--muted);
+        }
+
+        .business-store-note {
+            padding-top: 2px;
+            border-top: 1px dashed rgba(23, 32, 51, 0.08);
         }
 
         .business-cell {
@@ -1863,7 +1907,7 @@
     </div>
     <script>
         window.NATM_MULTI_CHANNEL = true;
-        window.NATM_APP_VERSION = "2026-04-14-17";
+        window.NATM_APP_VERSION = "2026-04-15-18";
         document.write('<script src="app.js?v=' + encodeURIComponent(window.NATM_APP_VERSION) + '&t=' + Date.now() + '"><\/script>');
     </script>
     <script>

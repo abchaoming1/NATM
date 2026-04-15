@@ -104,7 +104,15 @@
                 shipPrice2026: "更正后 0.6*(1-0.05-0.02)",
                 setup: "沿用当前流程，无额外新品 setup 备注",
                 popSize: "120cm",
-                popSkus: ["E310", "T920", "S803", "S710", "S820", "S821"]
+                popSkus: ["E310", "T920", "S803", "S710", "S820", "S821"],
+                storeSummary: "4家主门店",
+                storeRegions: [
+                    "NE: Omaha",
+                    "KS: Kansas City",
+                    "IA: Clive (Des Moines)",
+                    "TX: The Colony (Dallas-Fort Worth)"
+                ],
+                storeNote: "另有 Omaha 的 Mrs. B's Clearance & Outlet"
             },
             rcw: {
                 displayName: "RCW",
@@ -115,7 +123,15 @@
                 shipPrice2026: "0.6",
                 setup: "联系 rep 及 buyer",
                 popSize: "4*30cm",
-                popSkus: ["S820", "S821", "T920", "E310", "S710"]
+                popSkus: ["S820", "S821", "T920", "E310", "S710"],
+                storeSummary: "10家零售门店",
+                storeRegions: [
+                    "UT: Draper / Layton / Orem / Salt Lake City",
+                    "NV: Henderson / Reno / Summerlin",
+                    "ID: Boise / Meridian",
+                    "CA: Rocklin / Sacramento"
+                ],
+                storeNote: "按官方 Store Locations 统计，不含 warehouse"
             },
             abt: {
                 displayName: "Abt",
@@ -126,7 +142,11 @@
                 shipPrice2026: "0.6",
                 setup: "给 buyer 发送 Roadmap 即可",
                 popSize: "暂无",
-                popSkus: []
+                popSkus: [],
+                storeSummary: "1家单店 Showroom",
+                storeRegions: [
+                    "IL: Glenview (Chicago 北郊)"
+                ]
             },
             bsm: {
                 displayName: "BSM",
@@ -137,7 +157,13 @@
                 shipPrice2026: "0.6",
                 setup: "给 buyer 发送 Roadmap 即可",
                 popSize: "120cm",
-                popSkus: ["E310", "T920", "S803", "S710", "S820", "S821"]
+                popSkus: ["E310", "T920", "S803", "S710", "S820", "S821"],
+                storeSummary: "11个到店点位",
+                storeRegions: [
+                    "FL: Miami / Dadeland / South Dade / Sawgrass Mills / West Palm Beach / Deerfield Beach / Dania Pointe / Outlet Center",
+                    "GA: North Atlanta / South Atlanta / Kennesaw"
+                ],
+                storeNote: "含 Lauderhill 的 Outlet Center"
             }
         },
         popNextStepPlan: {
@@ -980,6 +1006,24 @@
         ].join("");
     }
 
+    function renderStoreFootprint(profile) {
+        const regions = Array.isArray(profile.storeRegions) ? profile.storeRegions : [];
+        if (!profile.storeSummary && !regions.length && !profile.storeNote) {
+            return "";
+        }
+
+        return [
+            "<div class=\"business-store-card\">",
+            "<p class=\"business-store-title\">门店网络</p>",
+            profile.storeSummary ? "<p class=\"business-store-summary\">" + escapeHtml(profile.storeSummary) + "</p>" : "",
+            regions.length ? "<div class=\"business-store-list\">" + regions.map(region => {
+                return "<p class=\"business-store-line\">" + escapeHtml(region) + "</p>";
+            }).join("") + "</div>" : "",
+            profile.storeNote ? "<p class=\"business-store-note\">" + escapeHtml(profile.storeNote) + "</p>" : "",
+            "</div>"
+        ].join("");
+    }
+
     function renderRankIndex(index) {
         return "<span class=\"rank-index\">" + String(index) + "</span>";
     }
@@ -1598,6 +1642,7 @@
                 "<div><p class=\"business-channel-name\">" + escapeHtml(profile.displayName || channel.label) + "</p></div>",
                 "<span class=\"channel-chip\">NATM</span>",
                 "<p class=\"business-channel-meta\">最新月份 " + escapeHtml(dashboard.latestMonthKey) + "<br>2026 YTD " + formatCurrency(dashboard.samePeriodByYear[2026].sales) + "</p>",
+                renderStoreFootprint(profile),
                 "</div>",
                 "</td>",
                 "<td>",
