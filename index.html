@@ -956,6 +956,34 @@
             background: rgba(248, 249, 251, 0.78);
         }
 
+        .mix-detail-row.is-hidden {
+            display: none;
+        }
+
+        .mix-base-sku-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mix-toggle-btn {
+            border: 0;
+            padding: 5px 10px;
+            border-radius: 999px;
+            background: rgba(23, 32, 51, 0.08);
+            color: var(--muted);
+            font: inherit;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.18s ease, color 0.18s ease;
+        }
+
+        .mix-toggle-btn:hover {
+            color: var(--ink);
+            background: rgba(23, 32, 51, 0.12);
+        }
+
         .mix-badge-group {
             display: flex;
             flex-wrap: wrap;
@@ -1224,6 +1252,159 @@
             color: var(--ink);
         }
 
+        .checklist-card {
+            display: grid;
+            gap: 14px;
+        }
+
+        .checklist-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .checklist-item {
+            display: grid;
+            grid-template-columns: 20px minmax(0, 1fr);
+            gap: 12px;
+            align-items: start;
+            padding: 12px 14px;
+            border-radius: 16px;
+            background: rgba(250, 247, 241, 0.88);
+            border: 1px solid rgba(23, 32, 51, 0.06);
+        }
+
+        .checklist-item.done {
+            background: rgba(15, 118, 110, 0.09);
+        }
+
+        .checklist-box {
+            width: 18px;
+            height: 18px;
+            margin-top: 1px;
+            border-radius: 6px;
+            border: 1.5px solid rgba(23, 32, 51, 0.2);
+            background: rgba(255, 255, 255, 0.96);
+        }
+
+        .checklist-item.done .checklist-box {
+            border-color: var(--teal);
+            background: var(--teal-soft);
+            box-shadow: inset 0 0 0 4px rgba(15, 118, 110, 0.24);
+        }
+
+        .checklist-copy strong {
+            display: block;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .checklist-copy span,
+        .checklist-empty {
+            display: block;
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .business-summary-card {
+            display: grid;
+            gap: 16px;
+        }
+
+        .business-summary-table {
+            min-width: 920px;
+        }
+
+        .table-subcopy {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .business-detail-btn {
+            border: 0;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: rgba(23, 32, 51, 0.08);
+            color: var(--ink);
+            font: inherit;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+        }
+
+        .business-detail-btn:hover {
+            background: rgba(15, 118, 110, 0.14);
+            color: var(--teal);
+            transform: translateY(-1px);
+        }
+
+        .business-detail-accordion {
+            display: grid;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .business-detail-item {
+            border-radius: 22px;
+            background: rgba(255, 255, 255, 0.78);
+            border: 1px solid rgba(23, 32, 51, 0.08);
+            overflow: hidden;
+        }
+
+        .business-detail-summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            padding: 18px 20px;
+            cursor: pointer;
+            list-style: none;
+        }
+
+        .business-detail-summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .business-detail-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .business-detail-title strong {
+            font-family: "Barlow Condensed", sans-serif;
+            font-size: 28px;
+            letter-spacing: 0.04em;
+        }
+
+        .business-detail-meta {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 12px 18px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .business-detail-body {
+            padding: 0 20px 20px;
+        }
+
+        .business-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .business-detail-wide {
+            grid-column: 1 / -1;
+        }
+
         .section-stack {
             display: grid;
             gap: 20px;
@@ -1245,12 +1426,12 @@
         }
 
         .channel-note-grid {
-            grid-template-columns: repeat(3, minmax(0, 1fr));
+            grid-template-columns: repeat(4, minmax(0, 1fr));
             margin-top: 22px;
         }
 
         .execution-grid {
-            grid-template-columns: repeat(3, minmax(0, 1fr));
+            grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
         .plan-mix-grid {
@@ -1459,6 +1640,10 @@
             margin-bottom: 16px;
         }
 
+        .promo-filter-bar.compact {
+            margin-top: -6px;
+        }
+
         .promo-filter-bar .metric-btn {
             white-space: nowrap;
         }
@@ -1524,6 +1709,62 @@
             line-height: 1.7;
         }
 
+        .execution-card-wide {
+            grid-column: span 2;
+        }
+
+        .channel-progress-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .channel-progress-card {
+            padding: 16px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.78);
+            border: 1px solid rgba(23, 32, 51, 0.06);
+        }
+
+        .channel-progress-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .channel-progress-head strong {
+            font-family: "Barlow Condensed", sans-serif;
+            font-size: 24px;
+            letter-spacing: 0.04em;
+        }
+
+        .channel-progress-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .channel-progress-item {
+            padding: 12px 14px;
+            border-radius: 14px;
+            background: rgba(248, 249, 251, 0.82);
+        }
+
+        .channel-progress-item strong {
+            display: block;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .channel-progress-item span {
+            display: block;
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
         .mix-badge {
             display: inline-flex;
             align-items: center;
@@ -1582,6 +1823,16 @@
             .summary-total-grid {
                 grid-template-columns: 1fr;
             }
+
+            .business-detail-grid,
+            .channel-progress-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .execution-card-wide,
+            .business-detail-wide {
+                grid-column: auto;
+            }
         }
 
         @media (max-width: 780px) {
@@ -1620,6 +1871,15 @@
 
             .channel-tab {
                 min-width: 140px;
+            }
+
+            .business-detail-summary {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .business-detail-meta {
+                justify-content: flex-start;
             }
 
             .chart.medium {
@@ -1963,7 +2223,7 @@
     </div>
     <script>
         window.NATM_MULTI_CHANNEL = true;
-        window.NATM_APP_VERSION = "2026-04-15-24";
+        window.NATM_APP_VERSION = "2026-04-15-25";
         document.write('<script src="app.js?v=' + encodeURIComponent(window.NATM_APP_VERSION) + '&t=' + Date.now() + '"><\/script>');
     </script>
     <script>

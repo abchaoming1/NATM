@@ -302,28 +302,36 @@
                 profileBody: "NFM 官方资料显示其以家具、家电、电子一站式大卖场运营，四个核心卖场拥有超大 showroom 与完整 electronics assortment；结合 PPT 里“大店流量高、停留时间长、耳机专区成熟”的结论，更适合做体验驱动成交。",
                 persona: "以家庭决策型客群为主，包含搬家、装修、整屋升级以及会在同一次进店中顺带比较音频产品的中高客单消费者。",
                 opportunityTitle: "把试听体验和家庭升级场景绑定，放大高客单转化",
-                opportunityBody: "继续用 POP + 主销英雄 SKU 稳住露出，同时把 OpenDots 2、T921 这类新品放在“家居升级 / TV / 健身 / 户外”联动场景里做转化，争取从单纯陈列升级到体验成交。七八月还有一个 POP 快闪店机会，目前由 Kristen 策划、Raymond 辅助推进。"
+                opportunityBody: "继续用 POP + 主销英雄 SKU 稳住露出，同时把 OpenDots 2、T921 这类新品放在“家居升级 / TV / 健身 / 户外”联动场景里做转化，争取从单纯陈列升级到体验成交。七八月还有一个 POP 快闪店机会，目前由 Kristen 策划、Raymond 辅助推进。",
+                nextStepTitle: "优先推进 POP 快闪店和新品切换",
+                nextStepBody: "继续跟进七八月 POP 快闪店机会，同时把 OpenDots 2、T921 与后续 NCE 的 POP / 上样 / 促销节奏提早对齐。"
             },
             rcw: {
                 profileTitle: "西部区域家居电器零售商，偏家庭计划型购买",
                 profileBody: "RC Willey 官网定位是服务西部市场的 home furnishings、appliances 与 electronics 零售商；结合 PPT 中“门店空间大、顾客停留久、独立店销售表现不错”的信息，这类店更像 destination store，而不是纯快进快出的电子卖场。",
                 persona: "更偏郊区家庭、换新型用户和成套购买用户，重视 financing、门店服务和可视化陈列，愿意在店内做横向比较后再下单。",
                 opportunityTitle: "围绕西部家庭客群做稳定扩店和结构升级",
-                opportunityBody: "RCW 的增长空间在于把现有成功门店打法复制到更多门店与更多核心 SKU 上，用更清晰的 POP、培训和价格带分层，把 Shokz 从补充型音频 SKU 变成被主动推荐的功能型耳机。"
+                opportunityBody: "RCW 的增长空间在于把现有成功门店打法复制到更多门店与更多核心 SKU 上，用更清晰的 POP、培训和价格带分层，把 Shokz 从补充型音频 SKU 变成被主动推荐的功能型耳机。",
+                nextStepTitle: "推动下单节奏与 POP 形态升级",
+                nextStepBody: "和 buyer 讨论把季度性下单改成月度下单，补签 Blair 合同，并争取把 4 台分散 POP 整合成 1 台 90cm POP。"
             },
             abt: {
                 profileTitle: "单店高服务模型，专业咨询和高 ASP 更关键",
                 profileBody: "Abt 官方公开信息强调其 Glenview 单店、90+ 年历史、公开 tour、培训体系与 award-winning customer service；它不是广撒网渠道，更像高服务密度的精品大店。",
                 persona: "以研究型、信任导购型、愿意为服务和专业建议买单的 Chicagoland 用户为主，对产品故事、功能差异和售后体验更敏感。",
                 opportunityTitle: "走精品化和顾问式成交，优先做高质量产出",
-                opportunityBody: "Abt 更适合做少而精的结构优化，集中火力推高 ASP 主力款和具备明确卖点的新型号，通过导购教育、场景话术和本地化活动，拉高单点产出而不是盲目铺量。"
+                opportunityBody: "Abt 更适合做少而精的结构优化，集中火力推高 ASP 主力款和具备明确卖点的新型号，通过导购教育、场景话术和本地化活动，拉高单点产出而不是盲目铺量。",
+                nextStepTitle: "承接 exclusive 促销结果推进全旗舰入店",
+                nextStepBody: "复盘 2-3 月 exclusive store only 促销效果，继续争取全旗舰、全色在店内完整呈现，并提前准备后续新品 setup。"
             },
             bsm: {
                 profileTitle: "东南部价格驱动大卖场，促销和现货感知更强",
                 profileBody: "BrandsMart USA 官网强调 huge selection、Audio & Headphones、110% Price Match、会员与 financing；结合 PPT 中“人流量高、竞品多、靠近 Costco / Sam / Best Buy”的判断，这一渠道更偏高流量、强促销、强对比购物环境。",
                 persona: "价格敏感型、促销响应型和家庭换新型用户占比较高，重视即时可得、价格优势和清晰的卖点提示，容易在大促节点集中释放销量。",
                 opportunityTitle: "用促销节点和主力价位带放大爆发力",
-                opportunityBody: "BSM 需要把 POP 更新、主推 SKU、价格带和大促节奏绑在一起，重点做高流量月份的主力款曝光与补货，争取把自然陈列流量转成更高的销量和销售额贡献。"
+                opportunityBody: "BSM 需要把 POP 更新、主推 SKU、价格带和大促节奏绑在一起，重点做高流量月份的主力款曝光与补货，争取把自然陈列流量转成更高的销量和销售额贡献。",
+                nextStepTitle: "用月末提醒机制提升下单密度",
+                nextStepBody: "既然已和 buyer 对齐提高下单密度，后续每个月末都检查是否下单，必要时邮件提醒，并同步跟进 E320 / T921 / NCE 切换。"
             }
         },
         promoCalendar: [
@@ -375,7 +383,9 @@
         selectedMetric: "qty",
         compareMetric: "sales",
         selectedPromoMonth: "all",
+        selectedPromoChannel: "all",
         selectedSkuByChannel: {},
+        expandedMixBases: {},
         charts: {}
     };
 
@@ -999,6 +1009,22 @@
         return "<span class=\"mix-badge" + (isPopSku ? "" : " out") + "\">" + (isPopSku ? "POP" : "非POP") + "</span>";
     }
 
+    function joinBusinessTags(values) {
+        return (values || []).join(" / ") || "暂无";
+    }
+
+    function firstContactLine(value) {
+        return String(value || "").split("/")[0].trim() || "暂无";
+    }
+
+    function mixExpansionKey(channelKey, baseSkuValue) {
+        return String(channelKey || "") + ":" + String(baseSkuValue || "");
+    }
+
+    function isMixBaseExpanded(channelKey, baseSkuValue) {
+        return Boolean(state.expandedMixBases[mixExpansionKey(channelKey, baseSkuValue)]);
+    }
+
     function renderProductMixTable(items, popSkuSet) {
         if (!items.length) {
             return "<div class=\"table-note\">2025-09 至今暂无卖出记录</div>";
@@ -1040,6 +1066,38 @@
             "<article class=\"business-metric-card\">",
             "<p class=\"business-metric-label\">" + escapeHtml(label) + "</p>",
             "<p class=\"business-metric-value\">" + escapeHtml(value) + "</p>",
+            "</article>"
+        ].join("");
+    }
+
+    function renderChecklistCard(module) {
+        const items = module.checklistItems || module.rows || [];
+        const emptyText = module.body || "鏆傛椂绌虹潃";
+        return [
+            "<article class=\"info-card checklist-card\">",
+            "<div class=\"info-card-head\">",
+            "<div>",
+            module.kicker ? "<p class=\"info-kicker\">" + escapeHtml(module.kicker) + "</p>" : "",
+            "<h3 class=\"info-card-title\">" + escapeHtml(module.title) + "</h3>",
+            module.description ? "<p class=\"info-card-copy\">" + escapeHtml(module.description) + "</p>" : "",
+            "</div>",
+            "<span class=\"info-badge\">" + escapeHtml(module.badge || "Checklist") + "</span>",
+            "</div>",
+            items.length ? [
+                "<div class=\"checklist-list\">",
+                items.map(item => {
+                    return [
+                        "<div class=\"checklist-item" + (item.done ? " done" : "") + "\">",
+                        "<span class=\"checklist-box\" aria-hidden=\"true\"></span>",
+                        "<div class=\"checklist-copy\">",
+                        "<strong>" + escapeHtml(item.title) + "</strong>",
+                        item.meta ? "<span>" + escapeHtml(item.meta) + "</span>" : "",
+                        "</div>",
+                        "</div>"
+                    ].join("");
+                }).join(""),
+                "</div>"
+            ].join("") : "<div class=\"checklist-empty\">" + escapeHtml(emptyText) + "</div>",
             "</article>"
         ].join("");
     }
@@ -1195,12 +1253,22 @@
                         const qtyShare = row.qtyShare !== null ? formatPercent(row.qtyShare, true) : "—";
                         const salesShare = row.salesShare !== null ? formatPercent(row.salesShare, true) : "—";
                         const isPopSku = popSkuSet.has(row.baseSku || row.sku);
+                        const hasSpecificRows = row.level === "base" && row.specificItems && row.specificItems.length;
+                        const isExpanded = row.level === "base" ? isMixBaseExpanded(channel.key, row.baseSku) : false;
+                        const isHidden = row.level === "specific" && !isMixBaseExpanded(channel.key, row.baseSku);
                         const rowClass = row.level === "specific" ? "mix-detail-row" : "mix-base-row";
                         const skuCell = row.level === "specific"
                             ? "<span class=\"mix-sku-sub\">" + escapeHtml(row.sku) + "</span>"
-                            : "<strong>" + escapeHtml(row.sku) + "</strong>";
+                            : [
+                                "<div class=\"mix-base-sku-wrap\">",
+                                hasSpecificRows
+                                    ? "<button class=\"mix-toggle-btn\" type=\"button\" data-mix-channel=\"" + escapeHtml(channel.key) + "\" data-mix-base=\"" + escapeHtml(row.baseSku) + "\">" + (isExpanded ? "收起" : "展开") + "</button>"
+                                    : "",
+                                "<strong>" + escapeHtml(row.sku) + "</strong>",
+                                "</div>"
+                            ].join("");
                         return [
-                            "<tr class=\"" + rowClass + "\">",
+                            "<tr class=\"" + rowClass + (isHidden ? " is-hidden" : "") + "\">",
                             "<td>" + (row.level === "base" ? renderRankIndex(row.rank) : "") + "</td>",
                             "<td>" + skuCell + "</td>",
                             "<td>" + renderMixLevelCell(row.level, isPopSku) + "</td>",
@@ -1368,7 +1436,7 @@
         if (!els.topActionGrid) {
             return;
         }
-        els.topActionGrid.innerHTML = (CONFIG.businessPlaceholders.topActions || []).map(renderInfoCard).join("");
+        els.topActionGrid.innerHTML = (CONFIG.businessPlaceholders.topActions || []).map(renderChecklistCard).join("");
     }
 
     function buildChannelStrategyModules() {
@@ -1409,6 +1477,19 @@
                 ]
             },
             {
+                kicker: "下一步动作",
+                title: "下一步动作",
+                description: "当前展示 " + activeChannel.label + " 接下来最值得优先推进的动作。",
+                badge: activeChannel.label,
+                rows: [
+                    {
+                        channelKey: activeChannel.key,
+                        title: research.nextStepTitle || "待补充",
+                        text: research.nextStepBody || "后续补充该渠道的下一步动作。"
+                    }
+                ]
+            },
+            {
                 kicker: "年度管理",
                 title: "今年目标",
                 description: "当前展示 " + activeChannel.label + " 的 2026 年目标值和相对 2025 实际的目标同比。",
@@ -1444,8 +1525,12 @@
         }
         const monthOptions = getPromoMonthOptions();
         const selectedMonth = state.selectedPromoMonth || "all";
+        const selectedChannel = state.selectedPromoChannel || "all";
+        const visibleChannels = selectedChannel === "all"
+            ? CONFIG.channels
+            : CONFIG.channels.filter(channel => channel.key === selectedChannel);
         els.promoCalendarPanel.innerHTML = [
-            "<p class=\"promo-panel-intro\">已根据四个渠道的 promo calendar Excel 汇总成表格，支持按月份筛选，便于直接和下方月度总览对照查看。</p>",
+            "<p class=\"promo-panel-intro\">已根据四个渠道的 promo calendar Excel 汇总成表格，支持按月份和渠道筛选，便于直接和下方月度总览对照查看。</p>",
             "<div class=\"promo-filter-bar\">",
             ["all"].concat(monthOptions).map(month => {
                 const isActive = month === selectedMonth ? " active" : "";
@@ -1453,8 +1538,15 @@
                 return "<button class=\"metric-btn" + isActive + "\" type=\"button\" data-promo-month=\"" + escapeHtml(month) + "\">" + escapeHtml(label) + "</button>";
             }).join(""),
             "</div>",
+            "<div class=\"promo-filter-bar compact\">",
+            ["all"].concat(CONFIG.channels.map(channel => channel.key)).map(channelKey => {
+                const isActive = channelKey === selectedChannel ? " active" : "";
+                const label = channelKey === "all" ? "All Channels" : getChannelConfig(channelKey).label;
+                return "<button class=\"metric-btn" + isActive + "\" type=\"button\" data-promo-channel=\"" + escapeHtml(channelKey) + "\">" + escapeHtml(label) + "</button>";
+            }).join(""),
+            "</div>",
             "<div class=\"mix-accordion\">",
-            CONFIG.channels.map(channel => {
+            visibleChannels.map(channel => {
                 const calendar = CONFIG.promoCalendars[channel.key] || { source: "", rows: [] };
                 const allRows = sortPromoRows(calendar.rows);
                 const rows = selectedMonth === "all"
@@ -1465,7 +1557,9 @@
                     ? (months.length ? months[0] + (months.length > 1 ? " - " + months[months.length - 1] : "") : "—")
                     : selectedMonth;
                 const modelCount = rows.reduce((total, row) => total + row.models.length, 0);
-                const openAttr = state.activeChannelKey === channel.key ? " open" : "";
+                const openAttr = selectedChannel === "all"
+                    ? (state.activeChannelKey === channel.key ? " open" : "")
+                    : " open";
                 const coverageLabel = selectedMonth === "all" ? "覆盖 " : "筛选 ";
 
                 return [
@@ -1618,6 +1712,74 @@
         }).join("");
     }
 
+    function renderBusinessDetailPanel(channel, profile, dashboard) {
+        const productMix = dashboard.productMixSinceStart;
+        const popSkuSet = new Set(profile.popSkus);
+        const soldSkuSet = new Set(productMix.items.map(item => item.sku));
+        const popInSales = profile.popSkus.filter(sku => soldSkuSet.has(sku));
+        const popCoverageText = profile.popSkus.length ? ("POP 覆盖 " + popInSales.length + "/" + profile.popSkus.length) : "当前无 POP 组合";
+
+        return [
+            "<details class=\"business-detail-item\" id=\"business-detail-" + escapeHtml(channel.key) + "\"" + (state.activeChannelKey === channel.key ? " open" : "") + " style=\"" + channelStyle(channel) + "\">",
+            "<summary class=\"business-detail-summary\">",
+            "<div class=\"business-detail-title\"><strong>" + escapeHtml(profile.displayName || channel.label) + "</strong><span class=\"channel-chip\">Detail</span></div>",
+            "<div class=\"business-detail-meta\"><span>门店 " + escapeHtml(profile.storeSummary || "—") + "</span><span>卖出SKU " + formatNumber(productMix.items.length) + "</span><span>销售额 " + formatCurrency(productMix.totalSales) + "</span></div>",
+            "</summary>",
+            "<div class=\"business-detail-body\">",
+            "<div class=\"business-detail-grid\">",
+            "<article class=\"profile-card\">",
+            "<div class=\"profile-card-head\"><div><h4 class=\"profile-card-title\">" + escapeHtml(profile.displayName || channel.label) + "</h4><p class=\"profile-card-sub\">最新月份 " + escapeHtml(dashboard.latestMonthKey) + " · 2026 YTD " + formatCurrency(dashboard.samePeriodByYear[2026].sales) + "</p></div><span class=\"channel-chip\">NATM</span></div>",
+            "<div class=\"profile-block\">",
+            "<p class=\"profile-label\">门店网络</p>",
+            renderStoreFootprint(profile),
+            "</div>",
+            "</article>",
+            "<article class=\"profile-card\">",
+            "<div class=\"profile-block\">",
+            "<p class=\"profile-label\">商务对接</p>",
+            "<div class=\"profile-tag-list\">" + renderProfileTags(profile.businessTags) + "</div>",
+            "<p class=\"profile-copy\"><strong>Buyer：</strong>" + escapeHtml(profile.buyer) + "</p>",
+            "<p class=\"profile-copy\"><strong>Account：</strong>" + escapeHtml(profile.account) + "</p>",
+            "<p class=\"profile-copy\"><strong>Setup：</strong>" + escapeHtml(profile.setup) + "</p>",
+            "</div>",
+            "</article>",
+            "<article class=\"profile-card\">",
+            "<div class=\"profile-block\">",
+            "<p class=\"profile-label\">出货价</p>",
+            "<div class=\"profile-price-grid\">",
+            "<div class=\"profile-price\"><p class=\"profile-price-label\">2025 出货价</p><p class=\"profile-price-value\">" + escapeHtml(profile.shipPrice2025) + "</p></div>",
+            "<div class=\"profile-price\"><p class=\"profile-price-label\">2026 出货价</p><p class=\"profile-price-value\">" + escapeHtml(profile.shipPrice2026) + "</p></div>",
+            "</div>",
+            "</div>",
+            "</article>",
+            "<article class=\"profile-card\">",
+            "<div class=\"profile-block\">",
+            "<p class=\"profile-label\">当前POP产品情况</p>",
+            "<p class=\"profile-copy\"><strong>POP形式：</strong>" + escapeHtml(profile.popFormatLabel || profile.popSize) + "</p>",
+            renderPopStatusNote(profile),
+            "<div class=\"profile-tag-list\">" + renderProfileTags(profile.popSkus) + "</div>",
+            renderPopVisual(profile),
+            "</div>",
+            "</article>",
+            "<article class=\"profile-card business-detail-wide\">",
+            "<div class=\"profile-block\">",
+            "<p class=\"profile-label\">产品结构概览</p>",
+            "<div class=\"business-metric-grid\">",
+            renderBusinessMetricCard("卖出SKU", String(productMix.items.length)),
+            renderBusinessMetricCard("POP覆盖", profile.popSkus.length ? (String(popInSales.length) + "/" + String(profile.popSkus.length)) : "无POP"),
+            renderBusinessMetricCard("累计销量", formatNumber(productMix.totalQty)),
+            renderBusinessMetricCard("销售额", formatCurrency(productMix.totalSales)),
+            "</div>",
+            "<p class=\"profile-mix-note\">统计口径：2025-09 至 " + escapeHtml(dashboard.latestMonthKey) + "。 " + popCoverageText + "</p>",
+            renderBusinessRankTable(productMix.items, popSkuSet),
+            "</div>",
+            "</article>",
+            "</div>",
+            "</div>",
+            "</details>"
+        ].join("");
+    }
+
     function renderExecutionGrid() {
         if (!els.executionGrid) {
             return;
@@ -1637,6 +1799,10 @@
         const meetingTimeline = [
             { date: "TBD", title: "会议历史待补充", text: "后续可按时间沉淀会议纪要、决议和责任事项。" }
         ];
+        const progressByChannel = CONFIG.channels.map(channel => {
+            const items = progressTimeline.filter(item => String(item.date).toLowerCase() === String(channel.label).toLowerCase());
+            return { channel: channel, items: items };
+        });
 
         els.executionGrid.innerHTML = [
             "<article class=\"info-card\">",
@@ -1647,11 +1813,26 @@
             }).join(""),
             "</div>",
             "</article>",
-            "<article class=\"info-card\">",
+            "<article class=\"info-card execution-card-wide\">",
             "<div class=\"info-card-head\"><div><p class=\"info-kicker\">推进状态</p><h3 class=\"info-card-title\">当前进度</h3><p class=\"info-card-copy\">集中记录各渠道正在推进的动作、问题点和下一步建议。</p></div><span class=\"info-badge\">Progress</span></div>",
             "<div class=\"timeline-list\">",
             progressTimeline.map(item => {
                 return "<div class=\"timeline-item\"><span class=\"timeline-date\">" + escapeHtml(item.date) + "</span><div class=\"timeline-body\"><strong>" + escapeHtml(item.title) + "</strong><span>" + escapeHtml(item.text) + "</span></div></div>";
+            }).join(""),
+            "</div>",
+            "</article>",
+            "<article class=\"info-card execution-card-wide\">",
+            "<div class=\"info-card-head\"><div><p class=\"info-kicker\">按渠道跟进</p><h3 class=\"info-card-title\">分渠道推进</h3><p class=\"info-card-copy\">把重点事项按 NFM / RCW / Abt / BSM 分组，方便逐个渠道追动作。</p></div><span class=\"info-badge\">By Channel</span></div>",
+            "<div class=\"channel-progress-grid\">",
+            progressByChannel.map(group => {
+                return [
+                    "<div class=\"channel-progress-card\" style=\"" + channelStyle(group.channel) + "\">",
+                    "<div class=\"channel-progress-head\"><strong>" + escapeHtml(group.channel.label) + "</strong><span class=\"channel-chip\">Action</span></div>",
+                    group.items.length
+                        ? "<div class=\"channel-progress-list\">" + group.items.map(item => "<div class=\"channel-progress-item\"><strong>" + escapeHtml(item.title) + "</strong><span>" + escapeHtml(item.text) + "</span></div>").join("") + "</div>"
+                        : "<p class=\"placeholder-copy\">当前暂无新增动作，后续可直接补充。</p>",
+                    "</div>"
+                ].join("");
             }).join(""),
             "</div>",
             "</article>",
@@ -1678,83 +1859,41 @@
     }
 
     function renderBusinessOverview() {
+        if (!els.businessOverviewGrid) {
+            return;
+        }
         els.businessOverviewGrid.innerHTML = [
-            "<table class=\"business-matrix\">",
-            "<colgroup>",
-            "<col class=\"col-channel\">",
-            "<col class=\"col-business\">",
-            "<col class=\"col-price\">",
-            "<col class=\"col-pop\">",
-            "<col class=\"col-overview\">",
-            "</colgroup>",
-            "<thead>",
-            "<tr>",
-            "<th>渠道</th>",
-            "<th>商务对接</th>",
-            "<th>出货价</th>",
-            "<th>当前POP产品情况</th>",
-            "<th>产品结构概览</th>",
-            "</tr>",
-            "</thead>",
+            "<article class=\"info-card business-summary-card\">",
+            "<div class=\"info-card-head\"><div><p class=\"info-kicker\">Overview</p><h3 class=\"info-card-title\">渠道总表</h3><p class=\"info-card-copy\">先用总表快速横向比，再展开单渠道详情看具体商务、POP 和产品结构。</p></div><span class=\"info-badge\">Summary</span></div>",
+            "<div class=\"table-wrap\">",
+            "<table class=\"business-summary-table\">",
+            "<thead><tr><th>渠道</th><th>门店</th><th>商务摘要</th><th>POP形式</th><th>卖出SKU</th><th>累计销量</th><th>销售额</th><th>详情</th></tr></thead>",
             "<tbody>",
             CONFIG.channels.map(channel => {
-            const profile = CONFIG.channelProfiles[channel.key];
-            const dashboard = state.dashboards[channel.key];
-            const productMix = dashboard.productMixSinceStart;
-            const popSkuSet = new Set(profile.popSkus);
-            const soldSkuSet = new Set(productMix.items.map(item => item.sku));
-            const popInSales = profile.popSkus.filter(sku => soldSkuSet.has(sku));
-            const popCoverageText = profile.popSkus.length ? ("POP 覆盖 " + popInSales.length + "/" + profile.popSkus.length) : "当前无 POP 组合";
-
-            return [
-                "<tr style=\"" + channelStyle(channel) + "\">",
-                "<td>",
-                "<div class=\"business-channel-cell\">",
-                "<div><p class=\"business-channel-name\">" + escapeHtml(profile.displayName || channel.label) + "</p></div>",
-                "<span class=\"channel-chip\">NATM</span>",
-                "<p class=\"business-channel-meta\">最新月份 " + escapeHtml(dashboard.latestMonthKey) + "<br>2026 YTD " + formatCurrency(dashboard.samePeriodByYear[2026].sales) + "</p>",
-                renderStoreFootprint(profile),
-                "</div>",
-                "</td>",
-                "<td>",
-                "<div class=\"business-cell\">",
-                "<div class=\"profile-tag-list\">" + renderProfileTags(profile.businessTags) + "</div>",
-                "<p class=\"profile-copy\"><strong>Buyer：</strong>" + escapeHtml(profile.buyer) + "</p>",
-                "<p class=\"profile-copy\"><strong>Account：</strong>" + escapeHtml(profile.account) + "</p>",
-                "<p class=\"profile-copy\"><strong>Setup：</strong>" + escapeHtml(profile.setup) + "</p>",
-                "</div>",
-                "</td>",
-                "<td>",
-                "<div class=\"business-cell compact\">",
-                renderBusinessMetricCard("2025 出货价", profile.shipPrice2025),
-                renderBusinessMetricCard("2026 出货价", profile.shipPrice2026),
-                "</div>",
-                "</td>",
-                "<td>",
-                "<div class=\"business-cell\">",
-                "<p class=\"profile-copy\"><strong>POP尺寸：</strong>" + escapeHtml(profile.popSize) + "</p>",
-                renderPopStatusNote(profile),
-                "<div class=\"profile-tag-list\">" + renderProfileTags(profile.popSkus) + "</div>",
-                renderPopVisual(profile),
-                "</div>",
-                "</td>",
-                "<td>",
-                "<div class=\"business-cell\">",
-                "<div class=\"business-metric-grid\">",
-                renderBusinessMetricCard("卖出SKU", String(productMix.items.length)),
-                renderBusinessMetricCard("POP覆盖", profile.popSkus.length ? (String(popInSales.length) + "/" + String(profile.popSkus.length)) : "无POP"),
-                renderBusinessMetricCard("累计销量", formatNumber(productMix.totalQty)),
-                renderBusinessMetricCard("销售额", formatCurrency(productMix.totalSales)),
-                "</div>",
-                "<p class=\"profile-mix-note\">统计口径：2025-09 至 " + escapeHtml(dashboard.latestMonthKey) + "。 " + popCoverageText + "</p>",
-                renderBusinessRankTable(productMix.items, popSkuSet),
-                "</div>",
-                "</td>",
-                "</tr>"
-            ].join("");
-        }).join(""),
-            "</tbody>",
-            "</table>"
+                const profile = CONFIG.channelProfiles[channel.key];
+                const dashboard = state.dashboards[channel.key];
+                const productMix = dashboard.productMixSinceStart;
+                return [
+                    "<tr style=\"" + channelStyle(channel) + "\">",
+                    "<td><strong>" + escapeHtml(profile.displayName || channel.label) + "</strong><div class=\"table-subcopy\">最新月份 " + escapeHtml(dashboard.latestMonthKey) + "</div></td>",
+                    "<td>" + escapeHtml(profile.storeSummary || "—") + "</td>",
+                    "<td>" + escapeHtml(joinBusinessTags(profile.businessTags)) + "<div class=\"table-subcopy\">" + escapeHtml(firstContactLine(profile.buyer)) + "</div></td>",
+                    "<td>" + escapeHtml(profile.popFormatLabel || profile.popSize) + "</td>",
+                    "<td>" + formatNumber(productMix.items.length) + "</td>",
+                    "<td>" + formatNumber(productMix.totalQty) + "</td>",
+                    "<td>" + formatCurrency(productMix.totalSales) + "</td>",
+                    "<td><button class=\"business-detail-btn\" type=\"button\" data-business-channel=\"" + escapeHtml(channel.key) + "\">查看</button></td>",
+                    "</tr>"
+                ].join("");
+            }).join(""),
+            "</tbody></table></div></article>",
+            "<div class=\"business-detail-accordion\">",
+            CONFIG.channels.map(channel => {
+                const profile = CONFIG.channelProfiles[channel.key];
+                const dashboard = state.dashboards[channel.key];
+                return renderBusinessDetailPanel(channel, profile, dashboard);
+            }).join(""),
+            "</div>"
         ].join("");
     }
 
@@ -2495,16 +2634,55 @@
     });
 
     els.promoCalendarPanel.addEventListener("click", event => {
-        const button = event.target.closest("[data-promo-month]");
+        const monthButton = event.target.closest("[data-promo-month]");
+        if (monthButton) {
+            const nextMonth = monthButton.dataset.promoMonth || "all";
+            if (state.selectedPromoMonth !== nextMonth) {
+                state.selectedPromoMonth = nextMonth;
+                renderPromoCalendarPanel();
+            }
+            return;
+        }
+
+        const channelButton = event.target.closest("[data-promo-channel]");
+        if (!channelButton) {
+            return;
+        }
+        const nextChannel = channelButton.dataset.promoChannel || "all";
+        if (state.selectedPromoChannel === nextChannel) {
+            return;
+        }
+        state.selectedPromoChannel = nextChannel;
+        renderPromoCalendarPanel();
+    });
+
+    els.fullProductMixPanel.addEventListener("click", event => {
+        const button = event.target.closest("[data-mix-channel][data-mix-base]");
         if (!button) {
             return;
         }
-        const nextMonth = button.dataset.promoMonth || "all";
-        if (state.selectedPromoMonth === nextMonth) {
+        const key = mixExpansionKey(button.dataset.mixChannel, button.dataset.mixBase);
+        state.expandedMixBases[key] = !state.expandedMixBases[key];
+        renderFullProductMixPanel();
+    });
+
+    els.businessOverviewGrid.addEventListener("click", event => {
+        const button = event.target.closest("[data-business-channel]");
+        if (!button) {
             return;
         }
-        state.selectedPromoMonth = nextMonth;
-        renderPromoCalendarPanel();
+        const nextChannel = button.dataset.businessChannel;
+        if (!nextChannel) {
+            return;
+        }
+        state.activeChannelKey = nextChannel;
+        renderAll();
+        requestAnimationFrame(() => {
+            const detail = document.getElementById("business-detail-" + nextChannel);
+            if (detail && typeof detail.scrollIntoView === "function") {
+                detail.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            }
+        });
     });
 
     els.skuSelect.addEventListener("change", event => {
