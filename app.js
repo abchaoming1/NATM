@@ -132,6 +132,7 @@
                     "CA: Rocklin / Sacramento"
                 ],
                 storeNote: "按官方 Store Locations 统计，不含 warehouse",
+                popStatusNote: "RCW 已下单 10 个 T010 单独 POP，预计 4 月底到店。",
                 popVisualSrc: "assets/rcw-pop-display.png",
                 popVisualAlt: "RCW POP display reference",
                 popVisualNote: "RCW 当前 POP 以该类桌面陈列形式为主"
@@ -1040,6 +1041,14 @@
         ].join("");
     }
 
+    function renderPopStatusNote(profile) {
+        if (!profile.popStatusNote) {
+            return "";
+        }
+
+        return "<p class=\"business-pop-note\"><strong>POP更新：</strong>" + escapeHtml(profile.popStatusNote) + "</p>";
+    }
+
     function renderRankIndex(index) {
         return "<span class=\"rank-index\">" + String(index) + "</span>";
     }
@@ -1678,6 +1687,7 @@
                 "<td>",
                 "<div class=\"business-cell\">",
                 "<p class=\"profile-copy\"><strong>POP尺寸：</strong>" + escapeHtml(profile.popSize) + "</p>",
+                renderPopStatusNote(profile),
                 "<div class=\"profile-tag-list\">" + renderProfileTags(profile.popSkus) + "</div>",
                 renderPopVisual(profile),
                 "</div>",
