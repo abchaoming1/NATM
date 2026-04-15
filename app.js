@@ -231,11 +231,11 @@
                     },
                     {
                         title: "当前样品提需",
-                        text: "四个渠道刚好都有 OpenDots Air 的黑色、紫色各一个，总计 4+4=8 个；提需已完成，但暂未和 buyer 产生联系，也尚未推进送样。"
+                        text: "四个渠道刚好都有 OpenDots Air 的黑色、紫色各一个，总计 4+4=8 个；提需已完成，但暂未和 buyer 产生联系，也尚未推进送样。OpenDots 2 也已有样品，当前由 Kevin 保管，等他回来后再给他。"
                     },
                     {
                         title: "待补项目",
-                        text: "当前还缺 OpenDots 2 的提需和 OpenRun 2 的提需，后续需要一并补齐并推进到 buyer 沟通。"
+                        text: "当前还缺 OpenRun 2 的提需；后续需要继续推进 buyer 沟通，并明确 OpenDots 2 的下一步送样动作。"
                     }
                 ]
             }
