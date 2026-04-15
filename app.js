@@ -131,7 +131,10 @@
                     "ID: Boise / Meridian",
                     "CA: Rocklin / Sacramento"
                 ],
-                storeNote: "按官方 Store Locations 统计，不含 warehouse"
+                storeNote: "按官方 Store Locations 统计，不含 warehouse",
+                popVisualSrc: "assets/rcw-pop-display.png",
+                popVisualAlt: "RCW POP display reference",
+                popVisualNote: "RCW 当前 POP 以该类桌面陈列形式为主"
             },
             abt: {
                 displayName: "Abt",
@@ -1024,6 +1027,19 @@
         ].join("");
     }
 
+    function renderPopVisual(profile) {
+        if (!profile.popVisualSrc) {
+            return "";
+        }
+
+        return [
+            "<figure class=\"business-pop-visual\">",
+            "<img src=\"" + encodeURI(profile.popVisualSrc) + "\" alt=\"" + escapeHtml(profile.popVisualAlt || "POP display reference") + "\" loading=\"lazy\">",
+            profile.popVisualNote ? "<figcaption>" + escapeHtml(profile.popVisualNote) + "</figcaption>" : "",
+            "</figure>"
+        ].join("");
+    }
+
     function renderRankIndex(index) {
         return "<span class=\"rank-index\">" + String(index) + "</span>";
     }
@@ -1663,6 +1679,7 @@
                 "<div class=\"business-cell\">",
                 "<p class=\"profile-copy\"><strong>POP尺寸：</strong>" + escapeHtml(profile.popSize) + "</p>",
                 "<div class=\"profile-tag-list\">" + renderProfileTags(profile.popSkus) + "</div>",
+                renderPopVisual(profile),
                 "</div>",
                 "</td>",
                 "<td>",

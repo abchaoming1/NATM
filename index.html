@@ -758,6 +758,30 @@
             border-top: 1px dashed rgba(23, 32, 51, 0.08);
         }
 
+        .business-pop-visual {
+            margin: 2px 0 0;
+            display: grid;
+            gap: 8px;
+            padding: 10px;
+            border-radius: 16px;
+            border: 1px solid rgba(23, 32, 51, 0.08);
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .business-pop-visual img {
+            display: block;
+            width: 100%;
+            border-radius: 12px;
+            background: #f8f5ef;
+        }
+
+        .business-pop-visual figcaption {
+            margin: 0;
+            font-size: 12px;
+            line-height: 1.6;
+            color: var(--muted);
+        }
+
         .business-cell {
             display: grid;
             gap: 10px;
@@ -1907,7 +1931,7 @@
     </div>
     <script>
         window.NATM_MULTI_CHANNEL = true;
-        window.NATM_APP_VERSION = "2026-04-15-18";
+        window.NATM_APP_VERSION = "2026-04-15-19";
         document.write('<script src="app.js?v=' + encodeURIComponent(window.NATM_APP_VERSION) + '&t=' + Date.now() + '"><\/script>');
     </script>
     <script>
