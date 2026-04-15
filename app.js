@@ -204,24 +204,58 @@
                     rows: [
                         {
                             title: "旧品 EOL 通知",
-                            meta: "节奏：每一个半月"
+                            note: "检查旧品退市节奏、渠道在售尾货和 buyer 是否需要补充说明，避免旧品继续占 POP 或促销资源。",
+                            meta: "节奏：每半个月一次 | 输出：EOL 清单 / buyer 通知"
                         },
                         {
                             title: "新品前 1 个月 SETUP",
-                            meta: "节奏：新品上市前 1 个月"
+                            note: "新品上市前倒推准备 setup、料号、页面信息、送样与 POP 切换，尽量把渠道准备动作前置。",
+                            meta: "节奏：上市前 1 个月 | 输出：setup 追踪"
                         },
                         {
                             title: "更新促销日历",
-                            meta: "节奏：至少提前半个月"
+                            note: "促销前至少半个月同步新 promo calendar，并对照下方月度总览观察促销前后销量与销售额变化。",
+                            meta: "节奏：至少提前半个月 | 输出：promo calendar"
                         }
                     ]
                 },
                 {
                     kicker: "项目管理",
                     title: "待办事项",
-                    description: "后续把需要持续跟进但还未完成的动作集中补在这里。",
+                    description: "把当前最需要推进、但还没闭环的动作直接挂在首页，减少遗漏。",
                     badge: "To-Do",
-                    body: "暂时空着"
+                    rows: [
+                        {
+                            title: "NFM 七八月 POP 快闪店方案落地",
+                            note: "继续跟 Kristen 对齐方案，由 Raymond 辅助推进，尽量把新品切换与快闪店机会一起打包。",
+                            meta: "渠道：NFM | 状态：进行中 | 优先级：高"
+                        },
+                        {
+                            title: "RCW 与 buyer 沟通季度下单改月度下单",
+                            note: "减少季度性下单对库存和节奏的影响，争取建立更稳定的月度补货节奏。",
+                            meta: "渠道：RCW | 状态：待会议 | 优先级：高"
+                        },
+                        {
+                            title: "RCW 单独补签 Blair 年度合作合同",
+                            note: "当前独立店与 Rep 的年度合作合同未包含 RCW，需要单独补签，避免后续执行脱节。",
+                            meta: "渠道：RCW | 状态：待处理 | 优先级：高"
+                        },
+                        {
+                            title: "RCW 争取把 4 台分散 POP 整合为 1 台 90cm POP",
+                            note: "结合当前 standard POP 与 T010 单独 POP 的进展，继续争取更完整的一体化展示。",
+                            meta: "渠道：RCW | 状态：推进中 | 优先级：中高"
+                        },
+                        {
+                            title: "BSM 建立月末未下单提醒机制",
+                            note: "每个月末检查 buyer 是否下单，若未下单则邮件提醒，持续提高下单密度。",
+                            meta: "渠道：BSM | 状态：执行中 | 优先级：中高"
+                        },
+                        {
+                            title: "补齐 OpenRun 2 的样品提需与送样动作",
+                            note: "OpenDots 2 已有样品，OpenRun 2 仍缺提需，需要尽快补齐并和 buyer 对上送样节奏。",
+                            meta: "渠道：All | 状态：待补齐 | 优先级：高"
+                        }
+                    ]
                 }
             ],
             launchPlan: {
@@ -1070,6 +1104,26 @@
         ].join("");
     }
 
+    function renderMixWatchCard(label, value, note) {
+        return [
+            "<article class=\"business-metric-card mix-watch-card\">",
+            "<p class=\"business-metric-label\">" + escapeHtml(label) + "</p>",
+            "<p class=\"business-metric-value\">" + escapeHtml(value) + "</p>",
+            note ? "<p class=\"mix-watch-note\">" + escapeHtml(note) + "</p>" : "",
+            "</article>"
+        ].join("");
+    }
+
+    function renderProgressMeta(item) {
+        const parts = [item.status, item.owner, item.priority].filter(Boolean);
+        if (!parts.length) {
+            return "";
+        }
+        return "<div class=\"timeline-meta\">" + parts.map(part => {
+            return "<span class=\"timeline-tag\">" + escapeHtml(part) + "</span>";
+        }).join("") + "</div>";
+    }
+
     function renderChecklistCard(module) {
         const items = module.checklistItems || module.rows || [];
         const emptyText = module.body || "鏆傛椂绌虹潃";
@@ -1091,6 +1145,7 @@
                         "<span class=\"checklist-box\" aria-hidden=\"true\"></span>",
                         "<div class=\"checklist-copy\">",
                         "<strong>" + escapeHtml(item.title) + "</strong>",
+                        item.note ? "<span class=\"checklist-note\">" + escapeHtml(item.note) + "</span>" : "",
                         item.meta ? "<span>" + escapeHtml(item.meta) + "</span>" : "",
                         "</div>",
                         "</div>"
@@ -1197,6 +1252,16 @@
             return;
         }
 
+        const activeChannel = getChannelConfig(state.activeChannelKey);
+        const activeDashboard = state.dashboards[state.activeChannelKey];
+        const activeProfile = CONFIG.channelProfiles[state.activeChannelKey] || {};
+        const activeMix = activeDashboard ? activeDashboard.productMixSinceStart : null;
+        const activeItems = activeMix ? activeMix.items : [];
+        const activePopSet = new Set(activeProfile.popSkus || []);
+        const topMixItems = activeItems.slice(0, 3);
+        const topNonPopItem = activeItems.find(item => !activePopSet.has(item.sku));
+        const popSoldCount = (activeProfile.popSkus || []).filter(sku => activeItems.some(item => item.sku === sku)).length;
+
         els.fullProductMixPanel.innerHTML = [
             "<article class=\"info-card\">",
             "<div class=\"info-card-head\">",
@@ -1207,6 +1272,14 @@
             "</div>",
             "<span class=\"info-badge\">Full Mix</span>",
             "</div>",
+            activeMix ? [
+                "<div class=\"business-metric-grid mix-watch-grid\">",
+                renderMixWatchCard("当前渠道", activeChannel.label, "下面默认展开当前选中的渠道结构"),
+                renderMixWatchCard("Top SKU", topMixItems.length ? topMixItems.map(item => item.sku).join(" / ") : "暂无", topMixItems.length ? ("Top1 销售额 " + formatCurrency(topMixItems[0].sales)) : ""),
+                renderMixWatchCard("非 POP 重点", topNonPopItem ? topNonPopItem.sku : "暂无", topNonPopItem ? ("销售额 " + formatCurrency(topNonPopItem.sales)) : "当前卖出结构已基本被 POP 覆盖"),
+                renderMixWatchCard("POP 覆盖", activeProfile.popSkus && activeProfile.popSkus.length ? (String(popSoldCount) + "/" + String(activeProfile.popSkus.length)) : "暂无 POP", activeMix ? ("统计口径：2025-09 至 " + activeDashboard.latestMonthKey) : ""),
+                "</div>"
+            ].join("") : "",
             "<div class=\"mix-accordion\">",
             CONFIG.channels.map(channel => {
                 const dashboard = state.dashboards[channel.key];
@@ -1790,17 +1863,19 @@
             { date: "Q3", title: "八月计划待确认", text: "预留给新品节奏、活动节点和后续 POP 调整。" }
         ];
         const progressTimeline = [
-            { date: "ABT", title: "已通过 2-3 月 exclusive store only 促销", text: "具体促销信息已放进 Abt 文件夹；渠道支持度较高，正在积极尝试把全旗舰、全色放进店内。" },
-            { date: "BSM", title: "提高下单密度", text: "已与 buyer 达成一致，后续提高下单密度；若每个月末仍未下单，可以邮件提醒。" },
-            { date: "RCW", title: "争取从季度下单改成月度下单", text: "当前渠道以季度性下单为主，会影响库存状况；后续可与 buyer 开会建议改为按月下单。" },
-            { date: "RCW", title: "补签独立店与 Rep（Blair）合作合同", text: "现有年度合作合同未包含 RCW，需要单独签署对应合作合同。" },
-            { date: "RCW", title: "尝试整合 POP 形式", text: "目前是 4 台分散的 POP，后续可争取整合为 1 台 90cm POP。" }
+            { date: "NFM", title: "推进七八月 POP 快闪店机会", text: "目前交由 Kristen 策划、Raymond 辅助推进，建议把快闪店展示与新品切换节奏一起对齐。", status: "进行中", owner: "Kristen / Raymond", priority: "高优先级" },
+            { date: "ABT", title: "已通过 2-3 月 exclusive store only 促销", text: "具体促销信息已放进 Abt 文件夹；渠道支持度较高，正在积极尝试把全旗舰、全色放进店内。", status: "已推进", owner: "ABT Channel", priority: "持续跟进" },
+            { date: "BSM", title: "提高下单密度", text: "已与 buyer 达成一致，后续提高下单密度；若每个月末仍未下单，可以邮件提醒。", status: "执行中", owner: "Buyer Follow-up", priority: "中高" },
+            { date: "RCW", title: "争取从季度下单改成月度下单", text: "当前渠道以季度性下单为主，会影响库存状况；后续可与 buyer 开会建议改为按月下单。", status: "待会议", owner: "Buyer Meeting", priority: "高优先级" },
+            { date: "RCW", title: "补签独立店与 Rep（Blair）合作合同", text: "现有年度合作合同未包含 RCW，需要单独签署对应合作合同。", status: "待处理", owner: "Contract", priority: "高优先级" },
+            { date: "RCW", title: "尝试整合 POP 形式", text: "目前是 4 台分散的 POP，后续可争取整合为 1 台 90cm POP。", status: "推进中", owner: "POP Upgrade", priority: "中高" },
+            { date: "ALL", title: "补齐 OpenRun 2 样品提需", text: "OpenDots 2 已有样品且暂由 Kevin 保管，OpenRun 2 的提需和下一步送样动作仍需补齐。", status: "待补齐", owner: "Samples", priority: "高优先级" }
         ];
         const meetingTimeline = [
             { date: "TBD", title: "会议历史待补充", text: "后续可按时间沉淀会议纪要、决议和责任事项。" }
         ];
         const progressByChannel = CONFIG.channels.map(channel => {
-            const items = progressTimeline.filter(item => String(item.date).toLowerCase() === String(channel.label).toLowerCase());
+            const items = progressTimeline.filter(item => String(item.date).toLowerCase() === String(channel.label).toLowerCase() || String(item.date).toLowerCase() === "all");
             return { channel: channel, items: items };
         });
 
@@ -1809,7 +1884,7 @@
             "<div class=\"info-card-head\"><div><p class=\"info-kicker\">营销推进</p><h3 class=\"info-card-title\">营销事件时间线</h3><p class=\"info-card-copy\">改成时间线视图，后续加活动时会比普通卡片更直观。</p></div><span class=\"info-badge\">Timeline</span></div>",
             "<div class=\"timeline-list\">",
             marketingTimeline.map(item => {
-                return "<div class=\"timeline-item\"><span class=\"timeline-date\">" + escapeHtml(item.date) + "</span><div class=\"timeline-body\"><strong>" + escapeHtml(item.title) + "</strong><span>" + escapeHtml(item.text) + "</span></div></div>";
+                return "<div class=\"timeline-item\"><span class=\"timeline-date\">" + escapeHtml(item.date) + "</span><div class=\"timeline-body\"><strong>" + escapeHtml(item.title) + "</strong>" + renderProgressMeta(item) + "<span>" + escapeHtml(item.text) + "</span></div></div>";
             }).join(""),
             "</div>",
             "</article>",
@@ -1817,7 +1892,7 @@
             "<div class=\"info-card-head\"><div><p class=\"info-kicker\">推进状态</p><h3 class=\"info-card-title\">当前进度</h3><p class=\"info-card-copy\">集中记录各渠道正在推进的动作、问题点和下一步建议。</p></div><span class=\"info-badge\">Progress</span></div>",
             "<div class=\"timeline-list\">",
             progressTimeline.map(item => {
-                return "<div class=\"timeline-item\"><span class=\"timeline-date\">" + escapeHtml(item.date) + "</span><div class=\"timeline-body\"><strong>" + escapeHtml(item.title) + "</strong><span>" + escapeHtml(item.text) + "</span></div></div>";
+                return "<div class=\"timeline-item\"><span class=\"timeline-date\">" + escapeHtml(item.date) + "</span><div class=\"timeline-body\"><strong>" + escapeHtml(item.title) + "</strong>" + renderProgressMeta(item) + "<span>" + escapeHtml(item.text) + "</span></div></div>";
             }).join(""),
             "</div>",
             "</article>",
@@ -1829,7 +1904,7 @@
                     "<div class=\"channel-progress-card\" style=\"" + channelStyle(group.channel) + "\">",
                     "<div class=\"channel-progress-head\"><strong>" + escapeHtml(group.channel.label) + "</strong><span class=\"channel-chip\">Action</span></div>",
                     group.items.length
-                        ? "<div class=\"channel-progress-list\">" + group.items.map(item => "<div class=\"channel-progress-item\"><strong>" + escapeHtml(item.title) + "</strong><span>" + escapeHtml(item.text) + "</span></div>").join("") + "</div>"
+                        ? "<div class=\"channel-progress-list\">" + group.items.map(item => "<div class=\"channel-progress-item\"><strong>" + escapeHtml(item.title) + "</strong>" + renderProgressMeta(item) + "<span>" + escapeHtml(item.text) + "</span></div>").join("") + "</div>"
                         : "<p class=\"placeholder-copy\">当前暂无新增动作，后续可直接补充。</p>",
                     "</div>"
                 ].join("");

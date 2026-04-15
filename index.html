@@ -821,6 +821,18 @@
             border: 1px solid rgba(23, 32, 51, 0.06);
         }
 
+        .mix-watch-grid {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            margin-bottom: 16px;
+        }
+
+        .mix-watch-note {
+            margin: 6px 0 0;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.7;
+        }
+
         .business-metric-label {
             margin: 0;
             color: var(--muted);
@@ -1298,6 +1310,10 @@
             line-height: 1.5;
         }
 
+        .checklist-note {
+            color: var(--ink);
+        }
+
         .checklist-copy span,
         .checklist-empty {
             display: block;
@@ -1709,6 +1725,25 @@
             line-height: 1.7;
         }
 
+        .timeline-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .timeline-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 9px;
+            border-radius: 999px;
+            background: rgba(23, 32, 51, 0.06);
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
         .execution-card-wide {
             grid-column: span 2;
         }
@@ -1825,7 +1860,8 @@
             }
 
             .business-detail-grid,
-            .channel-progress-grid {
+            .channel-progress-grid,
+            .mix-watch-grid {
                 grid-template-columns: 1fr;
             }
 
@@ -2223,7 +2259,7 @@
     </div>
     <script>
         window.NATM_MULTI_CHANNEL = true;
-        window.NATM_APP_VERSION = "2026-04-15-25";
+        window.NATM_APP_VERSION = "2026-04-15-26";
         document.write('<script src="app.js?v=' + encodeURIComponent(window.NATM_APP_VERSION) + '&t=' + Date.now() + '"><\/script>');
     </script>
     <script>
