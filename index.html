@@ -782,6 +782,32 @@
             color: var(--muted);
         }
 
+        .business-pop-gallery {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .business-pop-gallery-item {
+            margin: 0;
+            display: grid;
+            gap: 8px;
+        }
+
+        .business-pop-gallery-item img {
+            display: block;
+            width: 100%;
+            border-radius: 12px;
+            background: #f8f5ef;
+        }
+
+        .business-pop-gallery-item figcaption {
+            margin: 0;
+            font-size: 12px;
+            line-height: 1.6;
+            color: var(--muted);
+        }
+
         .business-pop-note {
             margin: 0;
             padding: 10px 12px;
@@ -1861,7 +1887,8 @@
 
             .business-detail-grid,
             .channel-progress-grid,
-            .mix-watch-grid {
+            .mix-watch-grid,
+            .business-pop-gallery {
                 grid-template-columns: 1fr;
             }
 
@@ -2259,7 +2286,7 @@
     </div>
     <script>
         window.NATM_MULTI_CHANNEL = true;
-        window.NATM_APP_VERSION = "2026-04-15-27";
+        window.NATM_APP_VERSION = "2026-04-16-28";
         document.write('<script src="app.js?v=' + encodeURIComponent(window.NATM_APP_VERSION) + '&t=' + Date.now() + '"><\/script>');
     </script>
     <script>

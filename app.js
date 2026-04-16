@@ -140,7 +140,19 @@
                 popStatusNote: "RCW 已下单 10 个 T010 单独 POP，预计 4 月底到店。",
                 popVisualSrc: "assets/rcw-pop-display.png",
                 popVisualAlt: "RCW POP display reference",
-                popVisualNote: "RCW 当前 POP 以该类桌面陈列形式为主"
+                popVisualNote: "RCW 当前 POP 以该类桌面陈列形式为主",
+                popVisualGallery: [
+                    {
+                        src: "assets/rcw-pop-store-1.jpg",
+                        alt: "RCW POP store photo 1",
+                        note: "RCW 门店 POP 实拍示例 1"
+                    },
+                    {
+                        src: "assets/rcw-pop-store-2.jpg",
+                        alt: "RCW POP store photo 2",
+                        note: "RCW 门店 POP 实拍示例 2"
+                    }
+                ]
             },
             abt: {
                 displayName: "Abt",
@@ -1182,14 +1194,27 @@
     }
 
     function renderPopVisual(profile) {
-        if (!profile.popVisualSrc) {
+        const gallery = Array.isArray(profile.popVisualGallery) ? profile.popVisualGallery : [];
+        if (!profile.popVisualSrc && !gallery.length) {
             return "";
         }
 
         return [
             "<figure class=\"business-pop-visual\">",
-            "<img src=\"" + encodeURI(profile.popVisualSrc) + "\" alt=\"" + escapeHtml(profile.popVisualAlt || "POP display reference") + "\" loading=\"lazy\">",
+            profile.popVisualSrc ? "<img src=\"" + encodeURI(profile.popVisualSrc) + "\" alt=\"" + escapeHtml(profile.popVisualAlt || "POP display reference") + "\" loading=\"lazy\">" : "",
             profile.popVisualNote ? "<figcaption>" + escapeHtml(profile.popVisualNote) + "</figcaption>" : "",
+            gallery.length ? [
+                "<div class=\"business-pop-gallery\">",
+                gallery.map(item => {
+                    return [
+                        "<figure class=\"business-pop-gallery-item\">",
+                        "<img src=\"" + encodeURI(item.src) + "\" alt=\"" + escapeHtml(item.alt || "POP store photo") + "\" loading=\"lazy\">",
+                        item.note ? "<figcaption>" + escapeHtml(item.note) + "</figcaption>" : "",
+                        "</figure>"
+                    ].join("");
+                }).join(""),
+                "</div>"
+            ].join("") : "",
             "</figure>"
         ].join("");
     }
