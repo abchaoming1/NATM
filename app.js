@@ -138,8 +138,10 @@
                 ],
                 storeNote: "按官方 Store Locations 统计，不含 warehouse",
                 popStatusNote: "RCW 已下单 10 个 T010 单独 POP，预计 4 月底到店。",
-                popVisualSrc: "assets/rcw-pop-display.png",
-                popVisualAlt: "RCW POP display reference",
+                popVisualItems: [
+                    { src: "assets/rcw-pop-store-1.png", alt: "RCW POP in store reference 1" },
+                    { src: "assets/rcw-pop-store-2.png", alt: "RCW POP in store reference 2" }
+                ],
                 popVisualNote: "RCW 当前 POP 以该类桌面陈列形式为主"
             },
             abt: {
@@ -1204,13 +1206,20 @@
     }
 
     function renderPopVisual(profile) {
-        if (!profile.popVisualSrc) {
+        const visualItems = Array.isArray(profile.popVisualItems) && profile.popVisualItems.length
+            ? profile.popVisualItems
+            : (profile.popVisualSrc ? [{ src: profile.popVisualSrc, alt: profile.popVisualAlt || "POP display reference" }] : []);
+        if (!visualItems.length) {
             return "";
         }
 
         return [
             "<figure class=\"business-pop-visual\">",
-            "<img src=\"" + encodeURI(profile.popVisualSrc) + "\" alt=\"" + escapeHtml(profile.popVisualAlt || "POP display reference") + "\" loading=\"lazy\">",
+            "<div class=\"business-pop-gallery\">",
+            visualItems.map(item => {
+                return "<img src=\"" + encodeURI(item.src) + "\" alt=\"" + escapeHtml(item.alt || "POP display reference") + "\" loading=\"lazy\">";
+            }).join(""),
+            "</div>",
             profile.popVisualNote ? "<figcaption>" + escapeHtml(profile.popVisualNote) + "</figcaption>" : "",
             "</figure>"
         ].join("");

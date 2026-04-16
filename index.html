@@ -833,6 +833,12 @@
             background: rgba(255, 255, 255, 0.8);
         }
 
+        .business-pop-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+        }
+
         .business-pop-visual img {
             display: block;
             width: 100%;
@@ -2335,7 +2341,7 @@
     </div>
     <script>
         window.NATM_MULTI_CHANNEL = true;
-        window.NATM_APP_VERSION = "2026-04-16-33";
+        window.NATM_APP_VERSION = "2026-04-16-34";
         document.write('<script src="app.js?v=' + encodeURIComponent(window.NATM_APP_VERSION) + '&t=' + Date.now() + '"><\/script>');
     </script>
     <script>
