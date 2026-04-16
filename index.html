@@ -68,11 +68,29 @@
             position: sticky;
             top: 22px;
             padding: 18px 14px;
+            max-height: calc(100vh - 44px);
+            overflow-y: auto;
+            overflow-x: hidden;
             border-radius: 22px;
             background: rgba(255, 255, 255, 0.72);
             border: 1px solid rgba(255, 255, 255, 0.68);
             box-shadow: 0 18px 42px rgba(41, 53, 72, 0.12);
             backdrop-filter: blur(14px);
+            scrollbar-width: thin;
+            scrollbar-color: rgba(23, 32, 51, 0.22) transparent;
+        }
+
+        .page-nav::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .page-nav::-webkit-scrollbar-thumb {
+            border-radius: 999px;
+            background: rgba(23, 32, 51, 0.22);
+        }
+
+        .page-nav::-webkit-scrollbar-track {
+            background: transparent;
         }
 
         .page-nav-title {
@@ -2341,7 +2359,7 @@
     </div>
     <script>
         window.NATM_MULTI_CHANNEL = true;
-        window.NATM_APP_VERSION = "2026-04-16-34";
+        window.NATM_APP_VERSION = "2026-04-16-35";
         document.write('<script src="app.js?v=' + encodeURIComponent(window.NATM_APP_VERSION) + '&t=' + Date.now() + '"><\/script>');
     </script>
     <script>
