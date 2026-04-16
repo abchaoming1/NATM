@@ -480,18 +480,20 @@
     }
 
     function formatNumber(value, digits) {
+        const fractionDigits = digits === undefined ? 0 : Math.min(Number(digits) || 0, 1);
         return new Intl.NumberFormat("en-US", {
-            maximumFractionDigits: digits || 0,
-            minimumFractionDigits: digits || 0
+            maximumFractionDigits: fractionDigits,
+            minimumFractionDigits: fractionDigits
         }).format(value);
     }
 
     function formatCurrency(value, digits) {
+        const fractionDigits = digits === undefined ? 0 : Math.min(Number(digits) || 0, 1);
         return new Intl.NumberFormat("en-US", {
             style: "currency",
             currency: "USD",
-            maximumFractionDigits: digits || 0,
-            minimumFractionDigits: digits || 0
+            maximumFractionDigits: fractionDigits,
+            minimumFractionDigits: fractionDigits
         }).format(value);
     }
 
