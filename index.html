@@ -69,7 +69,7 @@
             top: 22px;
             padding: 18px 14px;
             max-height: calc(100vh - 44px);
-            overflow-y: auto;
+            overflow-y: scroll;
             overflow-x: hidden;
             border-radius: 22px;
             background: rgba(255, 255, 255, 0.72);
@@ -147,6 +147,25 @@
         .sidebar-channel-list {
             display: grid;
             gap: 10px;
+            max-height: 420px;
+            padding-right: 4px;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(15, 118, 110, 0.35) transparent;
+        }
+
+        .sidebar-channel-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .sidebar-channel-list::-webkit-scrollbar-thumb {
+            border-radius: 999px;
+            background: rgba(15, 118, 110, 0.35);
+        }
+
+        .sidebar-channel-list::-webkit-scrollbar-track {
+            background: transparent;
         }
 
         .sidebar-channel-btn {
@@ -2359,7 +2378,7 @@
     </div>
     <script>
         window.NATM_MULTI_CHANNEL = true;
-        window.NATM_APP_VERSION = "2026-04-16-35";
+        window.NATM_APP_VERSION = "2026-04-16-36";
         document.write('<script src="app.js?v=' + encodeURIComponent(window.NATM_APP_VERSION) + '&t=' + Date.now() + '"><\/script>');
     </script>
     <script>
