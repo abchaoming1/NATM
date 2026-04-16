@@ -769,7 +769,8 @@
                 qty: item.qty,
                 sales: item.sales,
                 qtyShare: item.qtyShare,
-                salesShare: item.salesShare
+                salesShare: item.salesShare,
+                specificItems: specificItems
             });
             specificItems.forEach(specificItem => {
                 detailedRows.push(specificItem);
