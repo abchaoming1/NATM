@@ -59,7 +59,7 @@
             width: min(1740px, calc(100vw - 32px));
             margin: 0 auto;
             display: grid;
-            grid-template-columns: 156px minmax(0, 1fr);
+            grid-template-columns: 220px minmax(0, 1fr);
             gap: 20px;
             align-items: start;
         }
@@ -82,6 +82,28 @@
             letter-spacing: 0.06em;
         }
 
+        .page-nav-section + .page-nav-section {
+            margin-top: 18px;
+            padding-top: 18px;
+            border-top: 1px solid rgba(23, 32, 51, 0.08);
+        }
+
+        .page-nav-kicker {
+            margin: 0 0 8px;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .page-nav-copy {
+            margin: 0 0 12px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
         .page-nav-list {
             display: grid;
             gap: 8px;
@@ -102,6 +124,49 @@
             background: rgba(15, 118, 110, 0.09);
             color: var(--ink);
             transform: translateX(2px);
+        }
+
+        .sidebar-channel-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .sidebar-channel-btn {
+            width: 100%;
+            display: grid;
+            gap: 6px;
+            text-align: left;
+            padding: 12px 12px 13px;
+            border-radius: 18px;
+            border: 1px solid rgba(23, 32, 51, 0.08);
+            background: rgba(255, 255, 255, 0.76);
+            color: var(--ink);
+            cursor: pointer;
+            transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+        }
+
+        .sidebar-channel-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 12px 22px rgba(41, 53, 72, 0.1);
+        }
+
+        .sidebar-channel-btn.active {
+            border-color: var(--channel-accent, var(--teal));
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), var(--channel-soft, rgba(15, 118, 110, 0.12)));
+            box-shadow: 0 14px 24px rgba(41, 53, 72, 0.12);
+        }
+
+        .sidebar-channel-label {
+            font-family: "Barlow Condensed", sans-serif;
+            font-size: 26px;
+            line-height: 1;
+            letter-spacing: 0.04em;
+        }
+
+        .sidebar-channel-meta {
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.5;
         }
 
         .page-shell {
@@ -1936,21 +2001,31 @@
 <body>
     <div class="layout-shell">
         <aside class="page-nav">
-            <p class="eyebrow">Quick Jump</p>
-            <p class="page-nav-title">NATM</p>
-            <div class="page-nav-list">
-                <a class="page-nav-link" href="#actionSection">固定动作与待办</a>
-                <a class="page-nav-link" href="#businessSection">商务与产品组合</a>
-                <a class="page-nav-link" href="#overviewSection">渠道总览</a>
-                <a class="page-nav-link" href="#summarySection">渠道汇总表</a>
-                <a class="page-nav-link" href="#activeChannelSection">当前分析渠道</a>
-                <a class="page-nav-link" href="#insightSection">核心结论与年度对比</a>
-                <a class="page-nav-link" href="#executionSection">业务推进看板</a>
-                <a class="page-nav-link" href="#promoSection">促销日历</a>
-                <a class="page-nav-link" href="#monthlySection">月度总览</a>
-                <a class="page-nav-link" href="#matrixSection">SKU矩阵</a>
-                <a class="page-nav-link" href="#skuTrendSection">SKU趋势</a>
-                <a class="page-nav-link" href="#skuSummarySection">SKU汇总表</a>
+            <div class="page-nav-section">
+                <p class="eyebrow">Quick Jump</p>
+                <p class="page-nav-title">NATM</p>
+            </div>
+            <div class="page-nav-section">
+                <p class="page-nav-kicker">Active Channel</p>
+                <p class="page-nav-copy">左侧切换当前分析渠道，整页模块会一起联动更新。</p>
+                <div id="sidebarChannelSwitch" class="sidebar-channel-list"></div>
+            </div>
+            <div class="page-nav-section">
+                <p class="page-nav-kicker">Sections</p>
+                <div class="page-nav-list">
+                    <a class="page-nav-link" href="#actionSection">固定动作与待办</a>
+                    <a class="page-nav-link" href="#businessSection">商务与产品组合</a>
+                    <a class="page-nav-link" href="#overviewSection">渠道总览</a>
+                    <a class="page-nav-link" href="#summarySection">渠道汇总表</a>
+                    <a class="page-nav-link" href="#activeChannelSection">当前分析渠道</a>
+                    <a class="page-nav-link" href="#insightSection">核心结论与年度对比</a>
+                    <a class="page-nav-link" href="#executionSection">业务推进看板</a>
+                    <a class="page-nav-link" href="#promoSection">促销日历</a>
+                    <a class="page-nav-link" href="#monthlySection">月度总览</a>
+                    <a class="page-nav-link" href="#matrixSection">SKU矩阵</a>
+                    <a class="page-nav-link" href="#skuTrendSection">SKU趋势</a>
+                    <a class="page-nav-link" href="#skuSummarySection">SKU汇总表</a>
+                </div>
             </div>
         </aside>
         <div class="page-shell">
@@ -2260,7 +2335,7 @@
     </div>
     <script>
         window.NATM_MULTI_CHANNEL = true;
-        window.NATM_APP_VERSION = "2026-04-16-32";
+        window.NATM_APP_VERSION = "2026-04-16-33";
         document.write('<script src="app.js?v=' + encodeURIComponent(window.NATM_APP_VERSION) + '&t=' + Date.now() + '"><\/script>');
     </script>
     <script>

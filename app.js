@@ -434,6 +434,7 @@
         heroTitle: document.querySelector(".hero h1"),
         heroCopy: document.querySelector(".hero-copy"),
         footer: document.querySelector(".footer"),
+        sidebarChannelSwitch: document.getElementById("sidebarChannelSwitch"),
         businessOverviewGrid: document.getElementById("businessOverviewGrid"),
         fullProductMixPanel: document.getElementById("fullProductMixPanel"),
         popPlanPanel: document.getElementById("popPlanPanel"),
@@ -993,6 +994,24 @@
             label: String(channelKey || "").toUpperCase(),
             accent: CONFIG.colors.qty
         };
+    }
+
+    function setActiveChannel(channelKey, options) {
+        const nextChannel = getChannelConfig(channelKey);
+        if (!nextChannel || !nextChannel.key) {
+            return;
+        }
+        state.activeChannelKey = nextChannel.key;
+        renderAll();
+
+        if (options && options.scrollToBusinessDetail) {
+            requestAnimationFrame(() => {
+                const detail = document.getElementById("business-detail-" + nextChannel.key);
+                if (detail && typeof detail.scrollIntoView === "function") {
+                    detail.scrollIntoView({ behavior: "smooth", block: "nearest" });
+                }
+            });
+        }
     }
 
     function channelStyle(channel) {
@@ -2109,6 +2128,29 @@
         }).join("");
     }
 
+    function renderSidebarChannelSwitch() {
+        if (!els.sidebarChannelSwitch) {
+            return;
+        }
+        els.sidebarChannelSwitch.innerHTML = CONFIG.channels.map(channel => {
+            const dashboard = state.dashboards[channel.key];
+            const activeClass = state.activeChannelKey === channel.key ? " active" : "";
+            const metaTop = dashboard
+                ? "2026 YTD " + formatCurrency(dashboard.samePeriodByYear[2026].sales)
+                : "Loading";
+            const metaBottom = dashboard
+                ? ("最新 " + dashboard.latestMonthKey + " · " + formatCurrency(dashboard.latestMonth.sales))
+                : "同步中";
+            return [
+                "<button class=\"sidebar-channel-btn" + activeClass + "\" type=\"button\" data-sidebar-channel=\"" + channel.key + "\" style=\"" + channelStyle(channel) + "\">",
+                "<span class=\"sidebar-channel-label\">" + escapeHtml(channel.label) + "</span>",
+                "<span class=\"sidebar-channel-meta\">" + escapeHtml(metaTop) + "</span>",
+                "<span class=\"sidebar-channel-meta\">" + escapeHtml(metaBottom) + "</span>",
+                "</button>"
+            ].join("");
+        }).join("");
+    }
+
     function renderKpis(dashboard) {
         const latestSalesMoM = calculateGrowth(dashboard.latestMonth.sales, dashboard.previousMonth.sales);
         const latestSalesYoY = calculateGrowth(dashboard.latestMonth.sales, dashboard.latestMonthLastYear.sales);
@@ -2587,6 +2629,7 @@
     }
 
     function renderAll() {
+        renderSidebarChannelSwitch();
         renderStaticSections();
         renderBusinessOverview();
         renderChannelOverview();
@@ -2606,6 +2649,9 @@
         els.channelOverviewGrid.innerHTML = markup;
         if (els.natmSummaryGrid) {
             els.natmSummaryGrid.innerHTML = "";
+        }
+        if (els.sidebarChannelSwitch) {
+            els.sidebarChannelSwitch.innerHTML = "";
         }
         els.channelSummaryBody.innerHTML = "";
         els.channelTabs.innerHTML = "";
@@ -2704,8 +2750,7 @@
         if (!card) {
             return;
         }
-        state.activeChannelKey = card.dataset.channel;
-        renderAll();
+        setActiveChannel(card.dataset.channel);
     });
 
     els.channelTabs.addEventListener("click", event => {
@@ -2713,9 +2758,18 @@
         if (!tab) {
             return;
         }
-        state.activeChannelKey = tab.dataset.channel;
-        renderAll();
+        setActiveChannel(tab.dataset.channel);
     });
+
+    if (els.sidebarChannelSwitch) {
+        els.sidebarChannelSwitch.addEventListener("click", event => {
+            const button = event.target.closest("[data-sidebar-channel]");
+            if (!button) {
+                return;
+            }
+            setActiveChannel(button.dataset.sidebarChannel);
+        });
+    }
 
     els.promoCalendarPanel.addEventListener("click", event => {
         const monthButton = event.target.closest("[data-promo-month]");
@@ -2759,14 +2813,7 @@
         if (!nextChannel) {
             return;
         }
-        state.activeChannelKey = nextChannel;
-        renderAll();
-        requestAnimationFrame(() => {
-            const detail = document.getElementById("business-detail-" + nextChannel);
-            if (detail && typeof detail.scrollIntoView === "function") {
-                detail.scrollIntoView({ behavior: "smooth", block: "nearest" });
-            }
-        });
+        setActiveChannel(nextChannel, { scrollToBusinessDetail: true });
     });
 
     els.skuSelect.addEventListener("change", event => {
