@@ -1865,6 +1865,7 @@
         if (!els.executionGrid) {
             return;
         }
+        const activeChannel = getChannelConfig(state.activeChannelKey);
         const marketingTimeline = [
             { date: "Now", title: "POP 更新计划已建", text: "已把 6/4 替换动作与目标 POP 组合整理进页面。" },
             { date: "Next", title: "营销事件待补充", text: "后续补充每个渠道的营销动作、节奏与资源需求。" },
@@ -1872,8 +1873,10 @@
         ];
         const progressTimeline = [
             { date: "NFM", title: "推进七八月 POP 快闪店机会", text: "目前交由 Kristen 策划、Raymond 辅助推进，建议把快闪店展示与新品切换节奏一起对齐。", status: "进行中", owner: "Kristen / Raymond", priority: "高优先级" },
+            { date: "NFM", title: "4月已上 T921", text: "NFM 当前 POP 结构已在 4 月完成 T920 -> T921 的切换，后续重点看 sell-through 与顾客反馈。", status: "已完成", owner: "POP Update", priority: "已落地" },
             { date: "ABT", title: "已通过 2-3 月 exclusive store only 促销", text: "具体促销信息已放进 Abt 文件夹；渠道支持度较高，正在积极尝试把全旗舰、全色放进店内。", status: "已推进", owner: "ABT Channel", priority: "持续跟进" },
             { date: "BSM", title: "提高下单密度", text: "已与 buyer 达成一致，后续提高下单密度；若每个月末仍未下单，可以邮件提醒。", status: "执行中", owner: "Buyer Follow-up", priority: "中高" },
+            { date: "BSM", title: "4月已上 T921", text: "BSM 当前 POP 结构已在 4 月完成 T920 -> T921 的切换，后续要继续观察新品切换后的卖出表现。", status: "已完成", owner: "POP Update", priority: "已落地" },
             { date: "RCW", title: "争取从季度下单改成月度下单", text: "当前渠道以季度性下单为主，会影响库存状况；后续可与 buyer 开会建议改为按月下单。", status: "待会议", owner: "Buyer Meeting", priority: "高优先级" },
             { date: "RCW", title: "补签独立店与 Rep（Blair）合作合同", text: "现有年度合作合同未包含 RCW，需要单独签署对应合作合同。", status: "待处理", owner: "Contract", priority: "高优先级" },
             { date: "RCW", title: "尝试整合 POP 形式", text: "目前是 4 台分散的 POP，后续可争取整合为 1 台 90cm POP。", status: "推进中", owner: "POP Upgrade", priority: "中高" },
@@ -1882,10 +1885,13 @@
         const meetingTimeline = [
             { date: "TBD", title: "会议历史待补充", text: "后续可按时间沉淀会议纪要、决议和责任事项。" }
         ];
-        const progressByChannel = CONFIG.channels.map(channel => {
-            const items = progressTimeline.filter(item => String(item.date).toLowerCase() === String(channel.label).toLowerCase() || String(item.date).toLowerCase() === "all");
-            return { channel: channel, items: items };
+        const activeProgressItems = progressTimeline.filter(item => {
+            const itemDate = String(item.date).toLowerCase();
+            return itemDate === String(activeChannel.label).toLowerCase() || itemDate === "all";
         });
+        const activeHighPriorityCount = activeProgressItems.filter(item => String(item.priority || "").includes("高")).length;
+        const activePendingCount = activeProgressItems.filter(item => /待/.test(String(item.status || ""))).length;
+        const activeOwnerSummary = Array.from(new Set(activeProgressItems.map(item => item.owner).filter(Boolean))).join(" / ") || "待补充";
 
         els.executionGrid.innerHTML = [
             "<article class=\"info-card\">",
@@ -1897,26 +1903,20 @@
             "</div>",
             "</article>",
             "<article class=\"info-card execution-card-wide\">",
-            "<div class=\"info-card-head\"><div><p class=\"info-kicker\">推进状态</p><h3 class=\"info-card-title\">当前进度</h3><p class=\"info-card-copy\">集中记录各渠道正在推进的动作、问题点和下一步建议。</p></div><span class=\"info-badge\">Progress</span></div>",
+            "<div class=\"info-card-head\"><div><p class=\"info-kicker\">推进状态</p><h3 class=\"info-card-title\">当前进度 · " + escapeHtml(activeChannel.label) + "</h3><p class=\"info-card-copy\">这里会跟随当前分析渠道联动，切换渠道卡后只看该渠道的业务推进。</p></div><span class=\"info-badge\">Progress</span></div>",
             "<div class=\"timeline-list\">",
-            progressTimeline.map(item => {
+            activeProgressItems.length ? activeProgressItems.map(item => {
                 return "<div class=\"timeline-item\"><span class=\"timeline-date\">" + escapeHtml(item.date) + "</span><div class=\"timeline-body\"><strong>" + escapeHtml(item.title) + "</strong>" + renderProgressMeta(item) + "<span>" + escapeHtml(item.text) + "</span></div></div>";
-            }).join(""),
+            }).join("") : "<p class=\"placeholder-copy\">" + escapeHtml(activeChannel.label) + " 当前暂未补充业务推进内容。</p>",
             "</div>",
             "</article>",
             "<article class=\"info-card execution-card-wide\">",
-            "<div class=\"info-card-head\"><div><p class=\"info-kicker\">按渠道跟进</p><h3 class=\"info-card-title\">分渠道推进</h3><p class=\"info-card-copy\">把重点事项按 NFM / RCW / Abt / BSM 分组，方便逐个渠道追动作。</p></div><span class=\"info-badge\">By Channel</span></div>",
-            "<div class=\"channel-progress-grid\">",
-            progressByChannel.map(group => {
-                return [
-                    "<div class=\"channel-progress-card\" style=\"" + channelStyle(group.channel) + "\">",
-                    "<div class=\"channel-progress-head\"><strong>" + escapeHtml(group.channel.label) + "</strong><span class=\"channel-chip\">Action</span></div>",
-                    group.items.length
-                        ? "<div class=\"channel-progress-list\">" + group.items.map(item => "<div class=\"channel-progress-item\"><strong>" + escapeHtml(item.title) + "</strong>" + renderProgressMeta(item) + "<span>" + escapeHtml(item.text) + "</span></div>").join("") + "</div>"
-                        : "<p class=\"placeholder-copy\">当前暂无新增动作，后续可直接补充。</p>",
-                    "</div>"
-                ].join("");
-            }).join(""),
+            "<div class=\"info-card-head\"><div><p class=\"info-kicker\">当前分析渠道</p><h3 class=\"info-card-title\">推进摘要 · " + escapeHtml(activeChannel.label) + "</h3><p class=\"info-card-copy\">把当前分析渠道的推进重点、待办密度和 owner 集中显示，方便你在一个屏幕内判断优先级。</p></div><span class=\"info-badge\">Linked</span></div>",
+            "<div class=\"business-metric-grid mix-watch-grid\">",
+            renderMixWatchCard("推进事项", formatNumber(activeProgressItems.length), "当前分析渠道正在跟进的业务动作数量"),
+            renderMixWatchCard("高优先级", formatNumber(activeHighPriorityCount), "优先级标记里包含“高”的事项"),
+            renderMixWatchCard("待处理", formatNumber(activePendingCount), "当前状态里带“待”的事项"),
+            renderMixWatchCard("关键 Owner", activeOwnerSummary, "切换渠道后这里会同步更新"),
             "</div>",
             "</article>",
             "<article class=\"info-card\">",
