@@ -681,7 +681,16 @@
     }
 
     function formatProductPrice(value) {
-        return Number.isFinite(value) ? formatCurrency(value, 1) : "—";
+        if (!Number.isFinite(value)) {
+            return "—";
+        }
+        const truncated = Math.trunc(value * 100) / 100;
+        return new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD",
+            maximumFractionDigits: 2,
+            minimumFractionDigits: 2
+        }).format(truncated);
     }
 
     function buildMonthRange(records) {
