@@ -105,7 +105,7 @@
                 setup: "沿用当前流程，无额外新品 setup 备注",
                 popSize: "120cm",
                 popFormatLabel: "120cm",
-                popSkus: ["E310", "T920", "S803", "S710", "S820", "S821", "OpenComm2"],
+                popSkus: ["E310", "T920", "S803", "S710", "S820", "S821"],
                 popVisualSrc: "assets/natm-120cm-pop-example.jpg",
                 popVisualAlt: "NFM 120cm POP reference",
                 popVisualNote: "NFM 当前 POP 以这类 120cm 一体式陈列为主",
@@ -170,7 +170,7 @@
                 setup: "给 buyer 发送 Roadmap 即可",
                 popSize: "120cm",
                 popFormatLabel: "120cm",
-                popSkus: ["E310", "T920", "S803", "S710", "S820", "S821"],
+                popSkus: ["E310", "T920", "S803", "S710", "S820", "S821", "OpenComm2"],
                 popVisualSrc: "assets/natm-120cm-pop-example.jpg",
                 popVisualAlt: "BSM 120cm POP reference",
                 popVisualNote: "BSM 当前 POP 以这类 120cm 一体式陈列为主",
@@ -333,10 +333,10 @@
         ],
         growthGoalText: "目标同比增长 30%~40% 及以上，底线 30%，标准 40%，挑战 50%+。",
         channelTargets: {
-            nfm: { qty: 5000, sales: 500000 },
+            nfm: { qty: 4000, sales: 400000 },
             rcw: { qty: 3500, sales: 175000 },
-            abt: { qty: 1600, sales: 185000 },
-            bsm: { qty: 3800, sales: 420000 }
+            abt: { qty: 1800, sales: 185000 },
+            bsm: { qty: 3800, sales: 400000 }
         },
         channelResearch: {
             nfm: {
@@ -2101,6 +2101,8 @@
             const target2026 = CONFIG.channelTargets[channel.key] || { qty: 0, sales: 0 };
             const annualQtyYoY2025 = calculateGrowth(dashboard.yearlyTotals[2025].qty, dashboard.yearlyTotals[2024].qty);
             const annualSalesYoY2025 = calculateGrowth(dashboard.yearlyTotals[2025].sales, dashboard.yearlyTotals[2024].sales);
+            const targetQtyYoY2026 = calculateGrowth(target2026.qty, dashboard.yearlyTotals[2025].qty);
+            const targetSalesYoY2026 = calculateGrowth(target2026.sales, dashboard.yearlyTotals[2025].sales);
             const ytdQtyYoY2026 = calculateGrowth(dashboard.samePeriodByYear[2026].qty, dashboard.samePeriodByYear[2025].qty);
             const ytdSalesYoY2026 = calculateGrowth(dashboard.samePeriodByYear[2026].sales, dashboard.samePeriodByYear[2025].sales);
             return [
@@ -2114,6 +2116,8 @@
                 "<td>" + renderDelta(annualSalesYoY2025) + "</td>",
                 "<td>" + formatNumber(target2026.qty) + "</td>",
                 "<td>" + formatCurrency(target2026.sales) + "</td>",
+                "<td>" + renderDelta(targetQtyYoY2026) + "</td>",
+                "<td>" + renderDelta(targetSalesYoY2026) + "</td>",
                 "<td>" + formatNumber(dashboard.samePeriodByYear[2026].qty) + "</td>",
                 "<td>" + formatCurrency(dashboard.samePeriodByYear[2026].sales) + "</td>",
                 "<td>" + renderDelta(ytdQtyYoY2026) + "</td>",
