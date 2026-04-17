@@ -342,39 +342,39 @@
         channelResearch: {
             nfm: {
                 profileTitle: "区域目的地大店，家庭整单购物心智强",
-                profileBody: "NFM 官方资料显示其以家具、家电、电子一站式大卖场运营，四个核心卖场拥有超大 showroom 与完整 electronics assortment；结合 PPT 里“大店流量高、停留时间长、耳机专区成熟”的结论，更适合做体验驱动成交。",
+                profileBody: "NFM 官方资料显示其以家具、家电、电子一站式大卖场运营，四个核心卖场拥有超大 showroom 与完整 electronics assortment；结合 PPT 里“大店流量高、停留时间长、耳机专区成熟”的结论，更适合做体验驱动成交。按近两年的月度表现看，NFM 的补货/下单节奏也是四个渠道里最健康的一条线，多数月份都有连续动作，更像按节奏滚动补货，而不是一次性猛补。",
                 persona: "以家庭决策型客群为主，包含搬家、装修、整屋升级以及会在同一次进店中顺带比较音频产品的中高客单消费者。",
                 opportunityTitle: "把试听体验和家庭升级场景绑定，放大高客单转化",
                 opportunityBody: "继续用 POP + 主销英雄 SKU 稳住露出，同时把 OpenDots 2、T921 这类新品放在“家居升级 / TV / 健身 / 户外”联动场景里做转化，争取从单纯陈列升级到体验成交。七八月还有一个 POP 快闪店机会，目前由 Kristen 策划、Raymond 辅助推进。",
                 nextStepTitle: "优先推进 POP 快闪店和新品切换",
-                nextStepBody: "继续跟进七八月 POP 快闪店机会，同时把 OpenDots 2、T921 与后续 NCE 的 POP / 上样 / 促销节奏提早对齐。"
+                nextStepBody: "继续跟进七八月 POP 快闪店机会，同时把 OpenDots 2、T921 与后续 NCE 的 POP / 上样 / 促销节奏提早对齐。NFM 当前的优势就在于节奏相对稳定，后续要做的是把这个规律性延续到新品切换窗口，而不是打乱补货节奏。"
             },
             rcw: {
                 profileTitle: "西部区域家居电器零售商，偏家庭计划型购买",
-                profileBody: "RC Willey 官网定位是服务西部市场的 home furnishings、appliances 与 electronics 零售商；结合 PPT 中“门店空间大、顾客停留久、独立店销售表现不错”的信息，这类店更像 destination store，而不是纯快进快出的电子卖场。",
+                profileBody: "RC Willey 官网定位是服务西部市场的 home furnishings、appliances 与 electronics 零售商；结合 PPT 中“门店空间大、顾客停留久、独立店销售表现不错”的信息，这类店更像 destination store，而不是纯快进快出的电子卖场。按月表现看，RCW 更偏阶段性集中下单，常在促销或库存节点一次性补较多，然后进入安静期，等待下一轮再集中补货。",
                 persona: "更偏郊区家庭、换新型用户和成套购买用户，重视 financing、门店服务和可视化陈列，愿意在店内做横向比较后再下单。",
                 opportunityTitle: "围绕西部家庭客群做稳定扩店和结构升级",
                 opportunityBody: "RCW 的增长空间在于把现有成功门店打法复制到更多门店与更多核心 SKU 上，用更清晰的 POP、培训和价格带分层，把 Shokz 从补充型音频 SKU 变成被主动推荐的功能型耳机。",
                 nextStepTitle: "推动下单节奏与 POP 形态升级",
-                nextStepBody: "和 buyer 讨论把季度性下单改成月度下单，补签 Blair 合同，并争取把 4 台分散 POP 整合成 1 台 90cm POP。"
+                nextStepBody: "和 buyer 讨论把季度性下单改成月度下单，补签 Blair 合同，并争取把 4 台分散 POP 整合成 1 台 90cm POP。RCW 现在的问题不是完全没有量，而是下单节奏太波段化，需要把“猛补一次”逐步改成“更稳定的月度补货”。"
             },
             abt: {
                 profileTitle: "单店高服务模型，专业咨询和高 ASP 更关键",
-                profileBody: "Abt 官方公开信息强调其 Glenview 单店、90+ 年历史、公开 tour、培训体系与 award-winning customer service；它不是广撒网渠道，更像高服务密度的精品大店。",
+                profileBody: "Abt 官方公开信息强调其 Glenview 单店、90+ 年历史、公开 tour、培训体系与 award-winning customer service；它不是广撒网渠道，更像高服务密度的精品大店。从近两年的月度节奏看，Abt 更像“前段有动作、年中短暂停、下半年恢复”的渠道，接近 1-4 月先启动、5-6 月偏弱、7-12 月再恢复下单的模式。",
                 persona: "以研究型、信任导购型、愿意为服务和专业建议买单的 Chicagoland 用户为主，对产品故事、功能差异和售后体验更敏感。",
                 opportunityTitle: "走精品化和顾问式成交，优先做高质量产出",
                 opportunityBody: "Abt 更适合做少而精的结构优化，集中火力推高 ASP 主力款和具备明确卖点的新型号，通过导购教育、场景话术和本地化活动，拉高单点产出而不是盲目铺量。",
                 nextStepTitle: "承接 exclusive 促销结果推进全旗舰入店",
-                nextStepBody: "复盘 2-3 月 exclusive store only 促销效果，继续争取全旗舰、全色在店内完整呈现，并提前准备后续新品 setup。"
+                nextStepBody: "复盘 2-3 月 exclusive store only 促销效果，继续争取全旗舰、全色在店内完整呈现，并提前准备后续新品 setup。对 Abt 来说，更重要的是提前在上半年铺好动作，避免再出现 5-6 月明显断档、下半年再重新拉起的节奏。"
             },
             bsm: {
                 profileTitle: "东南部价格驱动大卖场，促销和现货感知更强",
-                profileBody: "BrandsMart USA 官网强调 huge selection、Audio & Headphones、110% Price Match、会员与 financing；结合 PPT 中“人流量高、竞品多、靠近 Costco / Sam / Best Buy”的判断，这一渠道更偏高流量、强促销、强对比购物环境。",
+                profileBody: "BrandsMart USA 官网强调 huge selection、Audio & Headphones、110% Price Match、会员与 financing；结合 PPT 中“人流量高、竞品多、靠近 Costco / Sam / Best Buy”的判断，这一渠道更偏高流量、强促销、强对比购物环境。从月度表现看，BSM 的节奏规律性最弱，更像缺货后集中猛补的库存驱动型渠道，波动明显，随机性比其他渠道更强。",
                 persona: "价格敏感型、促销响应型和家庭换新型用户占比较高，重视即时可得、价格优势和清晰的卖点提示，容易在大促节点集中释放销量。",
                 opportunityTitle: "用促销节点和主力价位带放大爆发力",
                 opportunityBody: "BSM 需要把 POP 更新、主推 SKU、价格带和大促节奏绑在一起，重点做高流量月份的主力款曝光与补货，争取把自然陈列流量转成更高的销量和销售额贡献。",
                 nextStepTitle: "用月末提醒机制提升下单密度",
-                nextStepBody: "既然已和 buyer 对齐提高下单密度，后续每个月末都检查是否下单，必要时邮件提醒，并同步跟进 E320 / T921 / NCE 切换。"
+                nextStepBody: "既然已和 buyer 对齐提高下单密度，后续每个月末都检查是否下单，必要时邮件提醒，并同步跟进 E320 / T921 / NCE 切换。BSM 当前最需要解决的不是单次猛补，而是把随机补货慢慢拉回到更可管理的月度节奏。"
             }
         },
         promoCalendar: [
