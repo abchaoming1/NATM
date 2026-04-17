@@ -105,7 +105,7 @@
                 setup: "沿用当前流程，无额外新品 setup 备注",
                 popSize: "120cm",
                 popFormatLabel: "120cm",
-                popSkus: ["E310", "T920", "S803", "S710", "S820", "S821"],
+                popSkus: ["E310", "T920", "S803", "S710", "S820", "S821", "OpenComm2"],
                 popVisualSrc: "assets/natm-120cm-pop-example.jpg",
                 popVisualAlt: "NFM 120cm POP reference",
                 popVisualNote: "NFM 当前 POP 以这类 120cm 一体式陈列为主",
@@ -195,7 +195,7 @@
             targetCombos: [
                 { channelKey: "nfm", skus: ["E320", "T921", "S803", "S710", "S820", "S821"] },
                 { channelKey: "rcw", skus: ["S820", "S821", "T921", "E320", "S710"] },
-                { channelKey: "bsm", skus: ["E320", "T921", "S803", "S710", "S820", "S821"] }
+                { channelKey: "bsm", skus: ["E320", "T921", "S803", "S710", "S820", "S821", "OpenComm2"] }
             ],
             augustReplacements: [
                 { channelKey: "nfm", currentSku: "S803", nextSku: "NCE（OpenRun 2）" },
@@ -1906,6 +1906,7 @@
             { date: "ABT", title: "已通过 2-3 月 exclusive store only 促销", text: "具体促销信息已放进 Abt 文件夹；渠道支持度较高，正在积极尝试把全旗舰、全色放进店内。", status: "已推进", owner: "ABT Channel", priority: "持续跟进" },
             { date: "BSM", title: "提高下单密度", text: "已与 buyer 达成一致，后续提高下单密度；若每个月末仍未下单，可以邮件提醒。", status: "执行中", owner: "Buyer Follow-up", priority: "中高" },
             { date: "BSM", title: "4月已上 T921", text: "BSM 当前 POP 结构已在 4 月完成 T920 -> T921 的切换，后续要继续观察新品切换后的卖出表现。", status: "已完成", owner: "POP Update", priority: "已落地" },
+            { date: "BSM", title: "4/17 新增 OpenComm2 需求结构", text: "BSM 在 4/17 新增了 OpenComm2 的产品结构需求，当前已纳入渠道需求结构，后续继续跟进 buyer 对应的承接与上样节奏。", status: "新增需求", owner: "Product Structure", priority: "持续跟进" },
             { date: "RCW", title: "争取从季度下单改成月度下单", text: "当前渠道以季度性下单为主，会影响库存状况；后续可与 buyer 开会建议改为按月下单。", status: "待会议", owner: "Buyer Meeting", priority: "高优先级" },
             { date: "RCW", title: "补签独立店与 Rep（Blair）合作合同", text: "现有年度合作合同未包含 RCW，需要单独签署对应合作合同。", status: "待处理", owner: "Contract", priority: "高优先级" },
             { date: "RCW", title: "尝试整合 POP 形式", text: "目前是 4 台分散的 POP，后续可争取整合为 1 台 90cm POP。", status: "推进中", owner: "POP Upgrade", priority: "中高" },
