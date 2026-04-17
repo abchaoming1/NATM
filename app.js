@@ -1,5 +1,6 @@
 (function() {
     const WORKBOOK_ID = "1-3zBJZvum5M7yLED_ZUbpMugmkWZeTCFZVAvs1F4QqE";
+    const CHANNEL_PRODUCT_PRICING = window.CHANNEL_PRODUCT_PRICING || {};
     const PROMO_CALENDARS = {
         nfm: {
             source: "20260414 Shokz Q2 Promotion Calendar-NFM.xlsx",
@@ -627,6 +628,60 @@
             return CONFIG.adjustmentLabel;
         }
         return value.split("-")[0] || CONFIG.adjustmentLabel;
+    }
+
+    function normalizeProductKey(rawSku) {
+        return String(rawSku || "").trim().toUpperCase();
+    }
+
+    function priceTupleToObject(tuple) {
+        if (!Array.isArray(tuple) || !tuple.length) {
+            return { msrp: null, po: null };
+        }
+        const msrp = Number(tuple[0]);
+        const po = Number(tuple[1]);
+        return {
+            msrp: Number.isFinite(msrp) ? msrp : null,
+            po: Number.isFinite(po) ? po : null
+        };
+    }
+
+    function buildExactPriceCandidates(rawSku) {
+        const key = normalizeProductKey(rawSku);
+        if (!key) {
+            return [];
+        }
+        const candidates = [key];
+        if (/\-US$/i.test(key)) {
+            candidates.push(key.replace(/\-US$/i, ""));
+        } else if (/\-/.test(key)) {
+            candidates.push(key + "-US");
+        }
+        return candidates;
+    }
+
+    function lookupProductPrice(channelKey, row) {
+        const pricing = CHANNEL_PRODUCT_PRICING[channelKey] || {};
+        const exactPricing = pricing.exact || {};
+        const basePricing = pricing.base || {};
+        const exactCandidates = row.level === "specific" ? buildExactPriceCandidates(row.sku) : [];
+
+        for (let index = 0; index < exactCandidates.length; index += 1) {
+            if (exactPricing[exactCandidates[index]]) {
+                return priceTupleToObject(exactPricing[exactCandidates[index]]);
+            }
+        }
+
+        const baseKey = normalizeProductKey(row.baseSku || baseSku(row.sku));
+        if (basePricing[baseKey]) {
+            return priceTupleToObject(basePricing[baseKey]);
+        }
+
+        return { msrp: null, po: null };
+    }
+
+    function formatProductPrice(value) {
+        return Number.isFinite(value) ? formatCurrency(value, 1) : "—";
     }
 
     function buildMonthRange(records) {
@@ -1352,6 +1407,8 @@
                     "<th>排名</th>",
                     "<th>SKU</th>",
                     "<th>记录层级</th>",
+                    "<th>MSRP</th>",
+                    "<th>PO Price</th>",
                     "<th>销量</th>",
                     "<th>销量占比</th>",
                     "<th>销售额</th>",
@@ -1367,6 +1424,7 @@
                         const isExpanded = row.level === "base" ? isMixBaseExpanded(channel.key, row.baseSku) : false;
                         const isHidden = row.level === "specific" && !isMixBaseExpanded(channel.key, row.baseSku);
                         const rowClass = row.level === "specific" ? "mix-detail-row" : "mix-base-row";
+                        const pricing = lookupProductPrice(channel.key, row);
                         const skuCell = row.level === "specific"
                             ? "<span class=\"mix-sku-sub\">" + escapeHtml(row.sku) + "</span>"
                             : [
@@ -1382,6 +1440,8 @@
                             "<td>" + (row.level === "base" ? renderRankIndex(row.rank) : "") + "</td>",
                             "<td>" + skuCell + "</td>",
                             "<td>" + renderMixLevelCell(row.level, isPopSku) + "</td>",
+                            "<td>" + formatProductPrice(pricing.msrp) + "</td>",
+                            "<td>" + formatProductPrice(pricing.po) + "</td>",
                             "<td>" + formatNumber(row.qty) + "</td>",
                             "<td>" + qtyShare + "</td>",
                             "<td>" + formatCurrency(row.sales) + "</td>",
