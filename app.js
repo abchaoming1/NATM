@@ -636,13 +636,15 @@
 
     function priceTupleToObject(tuple) {
         if (!Array.isArray(tuple) || !tuple.length) {
-            return { msrp: null, po: null };
+            return { msrp: null, po: null, net: null };
         }
         const msrp = Number(tuple[0]);
         const po = Number(tuple[1]);
+        const net = Number(tuple[2]);
         return {
             msrp: Number.isFinite(msrp) ? msrp : null,
-            po: Number.isFinite(po) ? po : null
+            po: Number.isFinite(po) ? po : null,
+            net: Number.isFinite(net) ? net : null
         };
     }
 
@@ -677,7 +679,7 @@
             return priceTupleToObject(basePricing[baseKey]);
         }
 
-        return { msrp: null, po: null };
+        return { msrp: null, po: null, net: null };
     }
 
     function formatProductPrice(value) {
@@ -1418,6 +1420,7 @@
                     "<th>记录层级</th>",
                     "<th>MSRP</th>",
                     "<th>PO Price</th>",
+                    channel.key === "nfm" ? "<th>Net cost</th>" : "",
                     "<th>销量</th>",
                     "<th>销量占比</th>",
                     "<th>销售额</th>",
@@ -1451,6 +1454,7 @@
                             "<td>" + renderMixLevelCell(row.level, isPopSku) + "</td>",
                             "<td>" + formatProductPrice(pricing.msrp) + "</td>",
                             "<td>" + formatProductPrice(pricing.po) + "</td>",
+                            channel.key === "nfm" ? "<td>" + formatProductPrice(pricing.net) + "</td>" : "",
                             "<td>" + formatNumber(row.qty) + "</td>",
                             "<td>" + qtyShare + "</td>",
                             "<td>" + formatCurrency(row.sales) + "</td>",
