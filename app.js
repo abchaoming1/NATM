@@ -339,6 +339,12 @@
             abt: { qty: 1800, sales: 185000 },
             bsm: { qty: 3800, sales: 400000 }
         },
+        storeCounts: {
+            nfm: 4,
+            rcw: 10,
+            abt: 1,
+            bsm: 11
+        },
         channelResearch: {
             nfm: {
                 profileTitle: "区域目的地大店，家庭整单购物心智强",
@@ -2179,6 +2185,10 @@
             const targetSalesYoY2026 = calculateGrowth(target2026.sales, dashboard.yearlyTotals[2025].sales);
             const ytdQtyYoY2026 = calculateGrowth(dashboard.samePeriodByYear[2026].qty, dashboard.samePeriodByYear[2025].qty);
             const ytdSalesYoY2026 = calculateGrowth(dashboard.samePeriodByYear[2026].sales, dashboard.samePeriodByYear[2025].sales);
+            const storeCount = CONFIG.storeCounts[channel.key] || 1;
+            const coveredMonths = Math.max(1, dashboard.latestMonthNumber || 1);
+            const storeMonthlyQty = dashboard.samePeriodByYear[2026].qty / storeCount / coveredMonths;
+            const storeMonthlySales = dashboard.samePeriodByYear[2026].sales / storeCount / coveredMonths;
             return [
                 "<tr>",
                 "<td><strong>" + channel.label + "</strong></td>",
@@ -2194,6 +2204,8 @@
                 "<td>" + renderDelta(targetSalesYoY2026) + "</td>",
                 "<td>" + formatNumber(dashboard.samePeriodByYear[2026].qty) + "</td>",
                 "<td>" + formatCurrency(dashboard.samePeriodByYear[2026].sales) + "</td>",
+                "<td>" + formatNumber(storeMonthlyQty) + "</td>",
+                "<td>" + formatCurrency(storeMonthlySales) + "</td>",
                 "<td>" + renderDelta(ytdQtyYoY2026) + "</td>",
                 "<td>" + renderDelta(ytdSalesYoY2026) + "</td>",
                 "<td>" + dashboard.latestMonthKey + "<br>" + formatCurrency(dashboard.latestMonth.sales) + "</td>",
