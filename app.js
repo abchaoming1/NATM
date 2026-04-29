@@ -767,6 +767,16 @@
         return (monthKeys || []).filter(monthKey => monthIndex(monthKey) >= startIndex);
     }
 
+    function countSoldSkusForMonths(skuMonthly, monthKeys) {
+        return Object.keys(skuMonthly || {}).filter(sku => {
+            if (sku === CONFIG.adjustmentLabel || !isBaseProductSku(sku)) {
+                return false;
+            }
+            const totals = sumMetrics(skuMonthly[sku], monthKeys);
+            return totals.qty > 0 || totals.sales > 0;
+        }).length;
+    }
+
     function isBaseProductSku(sku) {
         return /^[A-Z]\d{3}$/i.test(String(sku || "").trim());
     }
@@ -2081,27 +2091,28 @@
         }
         els.businessOverviewGrid.innerHTML = [
             "<article class=\"info-card business-summary-card\">",
-            "<div class=\"info-card-head\"><div><p class=\"info-kicker\">Overview</p><h3 class=\"info-card-title\">渠道总表</h3><p class=\"info-card-copy\">先用总表快速横向比，再展开单渠道详情看具体商务、POP 和产品结构；单店单月按 2026 YTD / 门店数 / 覆盖月份计算。</p></div><span class=\"info-badge\">Summary</span></div>",
+            "<div class=\"info-card-head\"><div><p class=\"info-kicker\">Overview</p><h3 class=\"info-card-title\">渠道总表</h3><p class=\"info-card-copy\">先用总表快速横向比，再展开单渠道详情看具体商务、POP 和产品结构；销量、销售额和单店单月均按 2026 YTD 口径计算。</p></div><span class=\"info-badge\">Summary</span></div>",
             "<div class=\"table-wrap\">",
             "<table class=\"business-summary-table\">",
-            "<thead><tr><th>渠道</th><th>门店</th><th>商务摘要</th><th>POP形式</th><th>卖出SKU</th><th>累计销量</th><th>销售额</th><th>单店单月销量</th><th>单店单月销售额</th><th>详情</th></tr></thead>",
+            "<thead><tr><th>渠道</th><th>门店</th><th>商务摘要</th><th>POP形式</th><th>2026卖出SKU</th><th>2026累积销量</th><th>2026累积销售额</th><th>单店单月销量</th><th>单店单月销售额</th><th>详情</th></tr></thead>",
             "<tbody>",
             CONFIG.channels.map(channel => {
                 const profile = CONFIG.channelProfiles[channel.key];
                 const dashboard = state.dashboards[channel.key];
-                const productMix = dashboard.productMixSinceStart;
                 const coveredMonths = Math.max(1, dashboard.latestMonthNumber || 1);
-                const storeMonthlyQty = storeMonthlyMetric(dashboard.samePeriodByYear[2026].qty, channel.key, coveredMonths);
-                const storeMonthlySales = storeMonthlyMetric(dashboard.samePeriodByYear[2026].sales, channel.key, coveredMonths);
+                const ytd2026 = dashboard.samePeriodByYear[2026];
+                const ytdSkuCount = countSoldSkusForMonths(dashboard.skuMonthly, dashboard.samePeriodKeys[2026]);
+                const storeMonthlyQty = storeMonthlyMetric(ytd2026.qty, channel.key, coveredMonths);
+                const storeMonthlySales = storeMonthlyMetric(ytd2026.sales, channel.key, coveredMonths);
                 return [
                     "<tr style=\"" + channelStyle(channel) + "\">",
                     "<td><strong>" + escapeHtml(profile.displayName || channel.label) + "</strong><div class=\"table-subcopy\">最新月份 " + escapeHtml(dashboard.latestMonthKey) + "</div></td>",
                     "<td>" + escapeHtml(profile.storeSummary || "—") + "</td>",
                     "<td>" + escapeHtml(joinBusinessTags(profile.businessTags)) + "<div class=\"table-subcopy\">" + escapeHtml(firstContactLine(profile.buyer)) + "</div></td>",
                     "<td>" + escapeHtml(profile.popFormatLabel || profile.popSize) + "</td>",
-                    "<td>" + formatNumber(productMix.items.length) + "</td>",
-                    "<td>" + formatNumber(productMix.totalQty) + "</td>",
-                    "<td>" + formatCurrency(productMix.totalSales) + "</td>",
+                    "<td>" + formatNumber(ytdSkuCount) + "</td>",
+                    "<td>" + formatNumber(ytd2026.qty) + "</td>",
+                    "<td>" + formatCurrency(ytd2026.sales) + "</td>",
                     "<td>" + formatNumber(storeMonthlyQty, 1) + "</td>",
                     "<td>" + formatCurrency(storeMonthlySales, 1) + "</td>",
                     "<td><button class=\"business-detail-btn\" type=\"button\" data-business-channel=\"" + escapeHtml(channel.key) + "\">查看</button></td>",
