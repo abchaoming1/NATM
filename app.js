@@ -616,6 +616,21 @@
         return parts[0] * 12 + parts[1] - 1;
     }
 
+    function monthSpanInclusive(startMonthKey, endMonthKey) {
+        const startIndex = monthIndex(startMonthKey);
+        const endIndex = monthIndex(endMonthKey);
+        if (!Number.isFinite(startIndex) || !Number.isFinite(endIndex) || endIndex < startIndex) {
+            return 1;
+        }
+        return endIndex - startIndex + 1;
+    }
+
+    function storeMonthlyMetric(value, channelKey, monthCount) {
+        const storeCount = Math.max(1, CONFIG.storeCounts[channelKey] || 1);
+        const safeMonthCount = Math.max(1, monthCount || 1);
+        return value / storeCount / safeMonthCount;
+    }
+
     function previousMonthKey(monthKey) {
         const index = monthIndex(monthKey) - 1;
         const year = Math.floor(index / 12);
@@ -1397,6 +1412,9 @@
                 const rows = dashboard ? dashboard.productMixSinceStart.detailedRows : [];
                 const channelLabel = profile.displayName || channel.label;
                 const productMix = dashboard ? dashboard.productMixSinceStart : { totalQty: 0, totalSales: 0 };
+                const mixMonthCount = dashboard ? monthSpanInclusive(CONFIG.structureStartMonth, dashboard.latestMonthKey) : 1;
+                const mixStoreMonthlyQty = storeMonthlyMetric(productMix.totalQty, channel.key, mixMonthCount);
+                const mixStoreMonthlySales = storeMonthlyMetric(productMix.totalSales, channel.key, mixMonthCount);
                 const openAttr = state.activeChannelKey === channel.key ? " open" : "";
 
                 if (!rows.length) {
@@ -1414,7 +1432,7 @@
                     "<details class=\"mix-accordion-item\"" + openAttr + " style=\"" + channelStyle(channel) + "\">",
                     "<summary class=\"mix-accordion-summary\">",
                     "<div class=\"mix-accordion-title\"><strong>" + escapeHtml(channelLabel) + "</strong><span class=\"channel-chip\">NATM</span></div>",
-                    "<div class=\"mix-accordion-meta\"><span>总销量 " + formatNumber(productMix.totalQty) + "</span><span>总销售额 " + formatCurrency(productMix.totalSales) + "</span><span>大类 SKU " + formatNumber(dashboard.productMixSinceStart.items.length) + "</span></div>",
+                    "<div class=\"mix-accordion-meta\"><span>总销量 " + formatNumber(productMix.totalQty) + "</span><span>总销售额 " + formatCurrency(productMix.totalSales) + "</span><span>单店单月销量 " + formatNumber(mixStoreMonthlyQty, 1) + "</span><span>单店单月销售额 " + formatCurrency(mixStoreMonthlySales, 1) + "</span><span>大类 SKU " + formatNumber(dashboard.productMixSinceStart.items.length) + "</span></div>",
                     "</summary>",
                     "<div class=\"mix-accordion-body\">",
                     "<div class=\"table-wrap\">",
@@ -1430,6 +1448,8 @@
                     "<th>销量</th>",
                     "<th>销量占比</th>",
                     "<th>销售额</th>",
+                    "<th>单店单月销量</th>",
+                    "<th>单店单月销售额</th>",
                     "<th>销售额占比</th>",
                     "</tr>",
                     "</thead>",
@@ -1443,6 +1463,8 @@
                         const isHidden = row.level === "specific" && !isMixBaseExpanded(channel.key, row.baseSku);
                         const rowClass = row.level === "specific" ? "mix-detail-row" : "mix-base-row";
                         const pricing = lookupProductPrice(channel.key, row);
+                        const rowStoreMonthlyQty = storeMonthlyMetric(row.qty, channel.key, mixMonthCount);
+                        const rowStoreMonthlySales = storeMonthlyMetric(row.sales, channel.key, mixMonthCount);
                         const skuCell = row.level === "specific"
                             ? "<span class=\"mix-sku-sub\">" + escapeHtml(row.sku) + "</span>"
                             : [
@@ -1464,6 +1486,8 @@
                             "<td>" + formatNumber(row.qty) + "</td>",
                             "<td>" + qtyShare + "</td>",
                             "<td>" + formatCurrency(row.sales) + "</td>",
+                            "<td>" + formatNumber(rowStoreMonthlyQty, 1) + "</td>",
+                            "<td>" + formatCurrency(rowStoreMonthlySales, 1) + "</td>",
                             "<td>" + salesShare + "</td>",
                             "</tr>"
                         ].join("");
@@ -2057,15 +2081,18 @@
         }
         els.businessOverviewGrid.innerHTML = [
             "<article class=\"info-card business-summary-card\">",
-            "<div class=\"info-card-head\"><div><p class=\"info-kicker\">Overview</p><h3 class=\"info-card-title\">渠道总表</h3><p class=\"info-card-copy\">先用总表快速横向比，再展开单渠道详情看具体商务、POP 和产品结构。</p></div><span class=\"info-badge\">Summary</span></div>",
+            "<div class=\"info-card-head\"><div><p class=\"info-kicker\">Overview</p><h3 class=\"info-card-title\">渠道总表</h3><p class=\"info-card-copy\">先用总表快速横向比，再展开单渠道详情看具体商务、POP 和产品结构；单店单月按 2026 YTD / 门店数 / 覆盖月份计算。</p></div><span class=\"info-badge\">Summary</span></div>",
             "<div class=\"table-wrap\">",
             "<table class=\"business-summary-table\">",
-            "<thead><tr><th>渠道</th><th>门店</th><th>商务摘要</th><th>POP形式</th><th>卖出SKU</th><th>累计销量</th><th>销售额</th><th>详情</th></tr></thead>",
+            "<thead><tr><th>渠道</th><th>门店</th><th>商务摘要</th><th>POP形式</th><th>卖出SKU</th><th>累计销量</th><th>销售额</th><th>单店单月销量</th><th>单店单月销售额</th><th>详情</th></tr></thead>",
             "<tbody>",
             CONFIG.channels.map(channel => {
                 const profile = CONFIG.channelProfiles[channel.key];
                 const dashboard = state.dashboards[channel.key];
                 const productMix = dashboard.productMixSinceStart;
+                const coveredMonths = Math.max(1, dashboard.latestMonthNumber || 1);
+                const storeMonthlyQty = storeMonthlyMetric(dashboard.samePeriodByYear[2026].qty, channel.key, coveredMonths);
+                const storeMonthlySales = storeMonthlyMetric(dashboard.samePeriodByYear[2026].sales, channel.key, coveredMonths);
                 return [
                     "<tr style=\"" + channelStyle(channel) + "\">",
                     "<td><strong>" + escapeHtml(profile.displayName || channel.label) + "</strong><div class=\"table-subcopy\">最新月份 " + escapeHtml(dashboard.latestMonthKey) + "</div></td>",
@@ -2075,6 +2102,8 @@
                     "<td>" + formatNumber(productMix.items.length) + "</td>",
                     "<td>" + formatNumber(productMix.totalQty) + "</td>",
                     "<td>" + formatCurrency(productMix.totalSales) + "</td>",
+                    "<td>" + formatNumber(storeMonthlyQty, 1) + "</td>",
+                    "<td>" + formatCurrency(storeMonthlySales, 1) + "</td>",
                     "<td><button class=\"business-detail-btn\" type=\"button\" data-business-channel=\"" + escapeHtml(channel.key) + "\">查看</button></td>",
                     "</tr>"
                 ].join("");
@@ -2185,10 +2214,9 @@
             const targetSalesYoY2026 = calculateGrowth(target2026.sales, dashboard.yearlyTotals[2025].sales);
             const ytdQtyYoY2026 = calculateGrowth(dashboard.samePeriodByYear[2026].qty, dashboard.samePeriodByYear[2025].qty);
             const ytdSalesYoY2026 = calculateGrowth(dashboard.samePeriodByYear[2026].sales, dashboard.samePeriodByYear[2025].sales);
-            const storeCount = CONFIG.storeCounts[channel.key] || 1;
             const coveredMonths = Math.max(1, dashboard.latestMonthNumber || 1);
-            const storeMonthlyQty = dashboard.samePeriodByYear[2026].qty / storeCount / coveredMonths;
-            const storeMonthlySales = dashboard.samePeriodByYear[2026].sales / storeCount / coveredMonths;
+            const storeMonthlyQty = storeMonthlyMetric(dashboard.samePeriodByYear[2026].qty, channel.key, coveredMonths);
+            const storeMonthlySales = storeMonthlyMetric(dashboard.samePeriodByYear[2026].sales, channel.key, coveredMonths);
             return [
                 "<tr>",
                 "<td><strong>" + channel.label + "</strong></td>",
@@ -2204,8 +2232,8 @@
                 "<td>" + renderDelta(targetSalesYoY2026) + "</td>",
                 "<td>" + formatNumber(dashboard.samePeriodByYear[2026].qty) + "</td>",
                 "<td>" + formatCurrency(dashboard.samePeriodByYear[2026].sales) + "</td>",
-                "<td>" + formatNumber(storeMonthlyQty) + "</td>",
-                "<td>" + formatCurrency(storeMonthlySales) + "</td>",
+                "<td>" + formatNumber(storeMonthlyQty, 1) + "</td>",
+                "<td>" + formatCurrency(storeMonthlySales, 1) + "</td>",
                 "<td>" + renderDelta(ytdQtyYoY2026) + "</td>",
                 "<td>" + renderDelta(ytdSalesYoY2026) + "</td>",
                 "<td>" + dashboard.latestMonthKey + "<br>" + formatCurrency(dashboard.latestMonth.sales) + "</td>",
