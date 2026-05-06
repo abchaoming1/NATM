@@ -285,6 +285,56 @@
                     }
                 ]
             },
+            samplePopRequestPlan: {
+                kicker: "NATM整体",
+                title: "样品&POP的提需计划",
+                description: "把 NATM 四个渠道的新品样品、POP 制作/更新、buyer 对接和到店确认放在同一个计划里管理。",
+                badge: "Samples + POP",
+                wide: true,
+                rows: [
+                    {
+                        title: "样品提需总盘",
+                        metrics: [
+                            { label: "OpenDots Air", value: "8个已提需" },
+                            { label: "OpenDots 2", value: "Kevin保管" },
+                            { label: "OpenRun 2", value: "待提需" }
+                        ],
+                        text: "OpenDots Air 已按四个渠道黑色、紫色各一个完成提需；OpenDots 2 已有样品，当前由 Kevin 保管，等待后续交接；OpenRun 2 仍需补齐提需。",
+                        meta: "动作：确认样品到手时间、保管人、预计送样对象和 buyer 沟通时间。"
+                    },
+                    {
+                        title: "6/4 POP切换提需",
+                        metrics: [
+                            { label: "涉及渠道", value: "NFM / RCW / BSM" },
+                            { label: "耳夹线", value: "E310 -> E320" },
+                            { label: "OpenFit", value: "T920 -> T921" }
+                        ],
+                        text: "围绕 6/4 的 E320（OpenDots 2）和 T921 切换，提前确认 POP 物料、图片、SKU 展示位、渠道尺寸和到店节奏。",
+                        meta: "动作：先锁定需求清单，再跟进制作、发货、到店与门店执行照片。"
+                    },
+                    {
+                        title: "八月底 POP / 新品预提需",
+                        metrics: [
+                            { label: "NFM", value: "S803 -> NCE" },
+                            { label: "BSM", value: "S803 -> NCE" },
+                            { label: "OpenDots Air", value: "待排期" }
+                        ],
+                        text: "NFM 和 BSM 计划将 S803 替换为 NCE（OpenRun 2），同时预留 OpenDots Air 若提前上市时的样品和 POP 提需窗口。",
+                        meta: "动作：等 GTM 时间确认后，倒推样品、POP、setup、buyer preview 的截止日期。"
+                    },
+                    {
+                        title: "RCW POP专项",
+                        metrics: [
+                            { label: "T010 POP", value: "10个已下单" },
+                            { label: "到店时间", value: "4月底" },
+                            { label: "升级方向", value: "90cm整合POP" }
+                        ],
+                        text: "RCW 已下单 10 个 T010 单独 POP，预计 4 月底到店；后续继续争取把当前 4 台分散 POP 整合为 1 台 90cm POP。",
+                        meta: "动作：到店后收集门店照片，并把效果反馈用于 90cm POP 升级提案。"
+                    }
+                ],
+                footnote: "后续建议每次新增样品或 POP 需求时，同步补上 owner、截止日期、当前状态和下一步动作。"
+            },
             costMargin: {
                 kicker: "产品结构",
                 title: "产品结构及成本及毛利率",
@@ -1543,7 +1593,7 @@
     function renderInfoCard(module) {
         const badge = module.badge || (module.rows && module.rows.length ? "已更新" : "待补充");
         return [
-            "<article class=\"info-card\">",
+            "<article class=\"info-card" + (module.wide ? " info-card-wide" : "") + "\">",
             "<div class=\"info-card-head\">",
             "<div>",
             module.kicker ? "<p class=\"info-kicker\">" + escapeHtml(module.kicker) + "</p>" : "",
@@ -1650,6 +1700,7 @@
             return;
         }
         els.businessSupportGrid.innerHTML = [
+            CONFIG.businessPlaceholders.samplePopRequestPlan,
             CONFIG.businessPlaceholders.costMargin,
             CONFIG.businessPlaceholders.sampling
         ].map(renderInfoCard).join("");
