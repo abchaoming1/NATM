@@ -260,6 +260,11 @@
                             meta: "渠道：BSM | 状态：执行中 | 优先级：中高"
                         },
                         {
+                            title: "Abt 补提 NT 需求并准备上量",
+                            note: "Abt 的 NT 有上量机会，但之前没有提前提需，当前没有可分配给 Abt 的量；需要补齐提需并同步可供货节奏。",
+                            meta: "渠道：Abt | 状态：待提需 | 优先级：高"
+                        },
+                        {
                             title: "补齐 OpenRun 2 的样品提需与送样动作",
                             note: "OpenDots 2 已有样品，OpenRun 2 仍缺提需，需要尽快补齐并和 buyer 对上送样节奏。",
                             meta: "渠道：All | 状态：待补齐 | 优先级：高"
@@ -421,7 +426,7 @@
                 opportunityTitle: "走精品化和顾问式成交，优先做高质量产出",
                 opportunityBody: "Abt 更适合做少而精的结构优化，集中火力推高 ASP 主力款和具备明确卖点的新型号，通过导购教育、场景话术和本地化活动，拉高单点产出而不是盲目铺量。",
                 nextStepTitle: "承接 exclusive 促销结果推进全旗舰入店",
-                nextStepBody: "复盘 2-3 月 exclusive store only 促销效果，继续争取全旗舰、全色在店内完整呈现，并提前准备后续新品 setup。对 Abt 来说，更重要的是提前在上半年铺好动作，避免再出现 5-6 月明显断档、下半年再重新拉起的节奏。"
+                nextStepBody: "复盘 2-3 月 exclusive store only 促销效果，继续争取全旗舰、全色在店内完整呈现，并提前准备后续新品 setup。Abt 的 NT 有上量机会，但之前没有提前提需，当前没有可分配给 Abt 的量，需要尽快补齐提需并同步可供货节奏。"
             },
             bsm: {
                 profileTitle: "东南部价格驱动大卖场，促销和现货感知更强",
@@ -2069,6 +2074,7 @@
             { date: "NFM", title: "4月已上 T921", text: "NFM 当前 POP 结构已在 4 月完成 T920 -> T921 的切换，后续重点看 sell-through 与顾客反馈。", status: "已完成", owner: "POP Update", priority: "已落地" },
             { date: "ABT", title: "已通过 2-3 月 exclusive store only 促销", text: "具体促销信息已放进 Abt 文件夹；渠道支持度较高，正在积极尝试把全旗舰、全色放进店内。", status: "已推进", owner: "ABT Channel", priority: "持续跟进" },
             { date: "ABT", title: "Abt 捐赠活动已确认", text: "Abt 当前新增捐赠活动，计划捐赠 12 个耳机；后续继续跟进捐赠执行和对应渠道反馈。", status: "推进中", owner: "Donation Support", priority: "中高" },
+            { date: "ABT", title: "补提 NT 需求并准备上量", text: "Abt 的 NT 有上量机会，但之前没有提前提需，导致当前没有量可以放给 Abt；需要尽快补齐提需，并同步供应节奏和 buyer 预期。", status: "待提需", owner: "Demand Planning", priority: "高优先级" },
             { date: "BSM", title: "提高下单密度", text: "已与 buyer 达成一致，后续提高下单密度；若每个月末仍未下单，可以邮件提醒。", status: "执行中", owner: "Buyer Follow-up", priority: "中高" },
             { date: "BSM", title: "4月已上 T921", text: "BSM 当前 POP 结构已在 4 月完成 T920 -> T921 的切换，后续要继续观察新品切换后的卖出表现。", status: "已完成", owner: "POP Update", priority: "已落地" },
             { date: "BSM", title: "4/17 新增 OpenComm2 需求结构", text: "BSM 在 4/17 新增了 OpenComm2 的产品结构需求，当前已纳入渠道需求结构，后续继续跟进 buyer 对应的承接与上样节奏。", status: "新增需求", owner: "Product Structure", priority: "持续跟进" },
