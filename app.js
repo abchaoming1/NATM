@@ -562,6 +562,32 @@
         }).format(value);
     }
 
+    function formatCompactNumber(value) {
+        const numeric = Number(value) || 0;
+        const sign = numeric < 0 ? "-" : "";
+        const absolute = Math.abs(numeric);
+        if (absolute >= 1000000) {
+            return sign + formatNumber(absolute / 1000000, 1) + "M";
+        }
+        if (absolute >= 1000) {
+            return sign + formatNumber(absolute / 1000, 1) + "k";
+        }
+        return formatNumber(numeric);
+    }
+
+    function formatCompactCurrency(value) {
+        const numeric = Number(value) || 0;
+        const sign = numeric < 0 ? "-" : "";
+        const absolute = Math.abs(numeric);
+        if (absolute >= 1000000) {
+            return sign + "$" + formatNumber(absolute / 1000000, 1) + "M";
+        }
+        if (absolute >= 1000) {
+            return sign + "$" + formatNumber(absolute / 1000, 1) + "k";
+        }
+        return sign + "$" + formatNumber(absolute);
+    }
+
     function formatPercent(value, absolute) {
         if (value === null || value === undefined || !Number.isFinite(value)) {
             return "—";
@@ -2575,7 +2601,7 @@
                 top: 0,
                 textStyle: { color: CONFIG.colors.muted }
             },
-            grid: { left: 54, right: 54, top: 42, bottom: 50 },
+            grid: { left: 58, right: 58, top: 78, bottom: 56 },
             xAxis: {
                 type: "category",
                 data: dashboard.monthKeys,
@@ -2615,6 +2641,17 @@
                         color: dashboard.channel.accent,
                         borderRadius: [8, 8, 0, 0]
                     },
+                    label: {
+                        show: true,
+                        position: "top",
+                        distance: 6,
+                        color: dashboard.channel.accent,
+                        fontSize: 10,
+                        fontWeight: 700,
+                        formatter: function(params) {
+                            return formatCompactCurrency(params.value);
+                        }
+                    },
                     data: dashboard.monthKeys.map(monthKey => dashboard.monthlyTotals[monthKey].sales)
                 },
                 {
@@ -2625,6 +2662,20 @@
                     symbolSize: 7,
                     lineStyle: { width: 3, color: CONFIG.colors.sales },
                     itemStyle: { color: CONFIG.colors.sales },
+                    label: {
+                        show: true,
+                        position: "top",
+                        distance: 10,
+                        color: CONFIG.colors.sales,
+                        fontSize: 10,
+                        fontWeight: 700,
+                        formatter: function(params) {
+                            return formatCompactNumber(params.value);
+                        }
+                    },
+                    labelLayout: {
+                        hideOverlap: true
+                    },
                     data: dashboard.monthKeys.map(monthKey => dashboard.monthlyTotals[monthKey].qty)
                 }
             ]
