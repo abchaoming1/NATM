@@ -536,12 +536,34 @@
         if (value === null || value === undefined) {
             return 0;
         }
-        const cleaned = String(value).trim().replace(/,/g, "").replace(/\$/g, "");
+        let cleaned = String(value).trim();
         if (!cleaned) {
             return 0;
         }
+        let negative = false;
+        if (/^\(.*\)$/.test(cleaned)) {
+            negative = true;
+            cleaned = cleaned.slice(1, -1);
+        }
+        cleaned = cleaned.replace(/[\s,\$]/g, "").replace(/[^0-9.\-]/g, "");
+        if (!cleaned || cleaned === "-" || cleaned === "." || cleaned === "-.") {
+            return 0;
+        }
         const parsed = Number(cleaned);
-        return Number.isFinite(parsed) ? parsed : 0;
+        if (!Number.isFinite(parsed)) {
+            return 0;
+        }
+        return negative && parsed > 0 ? -parsed : parsed;
+    }
+
+    function parseNumberFromFields(row, fieldNames) {
+        for (let index = 0; index < fieldNames.length; index += 1) {
+            const value = row[fieldNames[index]];
+            if (value !== null && value !== undefined && String(value).trim()) {
+                return parseNumber(value);
+            }
+        }
+        return 0;
     }
 
     function formatNumber(value, digits) {
@@ -977,8 +999,8 @@
 
         const rawSku = String(row.SKU || "").trim();
         const specificSku = String(row["Specific SKU"] || "").trim();
-        const qty = parseNumber(row["Total Quantity Sold"]);
-        const sales = parseNumber(row["Total Sales"]);
+        const qty = parseNumberFromFields(row, ["Total Quantity Sold", "Qty"]);
+        const sales = parseNumberFromFields(row, ["Total Sales", "Sales"]);
         if (!rawSku && !specificSku && qty === 0 && sales === 0) {
             return null;
         }
