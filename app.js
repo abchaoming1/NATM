@@ -110,14 +110,14 @@
                 popVisualSrc: "assets/natm-120cm-pop-example.jpg",
                 popVisualAlt: "NFM 120cm POP reference",
                 popVisualNote: "NFM 当前 POP 以这类 120cm 一体式陈列为主",
-                storeSummary: "4家主门店",
+                storeSummary: "4家主门店 / 3家在售",
                 storeRegions: [
-                    "NE: Omaha",
-                    "KS: Kansas City",
-                    "IA: Clive (Des Moines)",
-                    "TX: The Colony (Dallas-Fort Worth)"
+                    "NE: Omaha（暂未销售）",
+                    "KS: Kansas City（在售）",
+                    "IA: Clive / Des Moines（在售）",
+                    "TX: The Colony / Dallas-Fort Worth（在售）"
                 ],
-                storeNote: "另有 Omaha 的 Mrs. B's Clearance & Outlet"
+                storeNote: "单店单月效率按 3 家在售门店计算；Omaha 主店暂未销售，另有 Omaha 的 Mrs. B's Clearance & Outlet 不计入在售门店。"
             },
             rcw: {
                 displayName: "RCW",
@@ -395,7 +395,7 @@
             bsm: { qty: 3800, sales: 400000 }
         },
         storeCounts: {
-            nfm: 4,
+            nfm: 3,
             rcw: 10,
             abt: 1,
             bsm: 11
@@ -403,7 +403,7 @@
         channelResearch: {
             nfm: {
                 profileTitle: "区域目的地大店，家庭整单购物心智强",
-                profileBody: "NFM 官方资料显示其以家具、家电、电子一站式大卖场运营，四个核心卖场拥有超大 showroom 与完整 electronics assortment；结合 PPT 里“大店流量高、停留时间长、耳机专区成熟”的结论，更适合做体验驱动成交。按近两年的月度表现看，NFM 的补货/下单节奏也是四个渠道里最健康的一条线，多数月份都有连续动作，更像按节奏滚动补货，而不是一次性猛补。",
+                profileBody: "NFM 官方资料显示其以家具、家电、电子一站式大卖场运营；当前四家主门店中有三家在售，Omaha 主店暂未销售。在售门店拥有超大 showroom 与完整 electronics assortment；结合 PPT 里“大店流量高、停留时间长、耳机专区成熟”的结论，更适合做体验驱动成交。按近两年的月度表现看，NFM 的补货/下单节奏也是四个渠道里最健康的一条线，多数月份都有连续动作，更像按节奏滚动补货，而不是一次性猛补。",
                 persona: "以家庭决策型客群为主，包含搬家、装修、整屋升级以及会在同一次进店中顺带比较音频产品的中高客单消费者。",
                 opportunityTitle: "把试听体验和家庭升级场景绑定，放大高客单转化",
                 opportunityBody: "继续用 POP + 主销英雄 SKU 稳住露出，同时把 OpenDots 2、T921 这类新品放在“家居升级 / TV / 健身 / 户外”联动场景里做转化，争取从单纯陈列升级到体验成交。七八月还有一个 POP 快闪店机会，目前由 Kristen 策划、Raymond 辅助推进。",
