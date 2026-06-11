@@ -490,8 +490,11 @@
         selectedPromoChannel: "all",
         selectedSkuByChannel: {},
         expandedMixBases: {},
+        actionBoard: null,
         charts: {}
     };
+
+    const ACTION_BOARD_STORAGE_KEY = "natm-action-board-v1";
 
     const els = {
         eyebrow: document.querySelector(".eyebrow"),
@@ -1354,9 +1357,156 @@
         }).join("") + "</div>";
     }
 
+    function buildDefaultActionBoard() {
+        return {
+            version: 1,
+            modules: (CONFIG.businessPlaceholders.topActions || []).map((module, moduleIndex) => {
+                const moduleId = "top-action-" + moduleIndex;
+                return {
+                    id: moduleId,
+                    kicker: module.kicker || "",
+                    title: module.title || "",
+                    description: module.description || "",
+                    badge: module.badge || "Checklist",
+                    rows: (module.rows || []).map((item, itemIndex) => {
+                        return {
+                            id: moduleId + "-item-" + itemIndex,
+                            title: item.title || "",
+                            note: item.note || item.text || "",
+                            meta: item.meta || ""
+                        };
+                    })
+                };
+            }),
+            history: [],
+            deletedIds: []
+        };
+    }
+
+    function normalizeActionBoard(savedBoard) {
+        const defaultBoard = buildDefaultActionBoard();
+        const savedModules = Array.isArray(savedBoard && savedBoard.modules) ? savedBoard.modules : [];
+        const savedHistory = Array.isArray(savedBoard && savedBoard.history) ? savedBoard.history : [];
+        const deletedIds = new Set(Array.isArray(savedBoard && savedBoard.deletedIds) ? savedBoard.deletedIds : []);
+        const historySourceIds = new Set(savedHistory.map(item => item.sourceTaskId).filter(Boolean));
+        const normalizedModules = defaultBoard.modules.map(defaultModule => {
+            const savedModule = savedModules.find(module => module.id === defaultModule.id) || {};
+            const savedRows = Array.isArray(savedModule.rows) ? savedModule.rows : [];
+            const rowIds = new Set(savedRows.map(item => item.id));
+            const mergedRows = savedRows.slice();
+
+            defaultModule.rows.forEach(defaultRow => {
+                if (!rowIds.has(defaultRow.id) && !deletedIds.has(defaultRow.id) && !historySourceIds.has(defaultRow.id)) {
+                    mergedRows.push(defaultRow);
+                }
+            });
+
+            return {
+                id: defaultModule.id,
+                kicker: defaultModule.kicker,
+                title: defaultModule.title,
+                description: defaultModule.description,
+                badge: defaultModule.badge,
+                rows: mergedRows
+            };
+        });
+
+        return {
+            version: 1,
+            modules: normalizedModules,
+            history: savedHistory,
+            deletedIds: Array.from(deletedIds)
+        };
+    }
+
+    function ensureActionBoard() {
+        if (state.actionBoard) {
+            return state.actionBoard;
+        }
+
+        try {
+            const saved = JSON.parse(window.localStorage.getItem(ACTION_BOARD_STORAGE_KEY) || "null");
+            state.actionBoard = normalizeActionBoard(saved);
+        } catch (error) {
+            console.warn("Failed to read NATM action board storage", error);
+            state.actionBoard = buildDefaultActionBoard();
+        }
+
+        saveActionBoard();
+        return state.actionBoard;
+    }
+
+    function saveActionBoard() {
+        if (!state.actionBoard) {
+            return;
+        }
+        try {
+            window.localStorage.setItem(ACTION_BOARD_STORAGE_KEY, JSON.stringify(state.actionBoard));
+        } catch (error) {
+            console.warn("Failed to save NATM action board storage", error);
+        }
+    }
+
+    function createActionId(prefix) {
+        return prefix + "-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 8);
+    }
+
+    function findActionModule(moduleId) {
+        const board = ensureActionBoard();
+        return board.modules.find(module => module.id === moduleId) || null;
+    }
+
+    function findActionItem(moduleId, itemId) {
+        const module = findActionModule(moduleId);
+        if (!module) {
+            return { module: null, item: null, index: -1 };
+        }
+        const index = module.rows.findIndex(item => item.id === itemId);
+        return {
+            module: module,
+            item: index >= 0 ? module.rows[index] : null,
+            index: index
+        };
+    }
+
+    function updateDeletedActionId(taskId, shouldDelete) {
+        const board = ensureActionBoard();
+        const deletedIds = new Set(board.deletedIds || []);
+        if (shouldDelete) {
+            deletedIds.add(taskId);
+        } else {
+            deletedIds.delete(taskId);
+        }
+        board.deletedIds = Array.from(deletedIds);
+    }
+
+    function promptActionFields(initial) {
+        const title = window.prompt("任务标题", initial.title || "");
+        if (title === null) {
+            return null;
+        }
+        if (!title.trim()) {
+            window.alert("标题不能为空。");
+            return null;
+        }
+        const note = window.prompt("任务说明", initial.note || "");
+        if (note === null) {
+            return null;
+        }
+        const meta = window.prompt("补充信息（如：渠道 / 状态 / 优先级）", initial.meta || "");
+        if (meta === null) {
+            return null;
+        }
+        return {
+            title: title.trim(),
+            note: note.trim(),
+            meta: meta.trim()
+        };
+    }
+
     function renderChecklistCard(module) {
-        const items = module.checklistItems || module.rows || [];
-        const emptyText = module.body || "鏆傛椂绌虹潃";
+        const items = module.rows || [];
+        const emptyText = module.body || "暂时空着";
         return [
             "<article class=\"info-card checklist-card\">",
             "<div class=\"info-card-head\">",
@@ -1365,18 +1515,25 @@
             "<h3 class=\"info-card-title\">" + escapeHtml(module.title) + "</h3>",
             module.description ? "<p class=\"info-card-copy\">" + escapeHtml(module.description) + "</p>" : "",
             "</div>",
+            "<div class=\"action-card-tools\">",
             "<span class=\"info-badge\">" + escapeHtml(module.badge || "Checklist") + "</span>",
+            "<button class=\"action-mini-btn primary\" type=\"button\" data-action-add=\"" + escapeHtml(module.id) + "\">新增</button>",
+            "</div>",
             "</div>",
             items.length ? [
                 "<div class=\"checklist-list\">",
                 items.map(item => {
                     return [
-                        "<div class=\"checklist-item" + (item.done ? " done" : "") + "\">",
-                        "<span class=\"checklist-box\" aria-hidden=\"true\"></span>",
+                        "<div class=\"checklist-item\" data-action-item=\"" + escapeHtml(item.id) + "\">",
+                        "<button class=\"checklist-box\" type=\"button\" aria-label=\"完成 " + escapeHtml(item.title) + "\" data-action-complete=\"" + escapeHtml(item.id) + "\" data-action-module=\"" + escapeHtml(module.id) + "\"></button>",
                         "<div class=\"checklist-copy\">",
                         "<strong>" + escapeHtml(item.title) + "</strong>",
                         item.note ? "<span class=\"checklist-note\">" + escapeHtml(item.note) + "</span>" : "",
                         item.meta ? "<span>" + escapeHtml(item.meta) + "</span>" : "",
+                        "</div>",
+                        "<div class=\"checklist-actions\">",
+                        "<button class=\"action-mini-btn\" type=\"button\" data-action-edit=\"" + escapeHtml(item.id) + "\" data-action-module=\"" + escapeHtml(module.id) + "\">编辑</button>",
+                        "<button class=\"action-mini-btn danger\" type=\"button\" data-action-delete=\"" + escapeHtml(item.id) + "\" data-action-module=\"" + escapeHtml(module.id) + "\">删除</button>",
                         "</div>",
                         "</div>"
                     ].join("");
@@ -1384,6 +1541,49 @@
                 "</div>"
             ].join("") : "<div class=\"checklist-empty\">" + escapeHtml(emptyText) + "</div>",
             "</article>"
+        ].join("");
+    }
+
+    function renderActionHistory(history) {
+        const items = (history || []).slice().sort((left, right) => {
+            return String(right.completedAt || "").localeCompare(String(left.completedAt || ""));
+        });
+
+        return [
+            "<details class=\"info-card action-history-card\">",
+            "<summary class=\"action-history-summary\">",
+            "<div>",
+            "<p class=\"info-kicker\">历史沉淀</p>",
+            "<h3 class=\"info-card-title\">历史完成事件</h3>",
+            "<p class=\"info-card-copy\">点击展开后可以查看已完成动作，也可以恢复为待办或删除历史记录。</p>",
+            "</div>",
+            "<span class=\"info-badge\">" + formatNumber(items.length) + " completed</span>",
+            "</summary>",
+            items.length ? [
+                "<div class=\"action-history-toolbar\">",
+                "<button class=\"action-mini-btn danger\" type=\"button\" data-history-clear=\"1\">清空历史</button>",
+                "</div>",
+                "<div class=\"checklist-list action-history-list\">",
+                items.map(item => {
+                    return [
+                        "<div class=\"checklist-item done\">",
+                        "<span class=\"checklist-box\" aria-hidden=\"true\"></span>",
+                        "<div class=\"checklist-copy\">",
+                        "<strong>" + escapeHtml(item.title) + "</strong>",
+                        item.note ? "<span class=\"checklist-note\">" + escapeHtml(item.note) + "</span>" : "",
+                        item.meta ? "<span>" + escapeHtml(item.meta) + "</span>" : "",
+                        "<span>来源：" + escapeHtml(item.moduleTitle || "待办") + " | 完成时间：" + escapeHtml(item.completedAt || "") + "</span>",
+                        "</div>",
+                        "<div class=\"checklist-actions\">",
+                        "<button class=\"action-mini-btn\" type=\"button\" data-history-restore=\"" + escapeHtml(item.id) + "\">恢复</button>",
+                        "<button class=\"action-mini-btn danger\" type=\"button\" data-history-delete=\"" + escapeHtml(item.id) + "\">删除记录</button>",
+                        "</div>",
+                        "</div>"
+                    ].join("");
+                }).join(""),
+                "</div>"
+            ].join("") : "<div class=\"checklist-empty\">暂无已完成事件。完成待办后会自动收集到这里。</div>",
+            "</details>"
         ].join("");
     }
 
@@ -1763,7 +1963,132 @@
         if (!els.topActionGrid) {
             return;
         }
-        els.topActionGrid.innerHTML = (CONFIG.businessPlaceholders.topActions || []).map(renderChecklistCard).join("");
+        const board = ensureActionBoard();
+        els.topActionGrid.innerHTML = [
+            board.modules.map(renderChecklistCard).join(""),
+            renderActionHistory(board.history)
+        ].join("");
+    }
+
+    function addActionItem(moduleId) {
+        const module = findActionModule(moduleId);
+        if (!module) {
+            return;
+        }
+        const fields = promptActionFields({ title: "", note: "", meta: "" });
+        if (!fields) {
+            return;
+        }
+        module.rows.push(Object.assign({ id: createActionId("task") }, fields));
+        saveActionBoard();
+        renderTopActionGrid();
+    }
+
+    function editActionItem(moduleId, itemId) {
+        const result = findActionItem(moduleId, itemId);
+        if (!result.item) {
+            return;
+        }
+        const fields = promptActionFields(result.item);
+        if (!fields) {
+            return;
+        }
+        result.item.title = fields.title;
+        result.item.note = fields.note;
+        result.item.meta = fields.meta;
+        saveActionBoard();
+        renderTopActionGrid();
+    }
+
+    function deleteActionItem(moduleId, itemId) {
+        const result = findActionItem(moduleId, itemId);
+        if (!result.module || result.index < 0) {
+            return;
+        }
+        if (!window.confirm("确认删除这条任务吗？")) {
+            return;
+        }
+        result.module.rows.splice(result.index, 1);
+        updateDeletedActionId(itemId, true);
+        saveActionBoard();
+        renderTopActionGrid();
+    }
+
+    function completeActionItem(moduleId, itemId) {
+        const result = findActionItem(moduleId, itemId);
+        if (!result.module || !result.item || result.index < 0) {
+            return;
+        }
+        const item = result.item;
+        result.module.rows.splice(result.index, 1);
+        updateDeletedActionId(itemId, true);
+        ensureActionBoard().history.unshift({
+            id: createActionId("done"),
+            sourceTaskId: item.id,
+            moduleId: result.module.id,
+            moduleTitle: result.module.title,
+            title: item.title,
+            note: item.note || "",
+            meta: item.meta || "",
+            completedAt: new Date().toLocaleString("zh-CN")
+        });
+        saveActionBoard();
+        renderTopActionGrid();
+    }
+
+    function restoreHistoryItem(historyId) {
+        const board = ensureActionBoard();
+        const index = board.history.findIndex(item => item.id === historyId);
+        if (index < 0) {
+            return;
+        }
+        const historyItem = board.history.splice(index, 1)[0];
+        const module = findActionModule(historyItem.moduleId) || board.modules[1] || board.modules[0];
+        if (!module) {
+            return;
+        }
+        const restoredId = historyItem.sourceTaskId || createActionId("task");
+        updateDeletedActionId(restoredId, false);
+        module.rows.push({
+            id: restoredId,
+            title: historyItem.title,
+            note: historyItem.note || "",
+            meta: historyItem.meta || ""
+        });
+        saveActionBoard();
+        renderTopActionGrid();
+    }
+
+    function deleteHistoryItem(historyId) {
+        const board = ensureActionBoard();
+        const index = board.history.findIndex(item => item.id === historyId);
+        if (index < 0) {
+            return;
+        }
+        if (!window.confirm("确认删除这条完成记录吗？")) {
+            return;
+        }
+        const historyItem = board.history.splice(index, 1)[0];
+        if (historyItem && historyItem.sourceTaskId) {
+            updateDeletedActionId(historyItem.sourceTaskId, true);
+        }
+        saveActionBoard();
+        renderTopActionGrid();
+    }
+
+    function clearActionHistory() {
+        const board = ensureActionBoard();
+        if (!board.history.length || !window.confirm("确认清空所有历史完成事件吗？")) {
+            return;
+        }
+        board.history.forEach(item => {
+            if (item.sourceTaskId) {
+                updateDeletedActionId(item.sourceTaskId, true);
+            }
+        });
+        board.history = [];
+        saveActionBoard();
+        renderTopActionGrid();
     }
 
     function buildChannelStrategyModules() {
@@ -3037,6 +3362,51 @@
                 return;
             }
             setActiveChannel(button.dataset.sidebarChannel);
+        });
+    }
+
+    if (els.topActionGrid) {
+        els.topActionGrid.addEventListener("click", event => {
+            const addButton = event.target.closest("[data-action-add]");
+            if (addButton) {
+                addActionItem(addButton.dataset.actionAdd);
+                return;
+            }
+
+            const completeButton = event.target.closest("[data-action-complete][data-action-module]");
+            if (completeButton) {
+                completeActionItem(completeButton.dataset.actionModule, completeButton.dataset.actionComplete);
+                return;
+            }
+
+            const editButton = event.target.closest("[data-action-edit][data-action-module]");
+            if (editButton) {
+                editActionItem(editButton.dataset.actionModule, editButton.dataset.actionEdit);
+                return;
+            }
+
+            const deleteButton = event.target.closest("[data-action-delete][data-action-module]");
+            if (deleteButton) {
+                deleteActionItem(deleteButton.dataset.actionModule, deleteButton.dataset.actionDelete);
+                return;
+            }
+
+            const restoreButton = event.target.closest("[data-history-restore]");
+            if (restoreButton) {
+                restoreHistoryItem(restoreButton.dataset.historyRestore);
+                return;
+            }
+
+            const historyDeleteButton = event.target.closest("[data-history-delete]");
+            if (historyDeleteButton) {
+                deleteHistoryItem(historyDeleteButton.dataset.historyDelete);
+                return;
+            }
+
+            const clearButton = event.target.closest("[data-history-clear]");
+            if (clearButton) {
+                clearActionHistory();
+            }
         });
     }
 

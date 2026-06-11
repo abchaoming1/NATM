@@ -1378,6 +1378,47 @@
             gap: 14px;
         }
 
+        .action-card-tools {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .action-mini-btn {
+            appearance: none;
+            border: 1px solid rgba(23, 32, 51, 0.12);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.86);
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 700;
+            line-height: 1;
+            padding: 7px 10px;
+            transition: transform 160ms ease, border-color 160ms ease, background 160ms ease, color 160ms ease;
+        }
+
+        .action-mini-btn:hover {
+            transform: translateY(-1px);
+            border-color: rgba(15, 118, 110, 0.35);
+            color: var(--teal);
+            background: rgba(15, 118, 110, 0.08);
+        }
+
+        .action-mini-btn.primary {
+            border-color: rgba(15, 118, 110, 0.2);
+            color: var(--teal);
+            background: var(--teal-soft);
+        }
+
+        .action-mini-btn.danger:hover {
+            border-color: rgba(180, 35, 24, 0.28);
+            color: var(--red);
+            background: var(--red-soft);
+        }
+
         .checklist-list {
             display: grid;
             gap: 12px;
@@ -1385,7 +1426,7 @@
 
         .checklist-item {
             display: grid;
-            grid-template-columns: 20px minmax(0, 1fr);
+            grid-template-columns: 20px minmax(0, 1fr) auto;
             gap: 12px;
             align-items: start;
             padding: 12px 14px;
@@ -1394,23 +1435,44 @@
             border: 1px solid rgba(23, 32, 51, 0.06);
         }
 
+        .checklist-item:hover {
+            border-color: rgba(15, 118, 110, 0.16);
+        }
+
         .checklist-item.done {
             background: rgba(15, 118, 110, 0.09);
         }
 
         .checklist-box {
+            appearance: none;
             width: 18px;
             height: 18px;
             margin-top: 1px;
             border-radius: 6px;
             border: 1.5px solid rgba(23, 32, 51, 0.2);
             background: rgba(255, 255, 255, 0.96);
+            cursor: pointer;
+            padding: 0;
+            transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+        }
+
+        .checklist-box:hover {
+            border-color: var(--teal);
+            transform: scale(1.04);
         }
 
         .checklist-item.done .checklist-box {
             border-color: var(--teal);
             background: var(--teal-soft);
             box-shadow: inset 0 0 0 4px rgba(15, 118, 110, 0.24);
+        }
+
+        .checklist-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 6px;
+            flex-wrap: wrap;
         }
 
         .checklist-copy strong {
@@ -1430,6 +1492,49 @@
             color: var(--muted);
             font-size: 12px;
             line-height: 1.7;
+        }
+
+        .action-history-card {
+            grid-column: 1 / -1;
+        }
+
+        .action-history-summary {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 14px;
+            cursor: pointer;
+            list-style: none;
+        }
+
+        .action-history-summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .action-history-summary::after {
+            content: "展开";
+            flex: 0 0 auto;
+            margin-top: 4px;
+            border-radius: 999px;
+            background: rgba(23, 32, 51, 0.06);
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 7px 10px;
+        }
+
+        .action-history-card[open] .action-history-summary::after {
+            content: "收起";
+        }
+
+        .action-history-toolbar {
+            display: flex;
+            justify-content: flex-end;
+            margin: 14px 0 10px;
+        }
+
+        .action-history-list {
+            margin-top: 10px;
         }
 
         .business-summary-card {
@@ -1982,6 +2087,15 @@
             .business-detail-wide {
                 grid-column: auto;
             }
+
+            .checklist-item {
+                grid-template-columns: 20px minmax(0, 1fr);
+            }
+
+            .checklist-actions {
+                grid-column: 2;
+                justify-content: flex-start;
+            }
         }
 
         @media (max-width: 780px) {
@@ -2386,7 +2500,7 @@
     </div>
     <script>
         window.NATM_MULTI_CHANNEL = true;
-        window.NATM_APP_VERSION = "2026-05-25-01";
+        window.NATM_APP_VERSION = "2026-06-11-01";
         document.write('<script src="pricing-data.js?v=' + encodeURIComponent(window.NATM_APP_VERSION) + '&t=' + Date.now() + '"><\/script>');
         document.write('<script src="app.js?v=' + encodeURIComponent(window.NATM_APP_VERSION) + '&t=' + Date.now() + '"><\/script>');
     </script>
