@@ -1379,6 +1379,7 @@
                 };
             }),
             history: [],
+            deletedTasks: [],
             deletedIds: []
         };
     }
@@ -1387,8 +1388,10 @@
         const defaultBoard = buildDefaultActionBoard();
         const savedModules = Array.isArray(savedBoard && savedBoard.modules) ? savedBoard.modules : [];
         const savedHistory = Array.isArray(savedBoard && savedBoard.history) ? savedBoard.history : [];
+        const savedDeletedTasks = Array.isArray(savedBoard && savedBoard.deletedTasks) ? savedBoard.deletedTasks : [];
         const deletedIds = new Set(Array.isArray(savedBoard && savedBoard.deletedIds) ? savedBoard.deletedIds : []);
         const historySourceIds = new Set(savedHistory.map(item => item.sourceTaskId).filter(Boolean));
+        const deletedTaskSourceIds = new Set(savedDeletedTasks.map(item => item.sourceTaskId).filter(Boolean));
         const normalizedModules = defaultBoard.modules.map(defaultModule => {
             const savedModule = savedModules.find(module => module.id === defaultModule.id) || {};
             const savedRows = Array.isArray(savedModule.rows) ? savedModule.rows : [];
@@ -1396,7 +1399,7 @@
             const mergedRows = savedRows.slice();
 
             defaultModule.rows.forEach(defaultRow => {
-                if (!rowIds.has(defaultRow.id) && !deletedIds.has(defaultRow.id) && !historySourceIds.has(defaultRow.id)) {
+                if (!rowIds.has(defaultRow.id) && !deletedIds.has(defaultRow.id) && !historySourceIds.has(defaultRow.id) && !deletedTaskSourceIds.has(defaultRow.id)) {
                     mergedRows.push(defaultRow);
                 }
             });
@@ -1415,6 +1418,7 @@
             version: 1,
             modules: normalizedModules,
             history: savedHistory,
+            deletedTasks: savedDeletedTasks,
             deletedIds: Array.from(deletedIds)
         };
     }
@@ -1583,6 +1587,49 @@
                 }).join(""),
                 "</div>"
             ].join("") : "<div class=\"checklist-empty\">暂无已完成事件。完成待办后会自动收集到这里。</div>",
+            "</details>"
+        ].join("");
+    }
+
+    function renderDeletedActions(deletedTasks) {
+        const items = (deletedTasks || []).slice().sort((left, right) => {
+            return String(right.deletedAt || "").localeCompare(String(left.deletedAt || ""));
+        });
+
+        return [
+            "<details class=\"info-card action-history-card action-deleted-card\">",
+            "<summary class=\"action-history-summary\">",
+            "<div>",
+            "<p class=\"info-kicker\">删除归档</p>",
+            "<h3 class=\"info-card-title\">已删除任务</h3>",
+            "<p class=\"info-card-copy\">点击展开后可以查看被删除的任务，误删可以恢复，确认无用后也可以永久删除记录。</p>",
+            "</div>",
+            "<span class=\"info-badge\">" + formatNumber(items.length) + " deleted</span>",
+            "</summary>",
+            items.length ? [
+                "<div class=\"action-history-toolbar\">",
+                "<button class=\"action-mini-btn danger\" type=\"button\" data-deleted-clear=\"1\">清空删除归档</button>",
+                "</div>",
+                "<div class=\"checklist-list action-history-list\">",
+                items.map(item => {
+                    return [
+                        "<div class=\"checklist-item deleted\">",
+                        "<span class=\"checklist-box\" aria-hidden=\"true\"></span>",
+                        "<div class=\"checklist-copy\">",
+                        "<strong>" + escapeHtml(item.title) + "</strong>",
+                        item.note ? "<span class=\"checklist-note\">" + escapeHtml(item.note) + "</span>" : "",
+                        item.meta ? "<span>" + escapeHtml(item.meta) + "</span>" : "",
+                        "<span>来源：" + escapeHtml(item.moduleTitle || "待办") + " | 删除时间：" + escapeHtml(item.deletedAt || "") + "</span>",
+                        "</div>",
+                        "<div class=\"checklist-actions\">",
+                        "<button class=\"action-mini-btn\" type=\"button\" data-deleted-restore=\"" + escapeHtml(item.id) + "\">恢复</button>",
+                        "<button class=\"action-mini-btn danger\" type=\"button\" data-deleted-delete=\"" + escapeHtml(item.id) + "\">永久删除</button>",
+                        "</div>",
+                        "</div>"
+                    ].join("");
+                }).join(""),
+                "</div>"
+            ].join("") : "<div class=\"checklist-empty\">暂无已删除任务。删除待办后会自动收集到这里，方便后续追溯。</div>",
             "</details>"
         ].join("");
     }
@@ -1966,7 +2013,8 @@
         const board = ensureActionBoard();
         els.topActionGrid.innerHTML = [
             board.modules.map(renderChecklistCard).join(""),
-            renderActionHistory(board.history)
+            renderActionHistory(board.history),
+            renderDeletedActions(board.deletedTasks)
         ].join("");
     }
 
@@ -2005,11 +2053,21 @@
         if (!result.module || result.index < 0) {
             return;
         }
-        if (!window.confirm("确认删除这条任务吗？")) {
+        if (!window.confirm("确认把这条任务移入删除归档吗？")) {
             return;
         }
-        result.module.rows.splice(result.index, 1);
+        const item = result.module.rows.splice(result.index, 1)[0];
         updateDeletedActionId(itemId, true);
+        ensureActionBoard().deletedTasks.unshift({
+            id: createActionId("deleted"),
+            sourceTaskId: item.id,
+            moduleId: result.module.id,
+            moduleTitle: result.module.title,
+            title: item.title,
+            note: item.note || "",
+            meta: item.meta || "",
+            deletedAt: new Date().toLocaleString("zh-CN")
+        });
         saveActionBoard();
         renderTopActionGrid();
     }
@@ -2087,6 +2145,64 @@
             }
         });
         board.history = [];
+        saveActionBoard();
+        renderTopActionGrid();
+    }
+
+    function restoreDeletedItem(deletedId) {
+        const board = ensureActionBoard();
+        board.deletedTasks = Array.isArray(board.deletedTasks) ? board.deletedTasks : [];
+        const index = board.deletedTasks.findIndex(item => item.id === deletedId);
+        if (index < 0) {
+            return;
+        }
+        const deletedItem = board.deletedTasks.splice(index, 1)[0];
+        const module = findActionModule(deletedItem.moduleId) || board.modules[1] || board.modules[0];
+        if (!module) {
+            return;
+        }
+        const restoredId = deletedItem.sourceTaskId || createActionId("task");
+        updateDeletedActionId(restoredId, false);
+        module.rows.push({
+            id: restoredId,
+            title: deletedItem.title,
+            note: deletedItem.note || "",
+            meta: deletedItem.meta || ""
+        });
+        saveActionBoard();
+        renderTopActionGrid();
+    }
+
+    function deleteDeletedItem(deletedId) {
+        const board = ensureActionBoard();
+        board.deletedTasks = Array.isArray(board.deletedTasks) ? board.deletedTasks : [];
+        const index = board.deletedTasks.findIndex(item => item.id === deletedId);
+        if (index < 0) {
+            return;
+        }
+        if (!window.confirm("确认永久删除这条删除归档记录吗？")) {
+            return;
+        }
+        const deletedItem = board.deletedTasks.splice(index, 1)[0];
+        if (deletedItem && deletedItem.sourceTaskId) {
+            updateDeletedActionId(deletedItem.sourceTaskId, true);
+        }
+        saveActionBoard();
+        renderTopActionGrid();
+    }
+
+    function clearDeletedActions() {
+        const board = ensureActionBoard();
+        board.deletedTasks = Array.isArray(board.deletedTasks) ? board.deletedTasks : [];
+        if (!board.deletedTasks.length || !window.confirm("确认清空所有已删除任务记录吗？")) {
+            return;
+        }
+        board.deletedTasks.forEach(item => {
+            if (item.sourceTaskId) {
+                updateDeletedActionId(item.sourceTaskId, true);
+            }
+        });
+        board.deletedTasks = [];
         saveActionBoard();
         renderTopActionGrid();
     }
@@ -3406,6 +3522,24 @@
             const clearButton = event.target.closest("[data-history-clear]");
             if (clearButton) {
                 clearActionHistory();
+                return;
+            }
+
+            const deletedRestoreButton = event.target.closest("[data-deleted-restore]");
+            if (deletedRestoreButton) {
+                restoreDeletedItem(deletedRestoreButton.dataset.deletedRestore);
+                return;
+            }
+
+            const deletedDeleteButton = event.target.closest("[data-deleted-delete]");
+            if (deletedDeleteButton) {
+                deleteDeletedItem(deletedDeleteButton.dataset.deletedDelete);
+                return;
+            }
+
+            const deletedClearButton = event.target.closest("[data-deleted-clear]");
+            if (deletedClearButton) {
+                clearDeletedActions();
             }
         });
     }

@@ -1443,6 +1443,10 @@
             background: rgba(15, 118, 110, 0.09);
         }
 
+        .checklist-item.deleted {
+            background: rgba(180, 35, 24, 0.06);
+        }
+
         .checklist-box {
             appearance: none;
             width: 18px;
@@ -1525,6 +1529,11 @@
 
         .action-history-card[open] .action-history-summary::after {
             content: "收起";
+        }
+
+        .action-deleted-card .info-badge {
+            background: var(--red-soft);
+            color: var(--red);
         }
 
         .action-history-toolbar {
@@ -2500,7 +2509,7 @@
     </div>
     <script>
         window.NATM_MULTI_CHANNEL = true;
-        window.NATM_APP_VERSION = "2026-06-11-01";
+        window.NATM_APP_VERSION = "2026-06-11-02";
         document.write('<script src="pricing-data.js?v=' + encodeURIComponent(window.NATM_APP_VERSION) + '&t=' + Date.now() + '"><\/script>');
         document.write('<script src="app.js?v=' + encodeURIComponent(window.NATM_APP_VERSION) + '&t=' + Date.now() + '"><\/script>');
     </script>
