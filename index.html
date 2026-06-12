@@ -46,6 +46,10 @@
                 linear-gradient(180deg, var(--bg) 0%, #fbf8f2 100%);
         }
 
+        body.modal-open {
+            overflow: hidden;
+        }
+
         code {
             font-family: "Barlow Condensed", monospace;
             font-size: 0.95em;
@@ -1655,6 +1659,172 @@
             margin-top: 10px;
         }
 
+        .action-editor[hidden] {
+            display: none !important;
+        }
+
+        .action-editor {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+        }
+
+        .action-editor-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(23, 32, 51, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .action-editor-dialog {
+            position: relative;
+            z-index: 1;
+            width: min(760px, calc(100vw - 32px));
+            max-height: min(820px, calc(100vh - 48px));
+            overflow: auto;
+            border-radius: 28px;
+            border: 1px solid rgba(255, 255, 255, 0.64);
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(250, 247, 241, 0.96));
+            box-shadow: 0 30px 80px rgba(23, 32, 51, 0.28);
+            padding: 26px;
+        }
+
+        .action-editor-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 18px;
+            margin-bottom: 20px;
+        }
+
+        .action-editor-head h3 {
+            margin: 4px 0 0;
+            font-size: 26px;
+            letter-spacing: -0.02em;
+        }
+
+        .action-editor-subtitle {
+            margin: 6px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .action-editor-close {
+            appearance: none;
+            border: 1px solid rgba(23, 32, 51, 0.08);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.82);
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 20px;
+            line-height: 1;
+            width: 38px;
+            height: 38px;
+            transition: transform 160ms ease, color 160ms ease, border-color 160ms ease;
+        }
+
+        .action-editor-close:hover {
+            color: var(--ink);
+            border-color: rgba(15, 118, 110, 0.22);
+            transform: translateY(-1px);
+        }
+
+        .action-editor-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .action-editor-field {
+            display: grid;
+            gap: 8px;
+        }
+
+        .action-editor-field.full,
+        .action-editor-todo-fields {
+            grid-column: 1 / -1;
+        }
+
+        .action-editor-field label {
+            color: var(--ink);
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+        }
+
+        .action-editor-field input,
+        .action-editor-field select,
+        .action-editor-field textarea {
+            width: 100%;
+            border: 1px solid rgba(23, 32, 51, 0.12);
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--ink);
+            font: inherit;
+            font-size: 14px;
+            outline: none;
+            padding: 12px 14px;
+            transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+        }
+
+        .action-editor-field textarea {
+            min-height: 96px;
+            resize: vertical;
+        }
+
+        .action-editor-field input:focus,
+        .action-editor-field select:focus,
+        .action-editor-field textarea:focus {
+            border-color: rgba(15, 118, 110, 0.42);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.1);
+        }
+
+        .action-editor-todo-fields {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .action-editor-todo-fields[hidden] {
+            display: none !important;
+        }
+
+        .action-editor-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .action-editor-btn {
+            appearance: none;
+            border: 1px solid rgba(23, 32, 51, 0.1);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 800;
+            padding: 11px 18px;
+            transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+        }
+
+        .action-editor-btn:hover {
+            transform: translateY(-1px);
+            border-color: rgba(15, 118, 110, 0.25);
+        }
+
+        .action-editor-btn.primary {
+            border-color: rgba(15, 118, 110, 0.24);
+            background: var(--teal);
+            color: #fff;
+        }
+
         .business-summary-card {
             display: grid;
             gap: 16px;
@@ -2214,6 +2384,19 @@
                 grid-column: 2;
                 justify-content: flex-start;
             }
+
+            .action-editor-dialog {
+                padding: 20px;
+            }
+
+            .action-editor-grid,
+            .action-editor-todo-fields {
+                grid-template-columns: 1fr;
+            }
+
+            .action-editor-head h3 {
+                font-size: 22px;
+            }
         }
 
         @media (max-width: 780px) {
@@ -2616,9 +2799,73 @@
         </div>
     </div>
     </div>
+    <div id="actionEditor" class="action-editor" hidden aria-hidden="true">
+        <div class="action-editor-backdrop" data-action-editor-close="1"></div>
+        <form id="actionEditorForm" class="action-editor-dialog" aria-modal="true" role="dialog" aria-labelledby="actionEditorHeading">
+            <div class="action-editor-head">
+                <div>
+                    <p class="info-kicker">Action Editor</p>
+                    <h3 id="actionEditorHeading">编辑任务</h3>
+                    <p id="actionEditorSubtitle" class="action-editor-subtitle">可修改这个任务的全部属性。</p>
+                </div>
+                <button class="action-editor-close" type="button" aria-label="关闭编辑器" data-action-editor-close="1">×</button>
+            </div>
+            <div class="action-editor-grid">
+                <div class="action-editor-field full">
+                    <label for="actionEditorTitleInput">任务标题</label>
+                    <input id="actionEditorTitleInput" type="text" autocomplete="off" required>
+                </div>
+                <div class="action-editor-field full">
+                    <label for="actionEditorNoteInput">任务说明</label>
+                    <textarea id="actionEditorNoteInput"></textarea>
+                </div>
+                <div id="actionEditorTodoFields" class="action-editor-todo-fields">
+                    <div class="action-editor-field">
+                        <label for="actionEditorChannelInput">渠道</label>
+                        <input id="actionEditorChannelInput" type="text" list="actionEditorChannelOptions" autocomplete="off" placeholder="NFM / RCW / Abt / BSM">
+                        <datalist id="actionEditorChannelOptions">
+                            <option value="NFM"></option>
+                            <option value="RCW"></option>
+                            <option value="Abt"></option>
+                            <option value="BSM"></option>
+                            <option value="All"></option>
+                        </datalist>
+                    </div>
+                    <div class="action-editor-field">
+                        <label for="actionEditorStatusInput">状态</label>
+                        <input id="actionEditorStatusInput" type="text" list="actionEditorStatusOptions" autocomplete="off" placeholder="待会议 / 进行中 / 待提需">
+                        <datalist id="actionEditorStatusOptions">
+                            <option value="待处理"></option>
+                            <option value="待会议"></option>
+                            <option value="待提需"></option>
+                            <option value="推进中"></option>
+                            <option value="进行中"></option>
+                            <option value="执行中"></option>
+                        </datalist>
+                    </div>
+                    <div class="action-editor-field">
+                        <label for="actionEditorPriorityInput">优先级</label>
+                        <select id="actionEditorPriorityInput">
+                            <option value="高">高优先级</option>
+                            <option value="中">中优先级</option>
+                            <option value="低">低优先级</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="action-editor-field full">
+                    <label id="actionEditorMetaLabel" for="actionEditorMetaInput">其他补充信息</label>
+                    <textarea id="actionEditorMetaInput"></textarea>
+                </div>
+            </div>
+            <div class="action-editor-actions">
+                <button class="action-editor-btn" type="button" data-action-editor-close="1">取消</button>
+                <button class="action-editor-btn primary" type="submit">保存修改</button>
+            </div>
+        </form>
+    </div>
     <script>
         window.NATM_MULTI_CHANNEL = true;
-        window.NATM_APP_VERSION = "2026-06-12-01";
+        window.NATM_APP_VERSION = "2026-06-12-02";
         document.write('<script src="pricing-data.js?v=' + encodeURIComponent(window.NATM_APP_VERSION) + '&t=' + Date.now() + '"><\/script>');
         document.write('<script src="app.js?v=' + encodeURIComponent(window.NATM_APP_VERSION) + '&t=' + Date.now() + '"><\/script>');
     </script>

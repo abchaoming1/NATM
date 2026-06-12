@@ -535,6 +535,18 @@
         launchPlanPanel: document.getElementById("launchPlanPanel"),
         businessSupportGrid: document.getElementById("businessSupportGrid"),
         topActionGrid: document.getElementById("topActionGrid"),
+        actionEditor: document.getElementById("actionEditor"),
+        actionEditorForm: document.getElementById("actionEditorForm"),
+        actionEditorHeading: document.getElementById("actionEditorHeading"),
+        actionEditorSubtitle: document.getElementById("actionEditorSubtitle"),
+        actionEditorTodoFields: document.getElementById("actionEditorTodoFields"),
+        actionEditorMetaLabel: document.getElementById("actionEditorMetaLabel"),
+        actionEditorTitleInput: document.getElementById("actionEditorTitleInput"),
+        actionEditorNoteInput: document.getElementById("actionEditorNoteInput"),
+        actionEditorChannelInput: document.getElementById("actionEditorChannelInput"),
+        actionEditorStatusInput: document.getElementById("actionEditorStatusInput"),
+        actionEditorPriorityInput: document.getElementById("actionEditorPriorityInput"),
+        actionEditorMetaInput: document.getElementById("actionEditorMetaInput"),
         channelOverviewGrid: document.getElementById("channelOverviewGrid"),
         channelStrategyGrid: document.getElementById("channelStrategyGrid"),
         natmSummaryGrid: document.getElementById("natmSummaryGrid"),
@@ -1733,6 +1745,125 @@
         };
     }
 
+    function openActionEditor(moduleId, itemId) {
+        if (!els.actionEditor || !els.actionEditorForm || !els.actionEditorTitleInput) {
+            return false;
+        }
+        const module = findActionModule(moduleId);
+        if (!module) {
+            return false;
+        }
+        const result = itemId ? findActionItem(moduleId, itemId) : { item: null };
+        if (itemId && !result.item) {
+            return false;
+        }
+        const isTodo = isTodoActionModule(module);
+        const item = normalizeActionItem(result.item || { title: "", note: "", meta: "" }, { isTodo: isTodo });
+
+        els.actionEditor.dataset.moduleId = module.id;
+        els.actionEditor.dataset.itemId = itemId || "";
+        els.actionEditor.dataset.mode = itemId ? "edit" : "add";
+        els.actionEditor.dataset.isTodo = isTodo ? "1" : "0";
+
+        if (els.actionEditorHeading) {
+            els.actionEditorHeading.textContent = itemId ? "编辑任务" : "新增任务";
+        }
+        if (els.actionEditorSubtitle) {
+            els.actionEditorSubtitle.textContent = module.title + (isTodo ? " · 可修改标题、说明、渠道、状态、优先级和补充信息" : " · 可修改标题、说明和补充信息");
+        }
+        if (els.actionEditorTodoFields) {
+            els.actionEditorTodoFields.hidden = !isTodo;
+        }
+        if (els.actionEditorMetaLabel) {
+            els.actionEditorMetaLabel.textContent = isTodo ? "其他补充信息" : "补充信息";
+        }
+
+        els.actionEditorTitleInput.value = item.title || "";
+        els.actionEditorNoteInput.value = item.note || "";
+        els.actionEditorMetaInput.value = item.meta || "";
+        if (els.actionEditorChannelInput) {
+            els.actionEditorChannelInput.value = item.channel || "";
+        }
+        if (els.actionEditorStatusInput) {
+            els.actionEditorStatusInput.value = item.status || "";
+        }
+        if (els.actionEditorPriorityInput) {
+            els.actionEditorPriorityInput.value = normalizeActionPriorityValue(item.priority || "中");
+        }
+
+        els.actionEditor.hidden = false;
+        els.actionEditor.setAttribute("aria-hidden", "false");
+        document.body.classList.add("modal-open");
+        window.setTimeout(() => els.actionEditorTitleInput.focus(), 0);
+        return true;
+    }
+
+    function closeActionEditor() {
+        if (!els.actionEditor) {
+            return;
+        }
+        els.actionEditor.hidden = true;
+        els.actionEditor.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("modal-open");
+    }
+
+    function readActionEditorFields(module) {
+        if (!els.actionEditorTitleInput || !els.actionEditorNoteInput || !els.actionEditorMetaInput) {
+            return null;
+        }
+        const title = els.actionEditorTitleInput.value.trim();
+        if (!title) {
+            window.alert("任务标题不能为空。");
+            els.actionEditorTitleInput.focus();
+            return null;
+        }
+
+        const fields = {
+            title: title,
+            note: els.actionEditorNoteInput.value.trim(),
+            meta: els.actionEditorMetaInput.value.trim()
+        };
+
+        if (isTodoActionModule(module)) {
+            fields.channel = els.actionEditorChannelInput ? els.actionEditorChannelInput.value.trim() : "";
+            fields.status = els.actionEditorStatusInput ? els.actionEditorStatusInput.value.trim() : "";
+            fields.priority = normalizeActionPriorityValue(els.actionEditorPriorityInput ? els.actionEditorPriorityInput.value : "中");
+        }
+
+        return fields;
+    }
+
+    function submitActionEditorForm(event) {
+        event.preventDefault();
+        if (!els.actionEditor) {
+            return;
+        }
+        const moduleId = els.actionEditor.dataset.moduleId || "";
+        const itemId = els.actionEditor.dataset.itemId || "";
+        const module = findActionModule(moduleId);
+        if (!module) {
+            closeActionEditor();
+            return;
+        }
+        const fields = readActionEditorFields(module);
+        if (!fields) {
+            return;
+        }
+
+        if (itemId) {
+            const result = findActionItem(moduleId, itemId);
+            if (result.item) {
+                Object.assign(result.item, normalizeActionItem(Object.assign({}, result.item, fields), { isTodo: isTodoActionModule(module) }));
+            }
+        } else {
+            module.rows.push(normalizeActionItem(Object.assign({ id: createActionId("task") }, fields), { isTodo: isTodoActionModule(module) }));
+        }
+
+        saveActionBoard();
+        renderTopActionGrid();
+        closeActionEditor();
+    }
+
     function renderChecklistCard(module) {
         const items = module.rows || [];
         const emptyText = module.body || "暂时空着";
@@ -2235,6 +2366,9 @@
         if (!module) {
             return;
         }
+        if (openActionEditor(moduleId)) {
+            return;
+        }
         const fields = promptActionFields({ title: "", note: "", meta: "" }, module);
         if (!fields) {
             return;
@@ -2247,6 +2381,9 @@
     function editActionItem(moduleId, itemId) {
         const result = findActionItem(moduleId, itemId);
         if (!result.item) {
+            return;
+        }
+        if (openActionEditor(moduleId, itemId)) {
             return;
         }
         const fields = promptActionFields(result.item, result.module);
@@ -3765,6 +3902,25 @@
             }
         });
     }
+
+    if (els.actionEditorForm) {
+        els.actionEditorForm.addEventListener("submit", submitActionEditorForm);
+    }
+
+    if (els.actionEditor) {
+        els.actionEditor.addEventListener("click", event => {
+            const closeButton = event.target.closest("[data-action-editor-close]");
+            if (closeButton) {
+                closeActionEditor();
+            }
+        });
+    }
+
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape" && els.actionEditor && !els.actionEditor.hidden) {
+            closeActionEditor();
+        }
+    });
 
     els.promoCalendarPanel.addEventListener("click", event => {
         const monthButton = event.target.closest("[data-promo-month]");
