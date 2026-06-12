@@ -495,6 +495,33 @@
     };
 
     const ACTION_BOARD_STORAGE_KEY = "natm-action-board-v1";
+    const ACTION_TODO_MODULE_ID = "top-action-1";
+    const ACTION_PRIORITY_LEVELS = [
+        {
+            key: "high",
+            label: "高优先级",
+            shortLabel: "高",
+            rank: 3,
+            summary: "必须优先推进",
+            empty: "暂无高优先级待办，当前最关键事项已清空。"
+        },
+        {
+            key: "medium",
+            label: "中优先级",
+            shortLabel: "中",
+            rank: 2,
+            summary: "保持节奏跟进",
+            empty: "暂无中优先级待办。"
+        },
+        {
+            key: "low",
+            label: "低优先级",
+            shortLabel: "低",
+            rank: 1,
+            summary: "低压排队处理",
+            empty: "暂无低优先级待办。"
+        }
+    ];
 
     const els = {
         eyebrow: document.querySelector(".eyebrow"),
@@ -1357,6 +1384,166 @@
         }).join("") + "</div>";
     }
 
+    function isTodoActionModule(module) {
+        return module && module.id === ACTION_TODO_MODULE_ID;
+    }
+
+    function parseActionMeta(meta) {
+        const source = String(meta || "").trim();
+        const result = {
+            channel: "",
+            status: "",
+            priority: "",
+            meta: ""
+        };
+        if (!source) {
+            return result;
+        }
+
+        const leftovers = [];
+        source.split(/\s*[|｜]\s*|[;；]\s*|\n+/).forEach(part => {
+            const text = part.trim();
+            if (!text) {
+                return;
+            }
+            const separatorIndex = text.search(/[:：]/);
+            if (separatorIndex < 0) {
+                leftovers.push(text);
+                return;
+            }
+            const key = text.slice(0, separatorIndex).trim();
+            const value = text.slice(separatorIndex + 1).trim();
+            if (/渠道/.test(key)) {
+                result.channel = value;
+                return;
+            }
+            if (/状态/.test(key)) {
+                result.status = value;
+                return;
+            }
+            if (/优先级|优先/.test(key)) {
+                result.priority = value;
+                return;
+            }
+            leftovers.push(text);
+        });
+        result.meta = leftovers.join(" | ");
+        return result;
+    }
+
+    function getActionPriority(value) {
+        const text = String(value || "").trim().toLowerCase();
+        let key = "medium";
+        if (/低|low|^l$/.test(text)) {
+            key = "low";
+        } else if (/高|紧急|urgent|high|^h$/.test(text)) {
+            key = "high";
+        } else if (/中|medium|mid|^m$/.test(text)) {
+            key = "medium";
+        }
+        return ACTION_PRIORITY_LEVELS.find(level => level.key === key) || ACTION_PRIORITY_LEVELS[1];
+    }
+
+    function normalizeActionPriorityValue(value) {
+        return getActionPriority(value).shortLabel;
+    }
+
+    function normalizeActionItem(item, options) {
+        const source = item || {};
+        const parsedMeta = parseActionMeta(source.meta);
+        const hasStructuredMeta = Boolean(parsedMeta.channel || parsedMeta.status || parsedMeta.priority);
+        const isTodo = Boolean(options && options.isTodo);
+        const priority = source.priority || parsedMeta.priority || "";
+        return Object.assign({}, source, {
+            id: source.id || createActionId("task"),
+            title: source.title || "",
+            note: source.note || source.text || "",
+            meta: hasStructuredMeta ? parsedMeta.meta : (source.meta || ""),
+            channel: source.channel || parsedMeta.channel || "",
+            status: source.status || parsedMeta.status || "",
+            priority: priority ? normalizeActionPriorityValue(priority) : (isTodo ? "中" : "")
+        });
+    }
+
+    function renderActionAttributes(item, includeEmpty) {
+        const priority = getActionPriority(item.priority);
+        const fields = [
+            { label: "渠道", value: item.channel || (includeEmpty ? "未设置" : ""), type: "channel" },
+            { label: "状态", value: item.status || (includeEmpty ? "未设置" : ""), type: "status" },
+            { label: "优先级", value: item.priority || priority.shortLabel, type: "priority priority-" + priority.key }
+        ].filter(field => field.value);
+
+        if (!fields.length) {
+            return "";
+        }
+
+        return [
+            "<div class=\"action-attr-row\">",
+            fields.map(field => {
+                return "<span class=\"action-attr-pill " + escapeHtml(field.type) + "\">" + escapeHtml(field.label) + "：" + escapeHtml(field.value) + "</span>";
+            }).join(""),
+            "</div>"
+        ].join("");
+    }
+
+    function renderActionItemDetails(item, includeStructuredAttrs) {
+        return [
+            includeStructuredAttrs || item.channel || item.status || item.priority ? renderActionAttributes(item, includeStructuredAttrs) : "",
+            item.meta ? "<span>" + escapeHtml(item.meta) + "</span>" : ""
+        ].filter(Boolean).join("");
+    }
+
+    function renderActiveChecklistItem(module, item) {
+        const isTodo = isTodoActionModule(module);
+        const priority = getActionPriority(item.priority);
+        const classes = ["checklist-item"];
+        if (isTodo) {
+            classes.push("todo-checklist-item", "priority-" + priority.key);
+        }
+
+        return [
+            "<div class=\"" + classes.join(" ") + "\" data-action-item=\"" + escapeHtml(item.id) + "\">",
+            "<button class=\"checklist-box\" type=\"button\" aria-label=\"完成 " + escapeHtml(item.title) + "\" data-action-complete=\"" + escapeHtml(item.id) + "\" data-action-module=\"" + escapeHtml(module.id) + "\"></button>",
+            "<div class=\"checklist-copy\">",
+            "<strong>" + escapeHtml(item.title) + "</strong>",
+            item.note ? "<span class=\"checklist-note\">" + escapeHtml(item.note) + "</span>" : "",
+            renderActionItemDetails(item, isTodo),
+            "</div>",
+            "<div class=\"checklist-actions\">",
+            "<button class=\"action-mini-btn\" type=\"button\" data-action-edit=\"" + escapeHtml(item.id) + "\" data-action-module=\"" + escapeHtml(module.id) + "\">编辑</button>",
+            "<button class=\"action-mini-btn danger\" type=\"button\" data-action-delete=\"" + escapeHtml(item.id) + "\" data-action-module=\"" + escapeHtml(module.id) + "\">删除</button>",
+            "</div>",
+            "</div>"
+        ].join("");
+    }
+
+    function renderTodoPriorityGroups(module, items) {
+        const rows = (items || []).map(item => normalizeActionItem(item, { isTodo: true }));
+        return [
+            "<div class=\"todo-priority-groups\">",
+            ACTION_PRIORITY_LEVELS.map(level => {
+                const groupItems = rows.filter(item => getActionPriority(item.priority).key === level.key);
+                return [
+                    "<section class=\"todo-priority-section priority-" + escapeHtml(level.key) + "\">",
+                    "<div class=\"todo-priority-heading\">",
+                    "<div>",
+                    "<p class=\"todo-priority-eyebrow\">" + escapeHtml(level.summary) + "</p>",
+                    "<h4>" + escapeHtml(level.label) + "</h4>",
+                    "</div>",
+                    "<span class=\"todo-priority-count\">" + formatNumber(groupItems.length) + " 项</span>",
+                    "</div>",
+                    groupItems.length ? [
+                        "<div class=\"checklist-list\">",
+                        groupItems.map(item => renderActiveChecklistItem(module, item)).join(""),
+                        "</div>"
+                    ].join("") : "<div class=\"checklist-empty\">" + escapeHtml(level.empty) + "</div>",
+                    "</section>"
+                ].join("");
+            }).join(""),
+            "</div>"
+        ].join("");
+    }
+
     function buildDefaultActionBoard() {
         return {
             version: 1,
@@ -1369,12 +1556,15 @@
                     description: module.description || "",
                     badge: module.badge || "Checklist",
                     rows: (module.rows || []).map((item, itemIndex) => {
-                        return {
+                        return normalizeActionItem({
                             id: moduleId + "-item-" + itemIndex,
                             title: item.title || "",
                             note: item.note || item.text || "",
-                            meta: item.meta || ""
-                        };
+                            meta: item.meta || "",
+                            channel: item.channel || "",
+                            status: item.status || "",
+                            priority: item.priority || ""
+                        }, { isTodo: moduleId === ACTION_TODO_MODULE_ID });
                     })
                 };
             }),
@@ -1387,14 +1577,20 @@
     function normalizeActionBoard(savedBoard) {
         const defaultBoard = buildDefaultActionBoard();
         const savedModules = Array.isArray(savedBoard && savedBoard.modules) ? savedBoard.modules : [];
-        const savedHistory = Array.isArray(savedBoard && savedBoard.history) ? savedBoard.history : [];
-        const savedDeletedTasks = Array.isArray(savedBoard && savedBoard.deletedTasks) ? savedBoard.deletedTasks : [];
+        const savedHistory = Array.isArray(savedBoard && savedBoard.history)
+            ? savedBoard.history.map(item => normalizeActionItem(item, { isTodo: item && item.moduleId === ACTION_TODO_MODULE_ID }))
+            : [];
+        const savedDeletedTasks = Array.isArray(savedBoard && savedBoard.deletedTasks)
+            ? savedBoard.deletedTasks.map(item => normalizeActionItem(item, { isTodo: item && item.moduleId === ACTION_TODO_MODULE_ID }))
+            : [];
         const deletedIds = new Set(Array.isArray(savedBoard && savedBoard.deletedIds) ? savedBoard.deletedIds : []);
         const historySourceIds = new Set(savedHistory.map(item => item.sourceTaskId).filter(Boolean));
         const deletedTaskSourceIds = new Set(savedDeletedTasks.map(item => item.sourceTaskId).filter(Boolean));
         const normalizedModules = defaultBoard.modules.map(defaultModule => {
             const savedModule = savedModules.find(module => module.id === defaultModule.id) || {};
-            const savedRows = Array.isArray(savedModule.rows) ? savedModule.rows : [];
+            const savedRows = Array.isArray(savedModule.rows)
+                ? savedModule.rows.map(item => normalizeActionItem(item, { isTodo: defaultModule.id === ACTION_TODO_MODULE_ID }))
+                : [];
             const rowIds = new Set(savedRows.map(item => item.id));
             const mergedRows = savedRows.slice();
 
@@ -1484,8 +1680,9 @@
         board.deletedIds = Array.from(deletedIds);
     }
 
-    function promptActionFields(initial) {
-        const title = window.prompt("任务标题", initial.title || "");
+    function promptActionFields(initial, module) {
+        const normalizedInitial = normalizeActionItem(initial, { isTodo: isTodoActionModule(module) });
+        const title = window.prompt("任务标题", normalizedInitial.title || "");
         if (title === null) {
             return null;
         }
@@ -1493,11 +1690,39 @@
             window.alert("标题不能为空。");
             return null;
         }
-        const note = window.prompt("任务说明", initial.note || "");
+        const note = window.prompt("任务说明", normalizedInitial.note || "");
         if (note === null) {
             return null;
         }
-        const meta = window.prompt("补充信息（如：渠道 / 状态 / 优先级）", initial.meta || "");
+
+        if (isTodoActionModule(module)) {
+            const channel = window.prompt("渠道（如：NFM / RCW / Abt / BSM / All）", normalizedInitial.channel || "");
+            if (channel === null) {
+                return null;
+            }
+            const status = window.prompt("状态（如：待会议 / 进行中 / 待提需 / 执行中）", normalizedInitial.status || "");
+            if (status === null) {
+                return null;
+            }
+            const priority = window.prompt("优先级（高 / 中 / 低）", normalizedInitial.priority || "中");
+            if (priority === null) {
+                return null;
+            }
+            const meta = window.prompt("其他补充信息（可留空）", normalizedInitial.meta || "");
+            if (meta === null) {
+                return null;
+            }
+            return {
+                title: title.trim(),
+                note: note.trim(),
+                meta: meta.trim(),
+                channel: channel.trim(),
+                status: status.trim(),
+                priority: normalizeActionPriorityValue(priority)
+            };
+        }
+
+        const meta = window.prompt("补充信息", normalizedInitial.meta || "");
         if (meta === null) {
             return null;
         }
@@ -1524,26 +1749,13 @@
             "<button class=\"action-mini-btn primary\" type=\"button\" data-action-add=\"" + escapeHtml(module.id) + "\">新增</button>",
             "</div>",
             "</div>",
-            items.length ? [
-                "<div class=\"checklist-list\">",
-                items.map(item => {
-                    return [
-                        "<div class=\"checklist-item\" data-action-item=\"" + escapeHtml(item.id) + "\">",
-                        "<button class=\"checklist-box\" type=\"button\" aria-label=\"完成 " + escapeHtml(item.title) + "\" data-action-complete=\"" + escapeHtml(item.id) + "\" data-action-module=\"" + escapeHtml(module.id) + "\"></button>",
-                        "<div class=\"checklist-copy\">",
-                        "<strong>" + escapeHtml(item.title) + "</strong>",
-                        item.note ? "<span class=\"checklist-note\">" + escapeHtml(item.note) + "</span>" : "",
-                        item.meta ? "<span>" + escapeHtml(item.meta) + "</span>" : "",
-                        "</div>",
-                        "<div class=\"checklist-actions\">",
-                        "<button class=\"action-mini-btn\" type=\"button\" data-action-edit=\"" + escapeHtml(item.id) + "\" data-action-module=\"" + escapeHtml(module.id) + "\">编辑</button>",
-                        "<button class=\"action-mini-btn danger\" type=\"button\" data-action-delete=\"" + escapeHtml(item.id) + "\" data-action-module=\"" + escapeHtml(module.id) + "\">删除</button>",
-                        "</div>",
-                        "</div>"
-                    ].join("");
-                }).join(""),
-                "</div>"
-            ].join("") : "<div class=\"checklist-empty\">" + escapeHtml(emptyText) + "</div>",
+            isTodoActionModule(module)
+                ? renderTodoPriorityGroups(module, items)
+                : (items.length ? [
+                    "<div class=\"checklist-list\">",
+                    items.map(item => renderActiveChecklistItem(module, item)).join(""),
+                    "</div>"
+                ].join("") : "<div class=\"checklist-empty\">" + escapeHtml(emptyText) + "</div>"),
             "</article>"
         ].join("");
     }
@@ -1575,7 +1787,7 @@
                         "<div class=\"checklist-copy\">",
                         "<strong>" + escapeHtml(item.title) + "</strong>",
                         item.note ? "<span class=\"checklist-note\">" + escapeHtml(item.note) + "</span>" : "",
-                        item.meta ? "<span>" + escapeHtml(item.meta) + "</span>" : "",
+                        renderActionItemDetails(item, false),
                         "<span>来源：" + escapeHtml(item.moduleTitle || "待办") + " | 完成时间：" + escapeHtml(item.completedAt || "") + "</span>",
                         "</div>",
                         "<div class=\"checklist-actions\">",
@@ -1618,7 +1830,7 @@
                         "<div class=\"checklist-copy\">",
                         "<strong>" + escapeHtml(item.title) + "</strong>",
                         item.note ? "<span class=\"checklist-note\">" + escapeHtml(item.note) + "</span>" : "",
-                        item.meta ? "<span>" + escapeHtml(item.meta) + "</span>" : "",
+                        renderActionItemDetails(item, false),
                         "<span>来源：" + escapeHtml(item.moduleTitle || "待办") + " | 删除时间：" + escapeHtml(item.deletedAt || "") + "</span>",
                         "</div>",
                         "<div class=\"checklist-actions\">",
@@ -2023,11 +2235,11 @@
         if (!module) {
             return;
         }
-        const fields = promptActionFields({ title: "", note: "", meta: "" });
+        const fields = promptActionFields({ title: "", note: "", meta: "" }, module);
         if (!fields) {
             return;
         }
-        module.rows.push(Object.assign({ id: createActionId("task") }, fields));
+        module.rows.push(normalizeActionItem(Object.assign({ id: createActionId("task") }, fields), { isTodo: isTodoActionModule(module) }));
         saveActionBoard();
         renderTopActionGrid();
     }
@@ -2037,13 +2249,11 @@
         if (!result.item) {
             return;
         }
-        const fields = promptActionFields(result.item);
+        const fields = promptActionFields(result.item, result.module);
         if (!fields) {
             return;
         }
-        result.item.title = fields.title;
-        result.item.note = fields.note;
-        result.item.meta = fields.meta;
+        Object.assign(result.item, normalizeActionItem(Object.assign({}, result.item, fields), { isTodo: isTodoActionModule(result.module) }));
         saveActionBoard();
         renderTopActionGrid();
     }
@@ -2056,7 +2266,7 @@
         if (!window.confirm("确认把这条任务移入删除归档吗？")) {
             return;
         }
-        const item = result.module.rows.splice(result.index, 1)[0];
+        const item = normalizeActionItem(result.module.rows.splice(result.index, 1)[0], { isTodo: isTodoActionModule(result.module) });
         updateDeletedActionId(itemId, true);
         ensureActionBoard().deletedTasks.unshift({
             id: createActionId("deleted"),
@@ -2066,6 +2276,9 @@
             title: item.title,
             note: item.note || "",
             meta: item.meta || "",
+            channel: item.channel || "",
+            status: item.status || "",
+            priority: item.priority || "",
             deletedAt: new Date().toLocaleString("zh-CN")
         });
         saveActionBoard();
@@ -2077,7 +2290,7 @@
         if (!result.module || !result.item || result.index < 0) {
             return;
         }
-        const item = result.item;
+        const item = normalizeActionItem(result.item, { isTodo: isTodoActionModule(result.module) });
         result.module.rows.splice(result.index, 1);
         updateDeletedActionId(itemId, true);
         ensureActionBoard().history.unshift({
@@ -2088,6 +2301,9 @@
             title: item.title,
             note: item.note || "",
             meta: item.meta || "",
+            channel: item.channel || "",
+            status: item.status || "",
+            priority: item.priority || "",
             completedAt: new Date().toLocaleString("zh-CN")
         });
         saveActionBoard();
@@ -2111,7 +2327,10 @@
             id: restoredId,
             title: historyItem.title,
             note: historyItem.note || "",
-            meta: historyItem.meta || ""
+            meta: historyItem.meta || "",
+            channel: historyItem.channel || "",
+            status: historyItem.status || "",
+            priority: historyItem.priority || ""
         });
         saveActionBoard();
         renderTopActionGrid();
@@ -2167,7 +2386,10 @@
             id: restoredId,
             title: deletedItem.title,
             note: deletedItem.note || "",
-            meta: deletedItem.meta || ""
+            meta: deletedItem.meta || "",
+            channel: deletedItem.channel || "",
+            status: deletedItem.status || "",
+            priority: deletedItem.priority || ""
         });
         saveActionBoard();
         renderTopActionGrid();

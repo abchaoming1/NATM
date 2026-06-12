@@ -1424,6 +1424,67 @@
             gap: 12px;
         }
 
+        .todo-priority-groups {
+            display: grid;
+            gap: 14px;
+        }
+
+        .todo-priority-section {
+            display: grid;
+            gap: 12px;
+            padding: 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(23, 32, 51, 0.08);
+            background: rgba(255, 255, 255, 0.72);
+        }
+
+        .todo-priority-section.priority-high {
+            border-color: rgba(180, 35, 24, 0.22);
+            background: linear-gradient(135deg, rgba(180, 35, 24, 0.1), rgba(255, 247, 237, 0.94));
+            box-shadow: 0 18px 36px rgba(180, 35, 24, 0.1);
+        }
+
+        .todo-priority-section.priority-medium {
+            border-color: rgba(202, 113, 36, 0.18);
+            background: rgba(255, 250, 242, 0.88);
+        }
+
+        .todo-priority-section.priority-low {
+            background: rgba(248, 250, 252, 0.82);
+        }
+
+        .todo-priority-heading {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .todo-priority-heading h4 {
+            margin: 2px 0 0;
+            font-size: 15px;
+            letter-spacing: 0.02em;
+        }
+
+        .todo-priority-eyebrow {
+            margin: 0;
+            color: var(--muted);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .todo-priority-count {
+            flex: 0 0 auto;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.82);
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 800;
+            padding: 6px 10px;
+        }
+
         .checklist-item {
             display: grid;
             grid-template-columns: 20px minmax(0, 1fr) auto;
@@ -1445,6 +1506,20 @@
 
         .checklist-item.deleted {
             background: rgba(180, 35, 24, 0.06);
+        }
+
+        .todo-checklist-item.priority-high {
+            border-color: rgba(180, 35, 24, 0.22);
+            background: rgba(255, 255, 255, 0.94);
+            box-shadow: 0 10px 24px rgba(180, 35, 24, 0.1);
+        }
+
+        .todo-checklist-item.priority-medium {
+            border-color: rgba(202, 113, 36, 0.14);
+        }
+
+        .todo-checklist-item.priority-low {
+            opacity: 0.82;
         }
 
         .checklist-box {
@@ -1487,6 +1562,40 @@
 
         .checklist-note {
             color: var(--ink);
+        }
+
+        .action-attr-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .action-attr-pill {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 999px;
+            background: rgba(23, 32, 51, 0.06);
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 750;
+            line-height: 1;
+            padding: 6px 8px;
+        }
+
+        .action-attr-pill.priority-high {
+            background: var(--red-soft);
+            color: var(--red);
+        }
+
+        .action-attr-pill.priority-medium {
+            background: var(--amber-soft);
+            color: var(--amber);
+        }
+
+        .action-attr-pill.priority-low {
+            background: rgba(100, 116, 139, 0.1);
+            color: var(--muted);
         }
 
         .checklist-copy span,
@@ -2509,7 +2618,7 @@
     </div>
     <script>
         window.NATM_MULTI_CHANNEL = true;
-        window.NATM_APP_VERSION = "2026-06-11-02";
+        window.NATM_APP_VERSION = "2026-06-12-01";
         document.write('<script src="pricing-data.js?v=' + encodeURIComponent(window.NATM_APP_VERSION) + '&t=' + Date.now() + '"><\/script>');
         document.write('<script src="app.js?v=' + encodeURIComponent(window.NATM_APP_VERSION) + '&t=' + Date.now() + '"><\/script>');
     </script>
