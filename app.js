@@ -491,10 +491,12 @@
         selectedSkuByChannel: {},
         expandedMixBases: {},
         actionBoard: null,
+        requestPlan: null,
         charts: {}
     };
 
     const ACTION_BOARD_STORAGE_KEY = "natm-action-board-v1";
+    const REQUEST_PLAN_STORAGE_KEY = "natm-request-plan-v1";
     const ACTION_TODO_MODULE_ID = "top-action-1";
     const ACTION_PRIORITY_LEVELS = [
         {
@@ -547,6 +549,14 @@
         actionEditorStatusInput: document.getElementById("actionEditorStatusInput"),
         actionEditorPriorityInput: document.getElementById("actionEditorPriorityInput"),
         actionEditorMetaInput: document.getElementById("actionEditorMetaInput"),
+        requestPlanEditor: document.getElementById("requestPlanEditor"),
+        requestPlanEditorForm: document.getElementById("requestPlanEditorForm"),
+        requestPlanEditorHeading: document.getElementById("requestPlanEditorHeading"),
+        requestPlanSectionInput: document.getElementById("requestPlanSectionInput"),
+        requestPlanTitleInput: document.getElementById("requestPlanTitleInput"),
+        requestPlanMetricsInput: document.getElementById("requestPlanMetricsInput"),
+        requestPlanTextInput: document.getElementById("requestPlanTextInput"),
+        requestPlanMetaInput: document.getElementById("requestPlanMetaInput"),
         channelOverviewGrid: document.getElementById("channelOverviewGrid"),
         channelStrategyGrid: document.getElementById("channelStrategyGrid"),
         natmSummaryGrid: document.getElementById("natmSummaryGrid"),
@@ -2272,6 +2282,378 @@
         ].join("");
     }
 
+    function buildDefaultRequestPlan() {
+        return {
+            version: 1,
+            sections: [
+                {
+                    id: "sample",
+                    title: "样机送样提需",
+                    description: "管理新品样机、样品到手、保管人、buyer 对接和送样动作。",
+                    rows: [
+                        {
+                            id: "request-sample-overview",
+                            title: "样机提需总盘",
+                            metrics: [
+                                { label: "OpenFit Air 2", value: "已提需" },
+                                { label: "OpenRun Air 2", value: "已提需（小型CE店）" },
+                                { label: "OpenDots 2", value: "Kevin保管" }
+                            ],
+                            text: "OpenFit Air 2 已完成提需；OpenRun Air 2 也已完成提需，并归类在小型 CE 店；OpenDots 2 已有样品，当前由 Kevin 保管，等待后续交接。",
+                            meta: "动作：确认样品到手时间、保管人、预计送样对象和 buyer 沟通时间。"
+                        },
+                        {
+                            id: "request-sample-next",
+                            title: "下一步送样动作",
+                            metrics: [
+                                { label: "Buyer 对接", value: "待推进" },
+                                { label: "送样状态", value: "待安排" }
+                            ],
+                            text: "OpenFit Air 2 和 OpenRun Air 2 的提需缺口已补齐；后续需要继续推进 buyer 沟通，并明确 OpenFit Air 2、OpenRun Air 2、OpenDots 2 的下一步送样动作。",
+                            meta: "动作：把样机到手、送样对象、预计送样日期补齐。"
+                        }
+                    ]
+                },
+                {
+                    id: "bulk",
+                    title: "大货提需",
+                    description: "管理渠道大货需求、数量、颜色、ETA、供货节奏和补货风险。",
+                    rows: [
+                        {
+                            id: "request-bulk-placeholder",
+                            title: "大货提需待补充",
+                            metrics: [
+                                { label: "渠道", value: "待补充" },
+                                { label: "数量 / ETA", value: "待补充" }
+                            ],
+                            text: "后续按渠道补充大货需求、需求数量、颜色/型号、预计到货时间、供应风险和 owner。",
+                            meta: "动作：确认各渠道 buyer 需求后，在这里新增或编辑对应条目。"
+                        }
+                    ]
+                },
+                {
+                    id: "pop",
+                    title: "POP提需",
+                    description: "管理 POP 制作、替换、发货、到店和门店执行照片。",
+                    rows: [
+                        {
+                            id: "request-pop-june",
+                            title: "6/4 POP切换提需",
+                            metrics: [
+                                { label: "涉及渠道", value: "NFM / RCW / BSM" },
+                                { label: "耳夹线", value: "E310 -> E320" },
+                                { label: "OpenFit", value: "T920 -> T921" }
+                            ],
+                            text: "围绕 6/4 的 E320（OpenDots 2）和 T921 切换，提前确认 POP 物料、图片、SKU 展示位、渠道尺寸和到店节奏。",
+                            meta: "动作：先锁定需求清单，再跟进制作、发货、到店与门店执行照片。"
+                        },
+                        {
+                            id: "request-pop-august",
+                            title: "八月底 POP / 新品预提需",
+                            metrics: [
+                                { label: "NFM", value: "S803 -> NCE" },
+                                { label: "BSM", value: "S803 -> NCE" },
+                                { label: "OpenDots Air", value: "待排期" }
+                            ],
+                            text: "NFM 和 BSM 计划将 S803 替换为 NCE（OpenRun 2），同时预留 OpenDots Air 若提前上市时的样品和 POP 提需窗口。",
+                            meta: "动作：等 GTM 时间确认后，倒推样品、POP、setup、buyer preview 的截止日期。"
+                        },
+                        {
+                            id: "request-pop-rcw",
+                            title: "RCW POP专项",
+                            metrics: [
+                                { label: "T010 POP", value: "10个已下单" },
+                                { label: "到店时间", value: "4月底" },
+                                { label: "升级方向", value: "90cm整合POP" }
+                            ],
+                            text: "RCW 已下单 10 个 T010 单独 POP，预计 4 月底到店；后续继续争取把当前 4 台分散 POP 整合为 1 台 90cm POP。",
+                            meta: "动作：到店后收集门店照片，并把效果反馈用于 90cm POP 升级提案。"
+                        }
+                    ]
+                }
+            ]
+        };
+    }
+
+    function normalizeRequestMetric(metric) {
+        return {
+            label: metric && metric.label ? String(metric.label) : "",
+            value: metric && metric.value ? String(metric.value) : ""
+        };
+    }
+
+    function normalizeRequestRow(row) {
+        const source = row || {};
+        return {
+            id: source.id || createActionId("request"),
+            title: source.title || "",
+            metrics: Array.isArray(source.metrics) ? source.metrics.map(normalizeRequestMetric).filter(metric => metric.label || metric.value) : [],
+            text: source.text || source.note || "",
+            meta: source.meta || ""
+        };
+    }
+
+    function normalizeRequestPlan(savedPlan) {
+        const defaultPlan = buildDefaultRequestPlan();
+        const savedSections = Array.isArray(savedPlan && savedPlan.sections) ? savedPlan.sections : [];
+        return {
+            version: 1,
+            sections: defaultPlan.sections.map(defaultSection => {
+                const savedSection = savedSections.find(section => section.id === defaultSection.id) || {};
+                const rows = Array.isArray(savedSection.rows)
+                    ? savedSection.rows.map(normalizeRequestRow)
+                    : defaultSection.rows.map(normalizeRequestRow);
+                return {
+                    id: defaultSection.id,
+                    title: savedSection.title || defaultSection.title,
+                    description: savedSection.description || defaultSection.description,
+                    rows: rows
+                };
+            })
+        };
+    }
+
+    function ensureRequestPlan() {
+        if (state.requestPlan) {
+            return state.requestPlan;
+        }
+
+        try {
+            const saved = JSON.parse(window.localStorage.getItem(REQUEST_PLAN_STORAGE_KEY) || "null");
+            state.requestPlan = normalizeRequestPlan(saved);
+        } catch (error) {
+            console.warn("Failed to read NATM request plan storage", error);
+            state.requestPlan = buildDefaultRequestPlan();
+        }
+
+        saveRequestPlan();
+        return state.requestPlan;
+    }
+
+    function saveRequestPlan() {
+        if (!state.requestPlan) {
+            return;
+        }
+        try {
+            window.localStorage.setItem(REQUEST_PLAN_STORAGE_KEY, JSON.stringify(state.requestPlan));
+        } catch (error) {
+            console.warn("Failed to save NATM request plan storage", error);
+        }
+    }
+
+    function findRequestSection(sectionId) {
+        const plan = ensureRequestPlan();
+        return plan.sections.find(section => section.id === sectionId) || null;
+    }
+
+    function findRequestRow(sectionId, rowId) {
+        const section = findRequestSection(sectionId);
+        if (!section) {
+            return { section: null, row: null, index: -1 };
+        }
+        const index = section.rows.findIndex(row => row.id === rowId);
+        return {
+            section: section,
+            row: index >= 0 ? section.rows[index] : null,
+            index: index
+        };
+    }
+
+    function requestMetricsToText(metrics) {
+        return (metrics || []).map(metric => {
+            return [metric.label, metric.value].filter(Boolean).join("：");
+        }).join("\n");
+    }
+
+    function parseRequestMetrics(text) {
+        return String(text || "").split(/\n+/).map(line => {
+            const source = line.trim();
+            if (!source) {
+                return null;
+            }
+            const separatorIndex = source.search(/[:：|｜]/);
+            if (separatorIndex < 0) {
+                return { label: source, value: "" };
+            }
+            return {
+                label: source.slice(0, separatorIndex).trim(),
+                value: source.slice(separatorIndex + 1).trim()
+            };
+        }).filter(Boolean);
+    }
+
+    function renderRequestPlanRow(section, row) {
+        return [
+            "<div class=\"request-plan-row\" data-request-row=\"" + escapeHtml(row.id) + "\">",
+            "<div class=\"request-plan-row-head\">",
+            "<strong>" + escapeHtml(row.title) + "</strong>",
+            "<div class=\"request-plan-actions\">",
+            "<button class=\"action-mini-btn\" type=\"button\" data-request-edit=\"" + escapeHtml(row.id) + "\" data-request-section=\"" + escapeHtml(section.id) + "\">编辑</button>",
+            "<button class=\"action-mini-btn danger\" type=\"button\" data-request-delete=\"" + escapeHtml(row.id) + "\" data-request-section=\"" + escapeHtml(section.id) + "\">删除</button>",
+            "</div>",
+            "</div>",
+            row.metrics && row.metrics.length ? [
+                "<div class=\"note-stat-grid request-plan-metrics\">",
+                row.metrics.map(metric => {
+                    return [
+                        "<div class=\"note-stat\">",
+                        "<span>" + escapeHtml(metric.label) + "</span>",
+                        "<strong>" + escapeHtml(metric.value) + "</strong>",
+                        "</div>"
+                    ].join("");
+                }).join(""),
+                "</div>"
+            ].join("") : "",
+            row.text ? "<p class=\"note-row-copy\">" + escapeHtml(row.text) + "</p>" : "",
+            row.meta ? "<p class=\"note-row-meta\">" + escapeHtml(row.meta) + "</p>" : "",
+            "</div>"
+        ].join("");
+    }
+
+    function renderRequestPlanCard() {
+        const module = CONFIG.businessPlaceholders.samplePopRequestPlan;
+        const plan = ensureRequestPlan();
+        const totalRows = plan.sections.reduce((sum, section) => sum + section.rows.length, 0);
+        return [
+            "<article class=\"info-card info-card-wide request-plan-card\">",
+            "<div class=\"info-card-head\">",
+            "<div>",
+            "<p class=\"info-kicker\">" + escapeHtml(module.kicker || "NATM整体") + "</p>",
+            "<h3 class=\"info-card-title\">" + escapeHtml(module.title) + "</h3>",
+            module.description ? "<p class=\"info-card-copy\">" + escapeHtml(module.description) + "</p>" : "",
+            "</div>",
+            "<span class=\"info-badge\">" + formatNumber(totalRows) + " 条提需</span>",
+            "</div>",
+            "<div class=\"request-plan-section-grid\">",
+            plan.sections.map(section => {
+                return [
+                    "<section class=\"request-plan-section\" data-request-plan-section=\"" + escapeHtml(section.id) + "\">",
+                    "<div class=\"request-plan-section-head\">",
+                    "<div>",
+                    "<h4>" + escapeHtml(section.title) + "</h4>",
+                    "<p>" + escapeHtml(section.description) + "</p>",
+                    "</div>",
+                    "<button class=\"action-mini-btn primary\" type=\"button\" data-request-add=\"" + escapeHtml(section.id) + "\">新增</button>",
+                    "</div>",
+                    section.rows.length ? [
+                        "<div class=\"request-plan-list\">",
+                        section.rows.map(row => renderRequestPlanRow(section, row)).join(""),
+                        "</div>"
+                    ].join("") : "<p class=\"placeholder-copy\">暂时空着，可以点击新增补充。</p>",
+                    "</section>"
+                ].join("");
+            }).join(""),
+            "</div>",
+            module.footnote ? "<p class=\"info-footnote\">" + escapeHtml(module.footnote) + "</p>" : "",
+            "</article>"
+        ].join("");
+    }
+
+    function openRequestPlanEditor(sectionId, rowId) {
+        if (!els.requestPlanEditor || !els.requestPlanEditorForm || !els.requestPlanTitleInput) {
+            return;
+        }
+        const plan = ensureRequestPlan();
+        const section = findRequestSection(sectionId) || plan.sections[0];
+        const result = rowId ? findRequestRow(section.id, rowId) : { row: null };
+        if (rowId && !result.row) {
+            return;
+        }
+        const row = normalizeRequestRow(result.row || { title: "", metrics: [], text: "", meta: "" });
+
+        els.requestPlanEditor.dataset.sectionId = section.id;
+        els.requestPlanEditor.dataset.rowId = rowId || "";
+        if (els.requestPlanEditorHeading) {
+            els.requestPlanEditorHeading.textContent = rowId ? "编辑提需内容" : "新增提需内容";
+        }
+        if (els.requestPlanSectionInput) {
+            els.requestPlanSectionInput.innerHTML = plan.sections.map(item => {
+                const selected = item.id === section.id ? " selected" : "";
+                return "<option value=\"" + escapeHtml(item.id) + "\"" + selected + ">" + escapeHtml(item.title) + "</option>";
+            }).join("");
+        }
+        els.requestPlanTitleInput.value = row.title || "";
+        els.requestPlanMetricsInput.value = requestMetricsToText(row.metrics);
+        els.requestPlanTextInput.value = row.text || "";
+        els.requestPlanMetaInput.value = row.meta || "";
+
+        els.requestPlanEditor.hidden = false;
+        els.requestPlanEditor.setAttribute("aria-hidden", "false");
+        document.body.classList.add("modal-open");
+        window.setTimeout(() => els.requestPlanTitleInput.focus(), 0);
+    }
+
+    function closeRequestPlanEditor() {
+        if (!els.requestPlanEditor) {
+            return;
+        }
+        els.requestPlanEditor.hidden = true;
+        els.requestPlanEditor.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("modal-open");
+    }
+
+    function readRequestPlanEditorFields() {
+        const title = els.requestPlanTitleInput ? els.requestPlanTitleInput.value.trim() : "";
+        if (!title) {
+            window.alert("提需标题不能为空。");
+            els.requestPlanTitleInput.focus();
+            return null;
+        }
+        return {
+            sectionId: els.requestPlanSectionInput ? els.requestPlanSectionInput.value : "sample",
+            row: {
+                title: title,
+                metrics: parseRequestMetrics(els.requestPlanMetricsInput ? els.requestPlanMetricsInput.value : ""),
+                text: els.requestPlanTextInput ? els.requestPlanTextInput.value.trim() : "",
+                meta: els.requestPlanMetaInput ? els.requestPlanMetaInput.value.trim() : ""
+            }
+        };
+    }
+
+    function submitRequestPlanEditorForm(event) {
+        event.preventDefault();
+        const fields = readRequestPlanEditorFields();
+        if (!fields) {
+            return;
+        }
+        const plan = ensureRequestPlan();
+        const originalSectionId = els.requestPlanEditor ? els.requestPlanEditor.dataset.sectionId : "";
+        const rowId = els.requestPlanEditor ? els.requestPlanEditor.dataset.rowId : "";
+        const targetSection = plan.sections.find(section => section.id === fields.sectionId) || plan.sections[0];
+        if (!targetSection) {
+            return;
+        }
+
+        if (rowId) {
+            const result = findRequestRow(originalSectionId, rowId);
+            const row = normalizeRequestRow(Object.assign({}, result.row || {}, fields.row, { id: rowId }));
+            if (result.section && result.index >= 0) {
+                result.section.rows.splice(result.index, 1);
+            }
+            targetSection.rows.push(row);
+        } else {
+            targetSection.rows.push(normalizeRequestRow(Object.assign({ id: createActionId("request") }, fields.row)));
+        }
+
+        saveRequestPlan();
+        renderBusinessSupportGrid();
+        closeRequestPlanEditor();
+    }
+
+    function deleteRequestPlanRow(sectionId, rowId) {
+        const result = findRequestRow(sectionId, rowId);
+        if (!result.section || result.index < 0) {
+            return;
+        }
+        if (!window.confirm("确认删除这条提需内容吗？")) {
+            return;
+        }
+        result.section.rows.splice(result.index, 1);
+        saveRequestPlan();
+        renderBusinessSupportGrid();
+    }
+
+
     function renderPopPlanPanel() {
         if (!els.popPlanPanel) {
             return;
@@ -2360,10 +2742,10 @@
             return;
         }
         els.businessSupportGrid.innerHTML = [
-            CONFIG.businessPlaceholders.samplePopRequestPlan,
+            renderRequestPlanCard(),
             CONFIG.businessPlaceholders.costMargin,
             CONFIG.businessPlaceholders.sampling
-        ].map(renderInfoCard).join("");
+        ].map(item => typeof item === "string" ? item : renderInfoCard(item)).join("");
     }
 
     function renderTopActionGrid() {
@@ -3933,9 +4315,46 @@
         });
     }
 
+    if (els.requestPlanEditorForm) {
+        els.requestPlanEditorForm.addEventListener("submit", submitRequestPlanEditorForm);
+    }
+
+    if (els.requestPlanEditor) {
+        els.requestPlanEditor.addEventListener("click", event => {
+            const closeButton = event.target.closest("[data-request-editor-close]");
+            if (closeButton) {
+                closeRequestPlanEditor();
+            }
+        });
+    }
+
+    if (els.businessSupportGrid) {
+        els.businessSupportGrid.addEventListener("click", event => {
+            const addButton = event.target.closest("[data-request-add]");
+            if (addButton) {
+                openRequestPlanEditor(addButton.dataset.requestAdd);
+                return;
+            }
+
+            const editButton = event.target.closest("[data-request-edit][data-request-section]");
+            if (editButton) {
+                openRequestPlanEditor(editButton.dataset.requestSection, editButton.dataset.requestEdit);
+                return;
+            }
+
+            const deleteButton = event.target.closest("[data-request-delete][data-request-section]");
+            if (deleteButton) {
+                deleteRequestPlanRow(deleteButton.dataset.requestSection, deleteButton.dataset.requestDelete);
+            }
+        });
+    }
+
     document.addEventListener("keydown", event => {
         if (event.key === "Escape" && els.actionEditor && !els.actionEditor.hidden) {
             closeActionEditor();
+        }
+        if (event.key === "Escape" && els.requestPlanEditor && !els.requestPlanEditor.hidden) {
+            closeRequestPlanEditor();
         }
     });
 

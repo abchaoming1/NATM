@@ -2029,6 +2029,71 @@
             gap: 14px;
         }
 
+        .request-plan-section-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .request-plan-section {
+            display: grid;
+            gap: 12px;
+            padding: 16px;
+            border: 1px solid rgba(23, 32, 51, 0.08);
+            border-radius: 20px;
+            background: rgba(250, 247, 241, 0.72);
+        }
+
+        .request-plan-section-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .request-plan-section-head h4 {
+            margin: 0;
+            font-size: 17px;
+            letter-spacing: 0.01em;
+        }
+
+        .request-plan-section-head p {
+            margin: 5px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .request-plan-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .request-plan-row {
+            padding: 14px 16px;
+            border-radius: 18px;
+            border: 1px solid rgba(23, 32, 51, 0.08);
+            background: rgba(255, 255, 255, 0.86);
+        }
+
+        .request-plan-row-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .request-plan-actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .request-plan-metrics {
+            margin-bottom: 10px;
+        }
+
         .note-row {
             padding: 14px 16px;
             border-radius: 18px;
@@ -2863,9 +2928,48 @@
             </div>
         </form>
     </div>
+    <div id="requestPlanEditor" class="action-editor" hidden aria-hidden="true">
+        <div class="action-editor-backdrop" data-request-editor-close="1"></div>
+        <form id="requestPlanEditorForm" class="action-editor-dialog" aria-modal="true" role="dialog" aria-labelledby="requestPlanEditorHeading">
+            <div class="action-editor-head">
+                <div>
+                    <p class="info-kicker">Request Plan Editor</p>
+                    <h3 id="requestPlanEditorHeading">编辑提需内容</h3>
+                    <p class="action-editor-subtitle">可修改所属部分、标题、指标卡片、说明和下一步动作。</p>
+                </div>
+                <button class="action-editor-close" type="button" aria-label="关闭编辑器" data-request-editor-close="1">×</button>
+            </div>
+            <div class="action-editor-grid">
+                <div class="action-editor-field">
+                    <label for="requestPlanSectionInput">所属部分</label>
+                    <select id="requestPlanSectionInput"></select>
+                </div>
+                <div class="action-editor-field">
+                    <label for="requestPlanTitleInput">标题</label>
+                    <input id="requestPlanTitleInput" type="text" autocomplete="off" required>
+                </div>
+                <div class="action-editor-field full">
+                    <label for="requestPlanMetricsInput">指标卡片</label>
+                    <textarea id="requestPlanMetricsInput" placeholder="每行一个，例如：OpenRun Air 2：已提需（小型CE店）"></textarea>
+                </div>
+                <div class="action-editor-field full">
+                    <label for="requestPlanTextInput">说明</label>
+                    <textarea id="requestPlanTextInput"></textarea>
+                </div>
+                <div class="action-editor-field full">
+                    <label for="requestPlanMetaInput">下一步 / 备注</label>
+                    <textarea id="requestPlanMetaInput"></textarea>
+                </div>
+            </div>
+            <div class="action-editor-actions">
+                <button class="action-editor-btn" type="button" data-request-editor-close="1">取消</button>
+                <button class="action-editor-btn primary" type="submit">保存修改</button>
+            </div>
+        </form>
+    </div>
     <script>
         window.NATM_MULTI_CHANNEL = true;
-        window.NATM_APP_VERSION = "2026-06-17-02";
+        window.NATM_APP_VERSION = "2026-06-17-03";
         document.write('<script src="pricing-data.js?v=' + encodeURIComponent(window.NATM_APP_VERSION) + '&t=' + Date.now() + '"><\/script>');
         document.write('<script src="app.js?v=' + encodeURIComponent(window.NATM_APP_VERSION) + '&t=' + Date.now() + '"><\/script>');
     </script>
