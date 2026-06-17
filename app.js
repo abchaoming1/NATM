@@ -265,8 +265,8 @@
                             meta: "渠道：Abt | 状态：待提需 | 优先级：高"
                         },
                         {
-                            title: "补齐 OpenRun 2 的样品提需与送样动作",
-                            note: "OpenDots 2 已有样品，OpenRun 2 仍缺提需，需要尽快补齐并和 buyer 对上送样节奏。",
+                            title: "补齐 OpenRun Air 2 的样品提需与送样动作",
+                            note: "OpenFit Air 2 已完成提需，OpenDots 2 已有样品；OpenRun Air 2 仍未提需，需要尽快补齐并和 buyer 对上送样节奏。",
                             meta: "渠道：All | 状态：待补齐 | 优先级：高"
                         }
                     ]
@@ -300,11 +300,11 @@
                     {
                         title: "样品提需总盘",
                         metrics: [
-                            { label: "OpenDots Air", value: "8个已提需" },
+                            { label: "OpenFit Air 2", value: "已提需" },
                             { label: "OpenDots 2", value: "Kevin保管" },
-                            { label: "OpenRun 2", value: "待提需" }
+                            { label: "OpenRun Air 2", value: "待提需" }
                         ],
-                        text: "OpenDots Air 已按四个渠道黑色、紫色各一个完成提需；OpenDots 2 已有样品，当前由 Kevin 保管，等待后续交接；OpenRun 2 仍需补齐提需。",
+                        text: "OpenFit Air 2 已完成提需；OpenDots 2 已有样品，当前由 Kevin 保管，等待后续交接；OpenRun Air 2 仍未提需，需要补齐提需。",
                         meta: "动作：确认样品到手时间、保管人、预计送样对象和 buyer 沟通时间。"
                     },
                     {
@@ -354,15 +354,15 @@
                 rows: [
                     {
                         title: "当前送样情况",
-                        text: "目前四个渠道均未有 OpenDots 2、OpenFit Pro、OpenDots Air 和 OpenRun 2 的送样情况。"
+                        text: "目前四个渠道均未有 OpenDots 2、OpenFit Pro、OpenFit Air 2 和 OpenRun Air 2 的送样情况。"
                     },
                     {
                         title: "当前样品提需",
-                        text: "四个渠道刚好都有 OpenDots Air 的黑色、紫色各一个，总计 4+4=8 个；提需已完成，但暂未和 buyer 产生联系，也尚未推进送样。OpenDots 2 也已有样品，当前由 Kevin 保管，等他回来后再给他。"
+                        text: "OpenFit Air 2 已完成提需，但暂未和 buyer 产生联系，也尚未推进送样。OpenDots 2 也已有样品，当前由 Kevin 保管，等他回来后再给他。"
                     },
                     {
                         title: "待补项目",
-                        text: "当前还缺 OpenRun 2 的提需；后续需要继续推进 buyer 沟通，并明确 OpenDots 2 的下一步送样动作。"
+                        text: "当前还缺 OpenRun Air 2 的提需；后续需要继续推进 buyer 沟通，并明确 OpenFit Air 2、OpenDots 2 的下一步送样动作。"
                     }
                 ]
             }
@@ -1466,10 +1466,19 @@
         const hasStructuredMeta = Boolean(parsedMeta.channel || parsedMeta.status || parsedMeta.priority);
         const isTodo = Boolean(options && options.isTodo);
         const priority = source.priority || parsedMeta.priority || "";
+        let title = source.title || "";
+        let note = source.note || source.text || "";
+        if (isTodo && /OpenRun\s*2/.test(title + " " + note)) {
+            title = title.replace(/OpenRun\s*2/g, "OpenRun Air 2");
+            note = note
+                .replace(/OpenRun\s*2/g, "OpenRun Air 2")
+                .replace(/OpenDots 2 已有样品，OpenRun Air 2 仍缺提需/, "OpenFit Air 2 已完成提需，OpenDots 2 已有样品；OpenRun Air 2 仍未提需")
+                .replace(/仍缺提需/, "仍未提需");
+        }
         return Object.assign({}, source, {
             id: source.id || createActionId("task"),
-            title: source.title || "",
-            note: source.note || source.text || "",
+            title: title,
+            note: note,
             meta: hasStructuredMeta ? parsedMeta.meta : (source.meta || ""),
             channel: source.channel || parsedMeta.channel || "",
             status: source.status || parsedMeta.status || "",
@@ -2929,7 +2938,7 @@
             { date: "RCW", title: "争取从季度下单改成月度下单", text: "当前渠道以季度性下单为主，会影响库存状况；后续可与 buyer 开会建议改为按月下单。", status: "待会议", owner: "Buyer Meeting", priority: "高优先级" },
             { date: "RCW", title: "补签独立店与 Rep（Blair）合作合同", text: "现有年度合作合同未包含 RCW，需要单独签署对应合作合同。", status: "待处理", owner: "Contract", priority: "高优先级" },
             { date: "RCW", title: "尝试整合 POP 形式", text: "目前是 4 台分散的 POP，后续可争取整合为 1 台 90cm POP。", status: "推进中", owner: "POP Upgrade", priority: "中高" },
-            { date: "ALL", title: "补齐 OpenRun 2 样品提需", text: "OpenDots 2 已有样品且暂由 Kevin 保管，OpenRun 2 的提需和下一步送样动作仍需补齐。", status: "待补齐", owner: "Samples", priority: "高优先级" }
+            { date: "ALL", title: "补齐 OpenRun Air 2 样品提需", text: "OpenFit Air 2 已完成提需，OpenDots 2 已有样品且暂由 Kevin 保管；OpenRun Air 2 的提需和下一步送样动作仍需补齐。", status: "待补齐", owner: "Samples", priority: "高优先级" }
         ];
         const meetingTimeline = [
             { date: "TBD", title: "会议历史待补充", text: "后续可按时间沉淀会议纪要、决议和责任事项。" }
