@@ -292,9 +292,9 @@
             },
             samplePopRequestPlan: {
                 kicker: "NATM整体",
-                title: "样品&POP的提需计划",
-                description: "把 NATM 四个渠道的新品样品、POP 制作/更新、buyer 对接和到店确认放在同一个计划里管理。",
-                badge: "Samples + POP",
+                title: "样品样机提需计划",
+                description: "把 NATM 四个渠道新品样机、大货提需、抵达时间和送样时间放在同一个表格里管理。",
+                badge: "Samples",
                 wide: true,
                 rows: [
                     {
@@ -492,11 +492,13 @@
         expandedMixBases: {},
         actionBoard: null,
         requestPlan: null,
+        popPlan: null,
         charts: {}
     };
 
     const ACTION_BOARD_STORAGE_KEY = "natm-action-board-v1";
-    const REQUEST_PLAN_STORAGE_KEY = "natm-request-plan-v1";
+    const REQUEST_PLAN_STORAGE_KEY = "natm-sample-request-table-v1";
+    const POP_PLAN_STORAGE_KEY = "natm-pop-plan-table-v1";
     const ACTION_TODO_MODULE_ID = "top-action-1";
     const ACTION_PRIORITY_LEVELS = [
         {
@@ -552,11 +554,26 @@
         requestPlanEditor: document.getElementById("requestPlanEditor"),
         requestPlanEditorForm: document.getElementById("requestPlanEditorForm"),
         requestPlanEditorHeading: document.getElementById("requestPlanEditorHeading"),
-        requestPlanSectionInput: document.getElementById("requestPlanSectionInput"),
-        requestPlanTitleInput: document.getElementById("requestPlanTitleInput"),
-        requestPlanMetricsInput: document.getElementById("requestPlanMetricsInput"),
-        requestPlanTextInput: document.getElementById("requestPlanTextInput"),
-        requestPlanMetaInput: document.getElementById("requestPlanMetaInput"),
+        requestProductInput: document.getElementById("requestProductInput"),
+        requestLaunchTimeInput: document.getElementById("requestLaunchTimeInput"),
+        requestBulkRequestInput: document.getElementById("requestBulkRequestInput"),
+        requestBulkQtyInput: document.getElementById("requestBulkQtyInput"),
+        requestBulkArrivalInput: document.getElementById("requestBulkArrivalInput"),
+        requestSampleQtyInput: document.getElementById("requestSampleQtyInput"),
+        requestArrivalInput: document.getElementById("requestArrivalInput"),
+        requestSampleDeliveryInput: document.getElementById("requestSampleDeliveryInput"),
+        popPlanEditor: document.getElementById("popPlanEditor"),
+        popPlanEditorForm: document.getElementById("popPlanEditorForm"),
+        popPlanEditorHeading: document.getElementById("popPlanEditorHeading"),
+        popPlanTypeInput: document.getElementById("popPlanTypeInput"),
+        popPlanOldSkuInput: document.getElementById("popPlanOldSkuInput"),
+        popPlanNewSkuInput: document.getElementById("popPlanNewSkuInput"),
+        popPlanRequestTimeInput: document.getElementById("popPlanRequestTimeInput"),
+        popPlanNeedUpdateTimeInput: document.getElementById("popPlanNeedUpdateTimeInput"),
+        popPlanUpdatedTimeInput: document.getElementById("popPlanUpdatedTimeInput"),
+        popPlanChannelInput: document.getElementById("popPlanChannelInput"),
+        popPlanFormatInput: document.getElementById("popPlanFormatInput"),
+        popPlanProductsInput: document.getElementById("popPlanProductsInput"),
         channelOverviewGrid: document.getElementById("channelOverviewGrid"),
         channelStrategyGrid: document.getElementById("channelStrategyGrid"),
         natmSummaryGrid: document.getElementById("natmSummaryGrid"),
@@ -2285,131 +2302,65 @@
     function buildDefaultRequestPlan() {
         return {
             version: 1,
-            sections: [
+            rows: [
                 {
-                    id: "sample",
-                    title: "样机送样提需",
-                    description: "管理新品样机、样品到手、保管人、buyer 对接和送样动作。",
-                    rows: [
-                        {
-                            id: "request-sample-overview",
-                            title: "样机提需总盘",
-                            metrics: [
-                                { label: "OpenFit Air 2", value: "已提需" },
-                                { label: "OpenRun Air 2", value: "已提需（小型CE店）" },
-                                { label: "OpenDots 2", value: "Kevin保管" }
-                            ],
-                            text: "OpenFit Air 2 已完成提需；OpenRun Air 2 也已完成提需，并归类在小型 CE 店；OpenDots 2 已有样品，当前由 Kevin 保管，等待后续交接。",
-                            meta: "动作：确认样品到手时间、保管人、预计送样对象和 buyer 沟通时间。"
-                        },
-                        {
-                            id: "request-sample-next",
-                            title: "下一步送样动作",
-                            metrics: [
-                                { label: "Buyer 对接", value: "待推进" },
-                                { label: "送样状态", value: "待安排" }
-                            ],
-                            text: "OpenFit Air 2 和 OpenRun Air 2 的提需缺口已补齐；后续需要继续推进 buyer 沟通，并明确 OpenFit Air 2、OpenRun Air 2、OpenDots 2 的下一步送样动作。",
-                            meta: "动作：把样机到手、送样对象、预计送样日期补齐。"
-                        }
-                    ]
+                    id: "sample-request-openfit-air-2",
+                    product: "OpenFit Air 2",
+                    launchTime: "待确认",
+                    bulkRequest: "待确认",
+                    bulkQty: "待补充",
+                    bulkArrival: "待补充",
+                    sampleQty: "已提需",
+                    requestArrival: "待确认",
+                    sampleDeliveryTime: "待安排"
                 },
                 {
-                    id: "bulk",
-                    title: "大货提需",
-                    description: "管理渠道大货需求、数量、颜色、ETA、供货节奏和补货风险。",
-                    rows: [
-                        {
-                            id: "request-bulk-placeholder",
-                            title: "大货提需待补充",
-                            metrics: [
-                                { label: "渠道", value: "待补充" },
-                                { label: "数量 / ETA", value: "待补充" }
-                            ],
-                            text: "后续按渠道补充大货需求、需求数量、颜色/型号、预计到货时间、供应风险和 owner。",
-                            meta: "动作：确认各渠道 buyer 需求后，在这里新增或编辑对应条目。"
-                        }
-                    ]
+                    id: "sample-request-openrun-air-2",
+                    product: "OpenRun Air 2",
+                    launchTime: "待确认",
+                    bulkRequest: "已提需（小型CE店）",
+                    bulkQty: "待补充",
+                    bulkArrival: "待补充",
+                    sampleQty: "待补充",
+                    requestArrival: "待确认",
+                    sampleDeliveryTime: "待安排"
                 },
                 {
-                    id: "pop",
-                    title: "POP提需",
-                    description: "管理 POP 制作、替换、发货、到店和门店执行照片。",
-                    rows: [
-                        {
-                            id: "request-pop-june",
-                            title: "6/4 POP切换提需",
-                            metrics: [
-                                { label: "涉及渠道", value: "NFM / RCW / BSM" },
-                                { label: "耳夹线", value: "E310 -> E320" },
-                                { label: "OpenFit", value: "T920 -> T921" }
-                            ],
-                            text: "围绕 6/4 的 E320（OpenDots 2）和 T921 切换，提前确认 POP 物料、图片、SKU 展示位、渠道尺寸和到店节奏。",
-                            meta: "动作：先锁定需求清单，再跟进制作、发货、到店与门店执行照片。"
-                        },
-                        {
-                            id: "request-pop-august",
-                            title: "八月底 POP / 新品预提需",
-                            metrics: [
-                                { label: "NFM", value: "S803 -> NCE" },
-                                { label: "BSM", value: "S803 -> NCE" },
-                                { label: "OpenDots Air", value: "待排期" }
-                            ],
-                            text: "NFM 和 BSM 计划将 S803 替换为 NCE（OpenRun 2），同时预留 OpenDots Air 若提前上市时的样品和 POP 提需窗口。",
-                            meta: "动作：等 GTM 时间确认后，倒推样品、POP、setup、buyer preview 的截止日期。"
-                        },
-                        {
-                            id: "request-pop-rcw",
-                            title: "RCW POP专项",
-                            metrics: [
-                                { label: "T010 POP", value: "10个已下单" },
-                                { label: "到店时间", value: "4月底" },
-                                { label: "升级方向", value: "90cm整合POP" }
-                            ],
-                            text: "RCW 已下单 10 个 T010 单独 POP，预计 4 月底到店；后续继续争取把当前 4 台分散 POP 整合为 1 台 90cm POP。",
-                            meta: "动作：到店后收集门店照片，并把效果反馈用于 90cm POP 升级提案。"
-                        }
-                    ]
+                    id: "sample-request-opendots-2",
+                    product: "OpenDots 2",
+                    launchTime: "6月",
+                    bulkRequest: "待确认",
+                    bulkQty: "待补充",
+                    bulkArrival: "待补充",
+                    sampleQty: "已有样品",
+                    requestArrival: "Kevin保管",
+                    sampleDeliveryTime: "待交接"
                 }
             ]
-        };
-    }
-
-    function normalizeRequestMetric(metric) {
-        return {
-            label: metric && metric.label ? String(metric.label) : "",
-            value: metric && metric.value ? String(metric.value) : ""
         };
     }
 
     function normalizeRequestRow(row) {
         const source = row || {};
         return {
-            id: source.id || createActionId("request"),
-            title: source.title || "",
-            metrics: Array.isArray(source.metrics) ? source.metrics.map(normalizeRequestMetric).filter(metric => metric.label || metric.value) : [],
-            text: source.text || source.note || "",
-            meta: source.meta || ""
+            id: source.id || createActionId("sample-request"),
+            product: source.product || source.title || "",
+            launchTime: source.launchTime || "",
+            bulkRequest: source.bulkRequest || "",
+            bulkQty: source.bulkQty || "",
+            bulkArrival: source.bulkArrival || "",
+            sampleQty: source.sampleQty || "",
+            requestArrival: source.requestArrival || "",
+            sampleDeliveryTime: source.sampleDeliveryTime || ""
         };
     }
 
     function normalizeRequestPlan(savedPlan) {
         const defaultPlan = buildDefaultRequestPlan();
-        const savedSections = Array.isArray(savedPlan && savedPlan.sections) ? savedPlan.sections : [];
+        const savedRows = Array.isArray(savedPlan && savedPlan.rows) ? savedPlan.rows : null;
         return {
             version: 1,
-            sections: defaultPlan.sections.map(defaultSection => {
-                const savedSection = savedSections.find(section => section.id === defaultSection.id) || {};
-                const rows = Array.isArray(savedSection.rows)
-                    ? savedSection.rows.map(normalizeRequestRow)
-                    : defaultSection.rows.map(normalizeRequestRow);
-                return {
-                    id: defaultSection.id,
-                    title: savedSection.title || defaultSection.title,
-                    description: savedSection.description || defaultSection.description,
-                    rows: rows
-                };
-            })
+            rows: (savedRows || defaultPlan.rows).map(normalizeRequestRow)
         };
     }
 
@@ -2422,7 +2373,7 @@
             const saved = JSON.parse(window.localStorage.getItem(REQUEST_PLAN_STORAGE_KEY) || "null");
             state.requestPlan = normalizeRequestPlan(saved);
         } catch (error) {
-            console.warn("Failed to read NATM request plan storage", error);
+            console.warn("Failed to read NATM sample request table storage", error);
             state.requestPlan = buildDefaultRequestPlan();
         }
 
@@ -2437,150 +2388,91 @@
         try {
             window.localStorage.setItem(REQUEST_PLAN_STORAGE_KEY, JSON.stringify(state.requestPlan));
         } catch (error) {
-            console.warn("Failed to save NATM request plan storage", error);
+            console.warn("Failed to save NATM sample request table storage", error);
         }
     }
 
-    function findRequestSection(sectionId) {
+    function findRequestRow(rowId) {
         const plan = ensureRequestPlan();
-        return plan.sections.find(section => section.id === sectionId) || null;
-    }
-
-    function findRequestRow(sectionId, rowId) {
-        const section = findRequestSection(sectionId);
-        if (!section) {
-            return { section: null, row: null, index: -1 };
-        }
-        const index = section.rows.findIndex(row => row.id === rowId);
+        const index = plan.rows.findIndex(row => row.id === rowId);
         return {
-            section: section,
-            row: index >= 0 ? section.rows[index] : null,
+            row: index >= 0 ? plan.rows[index] : null,
             index: index
         };
     }
 
-    function requestMetricsToText(metrics) {
-        return (metrics || []).map(metric => {
-            return [metric.label, metric.value].filter(Boolean).join("：");
-        }).join("\n");
-    }
-
-    function parseRequestMetrics(text) {
-        return String(text || "").split(/\n+/).map(line => {
-            const source = line.trim();
-            if (!source) {
-                return null;
-            }
-            const separatorIndex = source.search(/[:：|｜]/);
-            if (separatorIndex < 0) {
-                return { label: source, value: "" };
-            }
-            return {
-                label: source.slice(0, separatorIndex).trim(),
-                value: source.slice(separatorIndex + 1).trim()
-            };
-        }).filter(Boolean);
-    }
-
-    function renderRequestPlanRow(section, row) {
+    function renderTableActions(id, editAttr, deleteAttr) {
         return [
-            "<div class=\"request-plan-row\" data-request-row=\"" + escapeHtml(row.id) + "\">",
-            "<div class=\"request-plan-row-head\">",
-            "<strong>" + escapeHtml(row.title) + "</strong>",
-            "<div class=\"request-plan-actions\">",
-            "<button class=\"action-mini-btn\" type=\"button\" data-request-edit=\"" + escapeHtml(row.id) + "\" data-request-section=\"" + escapeHtml(section.id) + "\">编辑</button>",
-            "<button class=\"action-mini-btn danger\" type=\"button\" data-request-delete=\"" + escapeHtml(row.id) + "\" data-request-section=\"" + escapeHtml(section.id) + "\">删除</button>",
-            "</div>",
-            "</div>",
-            row.metrics && row.metrics.length ? [
-                "<div class=\"note-stat-grid request-plan-metrics\">",
-                row.metrics.map(metric => {
-                    return [
-                        "<div class=\"note-stat\">",
-                        "<span>" + escapeHtml(metric.label) + "</span>",
-                        "<strong>" + escapeHtml(metric.value) + "</strong>",
-                        "</div>"
-                    ].join("");
-                }).join(""),
-                "</div>"
-            ].join("") : "",
-            row.text ? "<p class=\"note-row-copy\">" + escapeHtml(row.text) + "</p>" : "",
-            row.meta ? "<p class=\"note-row-meta\">" + escapeHtml(row.meta) + "</p>" : "",
+            "<div class=\"table-action-group\">",
+            "<button class=\"action-mini-btn\" type=\"button\" " + editAttr + "=\"" + escapeHtml(id) + "\">编辑</button>",
+            "<button class=\"action-mini-btn danger\" type=\"button\" " + deleteAttr + "=\"" + escapeHtml(id) + "\">删除</button>",
             "</div>"
         ].join("");
     }
 
     function renderRequestPlanCard() {
-        const module = CONFIG.businessPlaceholders.samplePopRequestPlan;
         const plan = ensureRequestPlan();
-        const totalRows = plan.sections.reduce((sum, section) => sum + section.rows.length, 0);
         return [
-            "<article class=\"info-card info-card-wide request-plan-card\">",
+            "<article class=\"info-card info-card-wide editable-table-card sample-request-card\">",
             "<div class=\"info-card-head\">",
             "<div>",
-            "<p class=\"info-kicker\">" + escapeHtml(module.kicker || "NATM整体") + "</p>",
-            "<h3 class=\"info-card-title\">" + escapeHtml(module.title) + "</h3>",
-            module.description ? "<p class=\"info-card-copy\">" + escapeHtml(module.description) + "</p>" : "",
+            "<p class=\"info-kicker\">NATM整体</p>",
+            "<h3 class=\"info-card-title\">样品样机提需计划</h3>",
+            "<p class=\"info-card-copy\">按产品管理上市、大货提需、样机提需和送样时间，后续可直接新增、编辑、删除。</p>",
             "</div>",
-            "<span class=\"info-badge\">" + formatNumber(totalRows) + " 条提需</span>",
+            "<button class=\"action-mini-btn primary\" type=\"button\" data-request-add=\"1\">新增</button>",
             "</div>",
-            "<div class=\"request-plan-section-grid\">",
-            plan.sections.map(section => {
+            "<div class=\"table-wrap editable-table-wrap\">",
+            "<table class=\"compact-table editable-table\">",
+            "<thead><tr><th>产品</th><th>上市时间</th><th>大货提需</th><th>大货提需数量</th><th>大货提需抵达时间</th><th>样机提需数量</th><th>提需抵达时间</th><th>送样时间</th><th>操作</th></tr></thead>",
+            "<tbody>",
+            plan.rows.length ? plan.rows.map(row => {
                 return [
-                    "<section class=\"request-plan-section\" data-request-plan-section=\"" + escapeHtml(section.id) + "\">",
-                    "<div class=\"request-plan-section-head\">",
-                    "<div>",
-                    "<h4>" + escapeHtml(section.title) + "</h4>",
-                    "<p>" + escapeHtml(section.description) + "</p>",
-                    "</div>",
-                    "<button class=\"action-mini-btn primary\" type=\"button\" data-request-add=\"" + escapeHtml(section.id) + "\">新增</button>",
-                    "</div>",
-                    section.rows.length ? [
-                        "<div class=\"request-plan-list\">",
-                        section.rows.map(row => renderRequestPlanRow(section, row)).join(""),
-                        "</div>"
-                    ].join("") : "<p class=\"placeholder-copy\">暂时空着，可以点击新增补充。</p>",
-                    "</section>"
+                    "<tr>",
+                    "<td><strong>" + escapeHtml(row.product) + "</strong></td>",
+                    "<td>" + escapeHtml(row.launchTime || "—") + "</td>",
+                    "<td>" + escapeHtml(row.bulkRequest || "—") + "</td>",
+                    "<td>" + escapeHtml(row.bulkQty || "—") + "</td>",
+                    "<td>" + escapeHtml(row.bulkArrival || "—") + "</td>",
+                    "<td>" + escapeHtml(row.sampleQty || "—") + "</td>",
+                    "<td>" + escapeHtml(row.requestArrival || "—") + "</td>",
+                    "<td>" + escapeHtml(row.sampleDeliveryTime || "—") + "</td>",
+                    "<td>" + renderTableActions(row.id, "data-request-edit", "data-request-delete") + "</td>",
+                    "</tr>"
                 ].join("");
-            }).join(""),
+            }).join("") : "<tr><td colspan=\"9\">暂时空着，可以点击新增补充。</td></tr>",
+            "</tbody>",
+            "</table>",
             "</div>",
-            module.footnote ? "<p class=\"info-footnote\">" + escapeHtml(module.footnote) + "</p>" : "",
             "</article>"
         ].join("");
     }
 
-    function openRequestPlanEditor(sectionId, rowId) {
-        if (!els.requestPlanEditor || !els.requestPlanEditorForm || !els.requestPlanTitleInput) {
+    function openRequestPlanEditor(rowId) {
+        if (!els.requestPlanEditor || !els.requestPlanEditorForm || !els.requestProductInput) {
             return;
         }
-        const plan = ensureRequestPlan();
-        const section = findRequestSection(sectionId) || plan.sections[0];
-        const result = rowId ? findRequestRow(section.id, rowId) : { row: null };
+        const result = rowId ? findRequestRow(rowId) : { row: null };
         if (rowId && !result.row) {
             return;
         }
-        const row = normalizeRequestRow(result.row || { title: "", metrics: [], text: "", meta: "" });
-
-        els.requestPlanEditor.dataset.sectionId = section.id;
+        const row = normalizeRequestRow(result.row || {});
         els.requestPlanEditor.dataset.rowId = rowId || "";
         if (els.requestPlanEditorHeading) {
-            els.requestPlanEditorHeading.textContent = rowId ? "编辑提需内容" : "新增提需内容";
+            els.requestPlanEditorHeading.textContent = rowId ? "编辑样品样机提需" : "新增样品样机提需";
         }
-        if (els.requestPlanSectionInput) {
-            els.requestPlanSectionInput.innerHTML = plan.sections.map(item => {
-                const selected = item.id === section.id ? " selected" : "";
-                return "<option value=\"" + escapeHtml(item.id) + "\"" + selected + ">" + escapeHtml(item.title) + "</option>";
-            }).join("");
-        }
-        els.requestPlanTitleInput.value = row.title || "";
-        els.requestPlanMetricsInput.value = requestMetricsToText(row.metrics);
-        els.requestPlanTextInput.value = row.text || "";
-        els.requestPlanMetaInput.value = row.meta || "";
-
+        els.requestProductInput.value = row.product || "";
+        els.requestLaunchTimeInput.value = row.launchTime || "";
+        els.requestBulkRequestInput.value = row.bulkRequest || "";
+        els.requestBulkQtyInput.value = row.bulkQty || "";
+        els.requestBulkArrivalInput.value = row.bulkArrival || "";
+        els.requestSampleQtyInput.value = row.sampleQty || "";
+        els.requestArrivalInput.value = row.requestArrival || "";
+        els.requestSampleDeliveryInput.value = row.sampleDeliveryTime || "";
         els.requestPlanEditor.hidden = false;
         els.requestPlanEditor.setAttribute("aria-hidden", "false");
         document.body.classList.add("modal-open");
-        window.setTimeout(() => els.requestPlanTitleInput.focus(), 0);
+        window.setTimeout(() => els.requestProductInput.focus(), 0);
     }
 
     function closeRequestPlanEditor() {
@@ -2593,20 +2485,21 @@
     }
 
     function readRequestPlanEditorFields() {
-        const title = els.requestPlanTitleInput ? els.requestPlanTitleInput.value.trim() : "";
-        if (!title) {
-            window.alert("提需标题不能为空。");
-            els.requestPlanTitleInput.focus();
+        const product = els.requestProductInput ? els.requestProductInput.value.trim() : "";
+        if (!product) {
+            window.alert("产品不能为空。");
+            els.requestProductInput.focus();
             return null;
         }
         return {
-            sectionId: els.requestPlanSectionInput ? els.requestPlanSectionInput.value : "sample",
-            row: {
-                title: title,
-                metrics: parseRequestMetrics(els.requestPlanMetricsInput ? els.requestPlanMetricsInput.value : ""),
-                text: els.requestPlanTextInput ? els.requestPlanTextInput.value.trim() : "",
-                meta: els.requestPlanMetaInput ? els.requestPlanMetaInput.value.trim() : ""
-            }
+            product: product,
+            launchTime: els.requestLaunchTimeInput ? els.requestLaunchTimeInput.value.trim() : "",
+            bulkRequest: els.requestBulkRequestInput ? els.requestBulkRequestInput.value.trim() : "",
+            bulkQty: els.requestBulkQtyInput ? els.requestBulkQtyInput.value.trim() : "",
+            bulkArrival: els.requestBulkArrivalInput ? els.requestBulkArrivalInput.value.trim() : "",
+            sampleQty: els.requestSampleQtyInput ? els.requestSampleQtyInput.value.trim() : "",
+            requestArrival: els.requestArrivalInput ? els.requestArrivalInput.value.trim() : "",
+            sampleDeliveryTime: els.requestSampleDeliveryInput ? els.requestSampleDeliveryInput.value.trim() : ""
         };
     }
 
@@ -2617,123 +2510,330 @@
             return;
         }
         const plan = ensureRequestPlan();
-        const originalSectionId = els.requestPlanEditor ? els.requestPlanEditor.dataset.sectionId : "";
         const rowId = els.requestPlanEditor ? els.requestPlanEditor.dataset.rowId : "";
-        const targetSection = plan.sections.find(section => section.id === fields.sectionId) || plan.sections[0];
-        if (!targetSection) {
-            return;
-        }
-
         if (rowId) {
-            const result = findRequestRow(originalSectionId, rowId);
-            const row = normalizeRequestRow(Object.assign({}, result.row || {}, fields.row, { id: rowId }));
-            if (result.section && result.index >= 0) {
-                result.section.rows.splice(result.index, 1);
+            const result = findRequestRow(rowId);
+            if (result.index >= 0) {
+                plan.rows[result.index] = normalizeRequestRow(Object.assign({}, result.row, fields, { id: rowId }));
             }
-            targetSection.rows.push(row);
         } else {
-            targetSection.rows.push(normalizeRequestRow(Object.assign({ id: createActionId("request") }, fields.row)));
+            plan.rows.push(normalizeRequestRow(Object.assign({ id: createActionId("sample-request") }, fields)));
         }
-
         saveRequestPlan();
         renderBusinessSupportGrid();
         closeRequestPlanEditor();
     }
 
-    function deleteRequestPlanRow(sectionId, rowId) {
-        const result = findRequestRow(sectionId, rowId);
-        if (!result.section || result.index < 0) {
+    function deleteRequestPlanRow(rowId) {
+        const plan = ensureRequestPlan();
+        const result = findRequestRow(rowId);
+        if (result.index < 0) {
             return;
         }
-        if (!window.confirm("确认删除这条提需内容吗？")) {
+        if (!window.confirm("确认删除这条样品样机提需吗？")) {
             return;
         }
-        result.section.rows.splice(result.index, 1);
+        plan.rows.splice(result.index, 1);
         saveRequestPlan();
         renderBusinessSupportGrid();
     }
 
+    function buildDefaultPopPlan() {
+        return {
+            version: 1,
+            currentCombos: [
+                { id: "pop-combo-nfm", channel: "NFM", popFormat: "120cm", products: "E320, T921, S803, S710, S820, S821" },
+                { id: "pop-combo-rcw", channel: "RCW", popFormat: "单独 standard POP，5*30cm", products: "S820, S821, T921, E320, S710" },
+                { id: "pop-combo-bsm", channel: "BSM", popFormat: "120cm", products: "E320, T921, S803, S710, S820, S821, OpenComm2" }
+            ],
+            updates: [
+                { id: "pop-update-e310", oldSku: "NFM / RCW / BSM · E310", newSku: "E320（OpenDots 2）", requestTime: "6/4", needUpdateTime: "6/4", updatedTime: "待确认" },
+                { id: "pop-update-t920", oldSku: "NFM / RCW / BSM · T920", newSku: "T921", requestTime: "6/4", needUpdateTime: "6/4", updatedTime: "NFM / BSM 4月已上 T921" },
+                { id: "pop-update-s803", oldSku: "NFM / BSM · S803", newSku: "NCE（OpenRun 2）", requestTime: "八月底计划", needUpdateTime: "八月底", updatedTime: "待更新" }
+            ]
+        };
+    }
 
-    function renderPopPlanPanel() {
-        if (!els.popPlanPanel) {
+    function normalizePopCombo(row) {
+        const source = row || {};
+        return {
+            id: source.id || createActionId("pop-combo"),
+            channel: source.channel || "",
+            popFormat: source.popFormat || "",
+            products: source.products || ""
+        };
+    }
+
+    function normalizePopUpdate(row) {
+        const source = row || {};
+        return {
+            id: source.id || createActionId("pop-update"),
+            oldSku: source.oldSku || "",
+            newSku: source.newSku || "",
+            requestTime: source.requestTime || "",
+            needUpdateTime: source.needUpdateTime || "",
+            updatedTime: source.updatedTime || ""
+        };
+    }
+
+    function normalizePopPlan(savedPlan) {
+        const defaultPlan = buildDefaultPopPlan();
+        return {
+            version: 1,
+            currentCombos: Array.isArray(savedPlan && savedPlan.currentCombos) ? savedPlan.currentCombos.map(normalizePopCombo) : defaultPlan.currentCombos.map(normalizePopCombo),
+            updates: Array.isArray(savedPlan && savedPlan.updates) ? savedPlan.updates.map(normalizePopUpdate) : defaultPlan.updates.map(normalizePopUpdate)
+        };
+    }
+
+    function ensurePopPlan() {
+        if (state.popPlan) {
+            return state.popPlan;
+        }
+        try {
+            const saved = JSON.parse(window.localStorage.getItem(POP_PLAN_STORAGE_KEY) || "null");
+            state.popPlan = normalizePopPlan(saved);
+        } catch (error) {
+            console.warn("Failed to read NATM POP plan storage", error);
+            state.popPlan = buildDefaultPopPlan();
+        }
+        savePopPlan();
+        return state.popPlan;
+    }
+
+    function savePopPlan() {
+        if (!state.popPlan) {
             return;
         }
-        const plan = CONFIG.popNextStepPlan;
-        els.popPlanPanel.innerHTML = [
-            "<article class=\"info-card\">",
+        try {
+            window.localStorage.setItem(POP_PLAN_STORAGE_KEY, JSON.stringify(state.popPlan));
+        } catch (error) {
+            console.warn("Failed to save NATM POP plan storage", error);
+        }
+    }
+
+    function findPopRow(type, rowId) {
+        const plan = ensurePopPlan();
+        const rows = type === "combo" ? plan.currentCombos : plan.updates;
+        const index = rows.findIndex(row => row.id === rowId);
+        return { rows: rows, row: index >= 0 ? rows[index] : null, index: index };
+    }
+
+    function renderLaunchTimelinePanel() {
+        const rows = [
+            { time: "6月", line: "耳夹线", title: "OpenDots 2（being）", text: "定价预计 $199，OpenDots 同步退市。", highlight: "GTM重点" },
+            { time: "8月上旬", line: "耳夹线", title: "OpenDots Air（looking）", text: "定价预计 $129；GTM 正在争取 6 月和 OpenDots 2 一起上市。", highlight: "争取提前" },
+            { time: "8月下旬", line: "骨导线", title: "OpenRun 2（NCE）", text: "GTM 正在争取提前到 6 月发布；当前优先方案 B：OpenRun 降价到 $99，OpenRun 2 定价 $129。", highlight: "价格方案B" }
+        ];
+        return [
+            "<article class=\"info-card launch-timeline-card\">",
             "<div class=\"info-card-head\">",
             "<div>",
-            "<p class=\"info-kicker\">POP 更新</p>",
-            "<h3 class=\"info-card-title\">POP下一步更新计划</h3>",
-            "<p class=\"info-card-copy\">先记录 6/4 已确认的 POP 替换动作和目标 POP 组合，八月计划后续继续补充。</p>",
+            "<p class=\"info-kicker\">产品结构</p>",
+            "<h3 class=\"info-card-title\">产品结构上市更新计划</h3>",
+            "<p class=\"info-card-copy\">把上市时间拉成时间线，优先看关键时间点，再对齐 POP / 样机 / 大货提需节奏。</p>",
             "</div>",
-            "<span class=\"info-badge\">" + escapeHtml(plan.effectiveDate) + "</span>",
+            "<span class=\"info-badge\">Timeline</span>",
             "</div>",
-            "<div class=\"info-section\">",
-            "<p class=\"info-label\">6/4</p>",
-            "<div class=\"table-wrap\">",
-            "<table class=\"compact-table\">",
-            "<thead><tr><th>渠道</th><th>当前SKU</th><th>更新后SKU</th></tr></thead>",
-            "<tbody>",
-            plan.replacements.map(item => {
-                const channel = getChannelConfig(item.channelKey);
+            "<div class=\"launch-timeline\">",
+            rows.map(row => {
                 return [
-                    "<tr>",
-                    "<td><strong>" + escapeHtml(channel.label) + "</strong></td>",
-                    "<td>" + escapeHtml(item.currentSku) + "</td>",
-                    "<td>" + escapeHtml(item.nextSku) + "</td>",
-                    "</tr>"
+                    "<div class=\"launch-timeline-item\">",
+                    "<div class=\"launch-time-block\"><span>" + escapeHtml(row.time) + "</span><strong>" + escapeHtml(row.line) + "</strong></div>",
+                    "<div class=\"launch-timeline-copy\">",
+                    "<span class=\"launch-highlight\">" + escapeHtml(row.highlight) + "</span>",
+                    "<h4>" + escapeHtml(row.title) + "</h4>",
+                    "<p>" + escapeHtml(row.text) + "</p>",
+                    "</div>",
+                    "</div>"
                 ].join("");
             }).join(""),
-            "</tbody>",
-            "</table>",
-            "</div>",
-            "</div>",
-            "<div class=\"info-section\">",
-            "<p class=\"info-label\">POP产品组合</p>",
-            "<div class=\"plan-mix-grid\">",
-            plan.targetCombos.map(group => {
-                const channel = getChannelConfig(group.channelKey);
-                const profile = CONFIG.channelProfiles[group.channelKey];
-                return [
-                    "<article class=\"plan-mini-card\" style=\"" + channelStyle(channel) + "\">",
-                    "<h4 class=\"plan-mini-title\">" + escapeHtml(channel.label) + "</h4>",
-                    profile && profile.popFormatLabel ? "<p class=\"plan-mini-meta\">" + escapeHtml(profile.popFormatLabel) + "</p>" : "",
-                    "<div class=\"profile-tag-list\">" + renderProfileTags(group.skus) + "</div>",
-                    "</article>"
-                ].join("");
-            }).join(""),
-            "</div>",
-            "</div>",
-            "<div class=\"info-section\">",
-            "<p class=\"info-label\">八月底计划</p>",
-            plan.augustReplacements && plan.augustReplacements.length ? [
-                "<div class=\"table-wrap\">",
-                "<table class=\"compact-table\">",
-                "<thead><tr><th>渠道</th><th>当前SKU</th><th>更新后SKU</th></tr></thead>",
-                "<tbody>",
-                plan.augustReplacements.map(item => {
-                    const channel = getChannelConfig(item.channelKey);
-                    return [
-                        "<tr>",
-                        "<td><strong>" + escapeHtml(channel.label) + "</strong></td>",
-                        "<td>" + escapeHtml(item.currentSku) + "</td>",
-                        "<td>" + escapeHtml(item.nextSku) + "</td>",
-                        "</tr>"
-                    ].join("");
-                }).join(""),
-                "</tbody>",
-                "</table>",
-                "</div>"
-            ].join("") : "<p class=\"placeholder-copy\">暂时空着</p>",
             "</div>",
             "</article>"
         ].join("");
     }
 
+    function renderPopPlanPanel() {
+        if (!els.popPlanPanel) {
+            return;
+        }
+        const plan = ensurePopPlan();
+        els.popPlanPanel.innerHTML = [
+            "<article class=\"info-card info-card-wide editable-table-card pop-plan-card\">",
+            "<div class=\"info-card-head\">",
+            "<div>",
+            "<p class=\"info-kicker\">POP 更新</p>",
+            "<h3 class=\"info-card-title\">POP下一步更新计划</h3>",
+            "<p class=\"info-card-copy\">拆成 POP 当前产品组合与下一步更新计划，两张表都可以直接新增、编辑、删除。</p>",
+            "</div>",
+            "<span class=\"info-badge\">POP Table</span>",
+            "</div>",
+            "<div class=\"editable-table-section\">",
+            "<div class=\"editable-table-head\"><div><h4>POP当前产品组合</h4><p>记录每个渠道当前 POP 尺寸/形式与在 POP 上展示的产品组合。</p></div><button class=\"action-mini-btn primary\" type=\"button\" data-pop-add=\"combo\">新增</button></div>",
+            "<div class=\"table-wrap editable-table-wrap\">",
+            "<table class=\"compact-table editable-table\">",
+            "<thead><tr><th>渠道</th><th>POP形式/尺寸</th><th>POP当前产品组合</th><th>操作</th></tr></thead>",
+            "<tbody>",
+            plan.currentCombos.length ? plan.currentCombos.map(row => {
+                return [
+                    "<tr>",
+                    "<td><strong>" + escapeHtml(row.channel) + "</strong></td>",
+                    "<td>" + escapeHtml(row.popFormat || "—") + "</td>",
+                    "<td>" + escapeHtml(row.products || "—") + "</td>",
+                    "<td>" + renderTableActions(row.id, "data-pop-edit-combo", "data-pop-delete-combo") + "</td>",
+                    "</tr>"
+                ].join("");
+            }).join("") : "<tr><td colspan=\"4\">暂时空着，可以点击新增补充。</td></tr>",
+            "</tbody>",
+            "</table>",
+            "</div>",
+            "</div>",
+            "<div class=\"editable-table-section\">",
+            "<div class=\"editable-table-head\"><div><h4>POP下一步更新计划</h4><p>按 SKU 记录提需时间、需更新时间和实际更新时间。</p></div><button class=\"action-mini-btn primary\" type=\"button\" data-pop-add=\"update\">新增</button></div>",
+            "<div class=\"table-wrap editable-table-wrap\">",
+            "<table class=\"compact-table editable-table\">",
+            "<thead><tr><th>原SKU</th><th>新SKU</th><th>提需时间</th><th>需更新时间</th><th>已更新时间</th><th>操作</th></tr></thead>",
+            "<tbody>",
+            plan.updates.length ? plan.updates.map(row => {
+                return [
+                    "<tr>",
+                    "<td><strong>" + escapeHtml(row.oldSku) + "</strong></td>",
+                    "<td>" + escapeHtml(row.newSku || "—") + "</td>",
+                    "<td>" + escapeHtml(row.requestTime || "—") + "</td>",
+                    "<td>" + escapeHtml(row.needUpdateTime || "—") + "</td>",
+                    "<td>" + escapeHtml(row.updatedTime || "—") + "</td>",
+                    "<td>" + renderTableActions(row.id, "data-pop-edit-update", "data-pop-delete-update") + "</td>",
+                    "</tr>"
+                ].join("");
+            }).join("") : "<tr><td colspan=\"6\">暂时空着，可以点击新增补充。</td></tr>",
+            "</tbody>",
+            "</table>",
+            "</div>",
+            "</div>",
+            "</article>"
+        ].join("");
+    }
+
+    function openPopPlanEditor(type, rowId) {
+        if (!els.popPlanEditor || !els.popPlanEditorForm || !els.popPlanTypeInput) {
+            return;
+        }
+        const result = rowId ? findPopRow(type, rowId) : { row: null };
+        if (rowId && !result.row) {
+            return;
+        }
+        const isCombo = type === "combo";
+        const combo = normalizePopCombo(result.row || {});
+        const update = normalizePopUpdate(result.row || {});
+        els.popPlanEditor.dataset.type = type;
+        els.popPlanEditor.dataset.rowId = rowId || "";
+        if (els.popPlanEditorHeading) {
+            els.popPlanEditorHeading.textContent = rowId ? "编辑 POP 内容" : "新增 POP 内容";
+        }
+        els.popPlanTypeInput.value = type;
+        els.popPlanChannelInput.value = combo.channel || "";
+        els.popPlanFormatInput.value = combo.popFormat || "";
+        els.popPlanProductsInput.value = combo.products || "";
+        els.popPlanOldSkuInput.value = update.oldSku || "";
+        els.popPlanNewSkuInput.value = update.newSku || "";
+        els.popPlanRequestTimeInput.value = update.requestTime || "";
+        els.popPlanNeedUpdateTimeInput.value = update.needUpdateTime || "";
+        els.popPlanUpdatedTimeInput.value = update.updatedTime || "";
+        if (els.popPlanEditor) {
+            els.popPlanEditor.classList.toggle("is-combo", isCombo);
+            els.popPlanEditor.classList.toggle("is-update", !isCombo);
+        }
+        els.popPlanEditor.hidden = false;
+        els.popPlanEditor.setAttribute("aria-hidden", "false");
+        document.body.classList.add("modal-open");
+        window.setTimeout(() => (isCombo ? els.popPlanChannelInput : els.popPlanOldSkuInput).focus(), 0);
+    }
+
+    function closePopPlanEditor() {
+        if (!els.popPlanEditor) {
+            return;
+        }
+        els.popPlanEditor.hidden = true;
+        els.popPlanEditor.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("modal-open");
+    }
+
+    function readPopPlanEditorFields() {
+        const type = els.popPlanTypeInput ? els.popPlanTypeInput.value : "combo";
+        if (type === "combo") {
+            const channel = els.popPlanChannelInput ? els.popPlanChannelInput.value.trim() : "";
+            if (!channel) {
+                window.alert("渠道不能为空。");
+                els.popPlanChannelInput.focus();
+                return null;
+            }
+            return {
+                type: "combo",
+                row: {
+                    channel: channel,
+                    popFormat: els.popPlanFormatInput ? els.popPlanFormatInput.value.trim() : "",
+                    products: els.popPlanProductsInput ? els.popPlanProductsInput.value.trim() : ""
+                }
+            };
+        }
+        const oldSku = els.popPlanOldSkuInput ? els.popPlanOldSkuInput.value.trim() : "";
+        if (!oldSku) {
+            window.alert("原SKU不能为空。");
+            els.popPlanOldSkuInput.focus();
+            return null;
+        }
+        return {
+            type: "update",
+            row: {
+                oldSku: oldSku,
+                newSku: els.popPlanNewSkuInput ? els.popPlanNewSkuInput.value.trim() : "",
+                requestTime: els.popPlanRequestTimeInput ? els.popPlanRequestTimeInput.value.trim() : "",
+                needUpdateTime: els.popPlanNeedUpdateTimeInput ? els.popPlanNeedUpdateTimeInput.value.trim() : "",
+                updatedTime: els.popPlanUpdatedTimeInput ? els.popPlanUpdatedTimeInput.value.trim() : ""
+            }
+        };
+    }
+
+    function submitPopPlanEditorForm(event) {
+        event.preventDefault();
+        const fields = readPopPlanEditorFields();
+        if (!fields) {
+            return;
+        }
+        const plan = ensurePopPlan();
+        const originalType = els.popPlanEditor ? els.popPlanEditor.dataset.type : fields.type;
+        const rowId = els.popPlanEditor ? els.popPlanEditor.dataset.rowId : "";
+        if (rowId) {
+            const original = findPopRow(originalType, rowId);
+            if (original.index >= 0) {
+                original.rows.splice(original.index, 1);
+            }
+        }
+        if (fields.type === "combo") {
+            plan.currentCombos.push(normalizePopCombo(Object.assign({ id: rowId || createActionId("pop-combo") }, fields.row)));
+        } else {
+            plan.updates.push(normalizePopUpdate(Object.assign({ id: rowId || createActionId("pop-update") }, fields.row)));
+        }
+        savePopPlan();
+        renderPopPlanPanel();
+        closePopPlanEditor();
+    }
+
+    function deletePopPlanRow(type, rowId) {
+        const result = findPopRow(type, rowId);
+        if (result.index < 0) {
+            return;
+        }
+        if (!window.confirm("确认删除这条 POP 记录吗？")) {
+            return;
+        }
+        result.rows.splice(result.index, 1);
+        savePopPlan();
+        renderPopPlanPanel();
+    }
+
     function renderLaunchPlanPanel() {
         if (els.launchPlanPanel) {
-            els.launchPlanPanel.innerHTML = renderInfoCard(CONFIG.businessPlaceholders.launchPlan);
+            els.launchPlanPanel.innerHTML = renderLaunchTimelinePanel();
         }
     }
 
@@ -4328,23 +4428,79 @@
         });
     }
 
+    if (els.popPlanEditorForm) {
+        els.popPlanEditorForm.addEventListener("submit", submitPopPlanEditorForm);
+    }
+
+    if (els.popPlanEditor) {
+        els.popPlanEditor.addEventListener("click", event => {
+            const closeButton = event.target.closest("[data-pop-editor-close]");
+            if (closeButton) {
+                closePopPlanEditor();
+            }
+        });
+    }
+
+    if (els.popPlanTypeInput) {
+        els.popPlanTypeInput.addEventListener("change", event => {
+            const nextType = event.target.value || "combo";
+            if (els.popPlanEditor) {
+                els.popPlanEditor.classList.toggle("is-combo", nextType === "combo");
+                els.popPlanEditor.classList.toggle("is-update", nextType !== "combo");
+            }
+        });
+    }
+
     if (els.businessSupportGrid) {
         els.businessSupportGrid.addEventListener("click", event => {
             const addButton = event.target.closest("[data-request-add]");
             if (addButton) {
-                openRequestPlanEditor(addButton.dataset.requestAdd);
+                openRequestPlanEditor();
                 return;
             }
 
-            const editButton = event.target.closest("[data-request-edit][data-request-section]");
+            const editButton = event.target.closest("[data-request-edit]");
             if (editButton) {
-                openRequestPlanEditor(editButton.dataset.requestSection, editButton.dataset.requestEdit);
+                openRequestPlanEditor(editButton.dataset.requestEdit);
                 return;
             }
 
-            const deleteButton = event.target.closest("[data-request-delete][data-request-section]");
+            const deleteButton = event.target.closest("[data-request-delete]");
             if (deleteButton) {
-                deleteRequestPlanRow(deleteButton.dataset.requestSection, deleteButton.dataset.requestDelete);
+                deleteRequestPlanRow(deleteButton.dataset.requestDelete);
+            }
+        });
+    }
+
+    if (els.popPlanPanel) {
+        els.popPlanPanel.addEventListener("click", event => {
+            const addButton = event.target.closest("[data-pop-add]");
+            if (addButton) {
+                openPopPlanEditor(addButton.dataset.popAdd || "combo");
+                return;
+            }
+
+            const comboEditButton = event.target.closest("[data-pop-edit-combo]");
+            if (comboEditButton) {
+                openPopPlanEditor("combo", comboEditButton.dataset.popEditCombo);
+                return;
+            }
+
+            const updateEditButton = event.target.closest("[data-pop-edit-update]");
+            if (updateEditButton) {
+                openPopPlanEditor("update", updateEditButton.dataset.popEditUpdate);
+                return;
+            }
+
+            const comboDeleteButton = event.target.closest("[data-pop-delete-combo]");
+            if (comboDeleteButton) {
+                deletePopPlanRow("combo", comboDeleteButton.dataset.popDeleteCombo);
+                return;
+            }
+
+            const updateDeleteButton = event.target.closest("[data-pop-delete-update]");
+            if (updateDeleteButton) {
+                deletePopPlanRow("update", updateDeleteButton.dataset.popDeleteUpdate);
             }
         });
     }
@@ -4355,6 +4511,9 @@
         }
         if (event.key === "Escape" && els.requestPlanEditor && !els.requestPlanEditor.hidden) {
             closeRequestPlanEditor();
+        }
+        if (event.key === "Escape" && els.popPlanEditor && !els.popPlanEditor.hidden) {
+            closePopPlanEditor();
         }
     });
 

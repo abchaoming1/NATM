@@ -2094,6 +2094,157 @@
             margin-bottom: 10px;
         }
 
+        .editable-table-card {
+            display: grid;
+            gap: 16px;
+        }
+
+        .editable-table-section {
+            display: grid;
+            gap: 12px;
+            padding: 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(23, 32, 51, 0.08);
+            background: rgba(250, 247, 241, 0.72);
+        }
+
+        .editable-table-section + .editable-table-section {
+            margin-top: 2px;
+        }
+
+        .editable-table-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .editable-table-head h4 {
+            margin: 0;
+            font-size: 17px;
+        }
+
+        .editable-table-head p {
+            margin: 5px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .editable-table-wrap {
+            margin-top: 0;
+        }
+
+        .editable-table th:last-child,
+        .editable-table td:last-child {
+            width: 116px;
+            white-space: nowrap;
+        }
+
+        .table-action-group {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .launch-timeline-card {
+            overflow: hidden;
+        }
+
+        .launch-timeline {
+            position: relative;
+            display: grid;
+            gap: 14px;
+            margin-top: 18px;
+        }
+
+        .launch-timeline::before {
+            content: "";
+            position: absolute;
+            left: 73px;
+            top: 18px;
+            bottom: 18px;
+            width: 2px;
+            background: linear-gradient(180deg, rgba(15, 118, 110, 0.45), rgba(180, 83, 9, 0.18));
+        }
+
+        .launch-timeline-item {
+            position: relative;
+            display: grid;
+            grid-template-columns: 148px minmax(0, 1fr);
+            gap: 18px;
+            align-items: stretch;
+        }
+
+        .launch-time-block {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            place-items: center;
+            align-content: center;
+            min-height: 112px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.16), rgba(255, 255, 255, 0.92));
+            border: 1px solid rgba(15, 118, 110, 0.16);
+            box-shadow: 0 16px 32px rgba(15, 118, 110, 0.08);
+        }
+
+        .launch-time-block span {
+            color: var(--teal);
+            font-family: "Barlow Condensed", sans-serif;
+            font-size: 34px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .launch-time-block strong {
+            margin-top: 2px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .launch-timeline-copy {
+            padding: 18px 20px;
+            border-radius: 22px;
+            background: rgba(255, 255, 255, 0.86);
+            border: 1px solid rgba(23, 32, 51, 0.08);
+        }
+
+        .launch-highlight {
+            display: inline-flex;
+            border-radius: 999px;
+            background: var(--amber-soft);
+            color: var(--amber);
+            font-size: 11px;
+            font-weight: 800;
+            padding: 6px 10px;
+        }
+
+        .launch-timeline-copy h4 {
+            margin: 10px 0 6px;
+            font-size: 18px;
+        }
+
+        .launch-timeline-copy p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .pop-plan-card .editable-table-section:first-of-type {
+            background: rgba(238, 248, 247, 0.62);
+        }
+
+        .pop-plan-card .editable-table-section:last-of-type {
+            background: rgba(255, 248, 238, 0.72);
+        }
+
+        #popPlanEditor.is-combo .pop-update-field,
+        #popPlanEditor.is-update .pop-combo-field {
+            display: none;
+        }
+
         .note-row {
             padding: 14px 16px;
             border-radius: 18px;
@@ -2596,8 +2747,8 @@
             <div id="businessOverviewGrid" class="business-table-wrap business-grid"></div>
             <div class="section-stack">
                 <div id="fullProductMixPanel"></div>
-                <div id="popPlanPanel"></div>
                 <div id="launchPlanPanel"></div>
+                <div id="popPlanPanel"></div>
                 <div id="businessSupportGrid" class="business-support-grid"></div>
             </div>
         </section>
@@ -2933,32 +3084,44 @@
         <form id="requestPlanEditorForm" class="action-editor-dialog" aria-modal="true" role="dialog" aria-labelledby="requestPlanEditorHeading">
             <div class="action-editor-head">
                 <div>
-                    <p class="info-kicker">Request Plan Editor</p>
-                    <h3 id="requestPlanEditorHeading">编辑提需内容</h3>
-                    <p class="action-editor-subtitle">可修改所属部分、标题、指标卡片、说明和下一步动作。</p>
+                    <p class="info-kicker">Sample Request Editor</p>
+                    <h3 id="requestPlanEditorHeading">编辑样品样机提需</h3>
+                    <p class="action-editor-subtitle">按表格字段维护产品上市、大货提需、样机提需与送样时间。</p>
                 </div>
                 <button class="action-editor-close" type="button" aria-label="关闭编辑器" data-request-editor-close="1">×</button>
             </div>
             <div class="action-editor-grid">
                 <div class="action-editor-field">
-                    <label for="requestPlanSectionInput">所属部分</label>
-                    <select id="requestPlanSectionInput"></select>
+                    <label for="requestProductInput">产品</label>
+                    <input id="requestProductInput" type="text" autocomplete="off" required>
                 </div>
                 <div class="action-editor-field">
-                    <label for="requestPlanTitleInput">标题</label>
-                    <input id="requestPlanTitleInput" type="text" autocomplete="off" required>
+                    <label for="requestLaunchTimeInput">上市时间</label>
+                    <input id="requestLaunchTimeInput" type="text" autocomplete="off">
                 </div>
-                <div class="action-editor-field full">
-                    <label for="requestPlanMetricsInput">指标卡片</label>
-                    <textarea id="requestPlanMetricsInput" placeholder="每行一个，例如：OpenRun Air 2：已提需（小型CE店）"></textarea>
+                <div class="action-editor-field">
+                    <label for="requestBulkRequestInput">大货提需</label>
+                    <input id="requestBulkRequestInput" type="text" autocomplete="off">
                 </div>
-                <div class="action-editor-field full">
-                    <label for="requestPlanTextInput">说明</label>
-                    <textarea id="requestPlanTextInput"></textarea>
+                <div class="action-editor-field">
+                    <label for="requestBulkQtyInput">大货提需数量</label>
+                    <input id="requestBulkQtyInput" type="text" autocomplete="off">
                 </div>
-                <div class="action-editor-field full">
-                    <label for="requestPlanMetaInput">下一步 / 备注</label>
-                    <textarea id="requestPlanMetaInput"></textarea>
+                <div class="action-editor-field">
+                    <label for="requestBulkArrivalInput">大货提需抵达时间</label>
+                    <input id="requestBulkArrivalInput" type="text" autocomplete="off">
+                </div>
+                <div class="action-editor-field">
+                    <label for="requestSampleQtyInput">样机提需数量</label>
+                    <input id="requestSampleQtyInput" type="text" autocomplete="off">
+                </div>
+                <div class="action-editor-field">
+                    <label for="requestArrivalInput">提需抵达时间</label>
+                    <input id="requestArrivalInput" type="text" autocomplete="off">
+                </div>
+                <div class="action-editor-field">
+                    <label for="requestSampleDeliveryInput">送样时间</label>
+                    <input id="requestSampleDeliveryInput" type="text" autocomplete="off">
                 </div>
             </div>
             <div class="action-editor-actions">
@@ -2967,9 +3130,67 @@
             </div>
         </form>
     </div>
+    <div id="popPlanEditor" class="action-editor" hidden aria-hidden="true">
+        <div class="action-editor-backdrop" data-pop-editor-close="1"></div>
+        <form id="popPlanEditorForm" class="action-editor-dialog" aria-modal="true" role="dialog" aria-labelledby="popPlanEditorHeading">
+            <div class="action-editor-head">
+                <div>
+                    <p class="info-kicker">POP Editor</p>
+                    <h3 id="popPlanEditorHeading">编辑 POP 内容</h3>
+                    <p class="action-editor-subtitle">可切换编辑 POP 当前产品组合或 POP 下一步更新计划。</p>
+                </div>
+                <button class="action-editor-close" type="button" aria-label="关闭编辑器" data-pop-editor-close="1">×</button>
+            </div>
+            <div class="action-editor-grid">
+                <div class="action-editor-field full">
+                    <label for="popPlanTypeInput">表格类型</label>
+                    <select id="popPlanTypeInput">
+                        <option value="combo">POP当前产品组合</option>
+                        <option value="update">POP下一步更新计划</option>
+                    </select>
+                </div>
+                <div class="action-editor-field pop-combo-field">
+                    <label for="popPlanChannelInput">渠道</label>
+                    <input id="popPlanChannelInput" type="text" autocomplete="off">
+                </div>
+                <div class="action-editor-field pop-combo-field">
+                    <label for="popPlanFormatInput">POP形式/尺寸</label>
+                    <input id="popPlanFormatInput" type="text" autocomplete="off">
+                </div>
+                <div class="action-editor-field full pop-combo-field">
+                    <label for="popPlanProductsInput">POP当前产品组合</label>
+                    <textarea id="popPlanProductsInput"></textarea>
+                </div>
+                <div class="action-editor-field pop-update-field">
+                    <label for="popPlanOldSkuInput">原SKU</label>
+                    <input id="popPlanOldSkuInput" type="text" autocomplete="off">
+                </div>
+                <div class="action-editor-field pop-update-field">
+                    <label for="popPlanNewSkuInput">新SKU</label>
+                    <input id="popPlanNewSkuInput" type="text" autocomplete="off">
+                </div>
+                <div class="action-editor-field pop-update-field">
+                    <label for="popPlanRequestTimeInput">提需时间</label>
+                    <input id="popPlanRequestTimeInput" type="text" autocomplete="off">
+                </div>
+                <div class="action-editor-field pop-update-field">
+                    <label for="popPlanNeedUpdateTimeInput">需更新时间</label>
+                    <input id="popPlanNeedUpdateTimeInput" type="text" autocomplete="off">
+                </div>
+                <div class="action-editor-field pop-update-field">
+                    <label for="popPlanUpdatedTimeInput">已更新时间</label>
+                    <input id="popPlanUpdatedTimeInput" type="text" autocomplete="off">
+                </div>
+            </div>
+            <div class="action-editor-actions">
+                <button class="action-editor-btn" type="button" data-pop-editor-close="1">取消</button>
+                <button class="action-editor-btn primary" type="submit">保存修改</button>
+            </div>
+        </form>
+    </div>
     <script>
         window.NATM_MULTI_CHANNEL = true;
-        window.NATM_APP_VERSION = "2026-06-17-03";
+        window.NATM_APP_VERSION = "2026-06-18-01";
         document.write('<script src="pricing-data.js?v=' + encodeURIComponent(window.NATM_APP_VERSION) + '&t=' + Date.now() + '"><\/script>');
         document.write('<script src="app.js?v=' + encodeURIComponent(window.NATM_APP_VERSION) + '&t=' + Date.now() + '"><\/script>');
     </script>
