@@ -2843,8 +2843,7 @@
         }
         els.businessSupportGrid.innerHTML = [
             renderRequestPlanCard(),
-            CONFIG.businessPlaceholders.costMargin,
-            CONFIG.businessPlaceholders.sampling
+            CONFIG.businessPlaceholders.costMargin
         ].map(item => typeof item === "string" ? item : renderInfoCard(item)).join("");
     }
 
