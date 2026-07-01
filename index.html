@@ -607,6 +607,95 @@
             background: rgba(246, 240, 230, 0.98);
         }
 
+        .sku-multi-trend-panel {
+            margin-bottom: 18px;
+            padding: 18px;
+            border-radius: 22px;
+            border: 1px solid rgba(23, 32, 51, 0.08);
+            background:
+                radial-gradient(circle at top left, rgba(15, 118, 110, 0.12), transparent 34%),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 246, 241, 0.82));
+            box-shadow: 0 16px 36px rgba(23, 32, 51, 0.07);
+        }
+
+        .sku-multi-trend-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        .sku-multi-trend-head h3 {
+            margin: 0;
+            font-size: 18px;
+            line-height: 1.35;
+        }
+
+        .sku-multi-trend-head p {
+            margin: 5px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .sku-trend-toolbar {
+            display: inline-flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .sku-trend-action,
+        .sku-trend-chip {
+            border: 1px solid rgba(23, 32, 51, 0.1);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.88);
+            color: var(--muted);
+            cursor: pointer;
+            font: inherit;
+            transition: all 0.18s ease;
+        }
+
+        .sku-trend-action {
+            padding: 8px 12px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .sku-trend-action:hover,
+        .sku-trend-chip:hover {
+            border-color: var(--channel-accent, var(--teal));
+            color: var(--channel-accent, var(--teal));
+        }
+
+        .sku-trend-chip-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            max-height: 112px;
+            overflow: auto;
+            padding: 2px 4px 10px 0;
+        }
+
+        .sku-trend-chip {
+            padding: 8px 12px;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+        }
+
+        .sku-trend-chip.active {
+            color: #fff;
+            border-color: var(--channel-accent, var(--teal));
+            background: var(--channel-accent, var(--teal));
+            box-shadow: 0 8px 20px rgba(23, 32, 51, 0.16);
+        }
+
+        .sku-multi-trend-chart {
+            height: 380px;
+        }
+
         .table-note {
             margin-top: 10px;
             color: var(--muted);
@@ -2670,6 +2759,18 @@
                 height: 360px;
             }
 
+            .sku-multi-trend-head {
+                flex-direction: column;
+            }
+
+            .sku-trend-toolbar {
+                justify-content: flex-start;
+            }
+
+            .sku-multi-trend-chart {
+                height: 320px;
+            }
+
             table {
                 min-width: 760px;
             }
@@ -2916,6 +3017,20 @@
                     <button class="metric-btn active" data-metric="qty">销量</button>
                     <button class="metric-btn" data-metric="sales">销售额</button>
                 </div>
+            </div>
+            <div class="sku-multi-trend-panel" id="skuMultiTrendPanel">
+                <div class="sku-multi-trend-head">
+                    <div>
+                        <h3>SKU 月度销量趋势</h3>
+                        <p>横轴为月份，纵轴为销量；点击 SKU 标签可多选/取消，只看一个或多个 SKU 的销量变化。</p>
+                    </div>
+                    <div class="sku-trend-toolbar">
+                        <button class="sku-trend-action" type="button" data-sku-trend-preset="top">Top SKU</button>
+                        <button class="sku-trend-action" type="button" data-sku-trend-clear="1">清空</button>
+                    </div>
+                </div>
+                <div id="skuMultiTrendControls" class="sku-trend-chip-row"></div>
+                <div id="skuMultiTrendChart" class="chart sku-multi-trend-chart"></div>
             </div>
             <div class="table-wrap matrix-wrap">
                 <table id="skuMatrixTable"></table>
@@ -3190,7 +3305,7 @@
     </div>
     <script>
         window.NATM_MULTI_CHANNEL = true;
-        window.NATM_APP_VERSION = "2026-06-18-02";
+        window.NATM_APP_VERSION = "2026-07-01-01";
         document.write('<script src="pricing-data.js?v=' + encodeURIComponent(window.NATM_APP_VERSION) + '&t=' + Date.now() + '"><\/script>');
         document.write('<script src="app.js?v=' + encodeURIComponent(window.NATM_APP_VERSION) + '&t=' + Date.now() + '"><\/script>');
     </script>

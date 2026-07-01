@@ -489,6 +489,7 @@
         selectedPromoMonth: "all",
         selectedPromoChannel: "all",
         selectedSkuByChannel: {},
+        selectedSkuTrendByChannel: {},
         expandedMixBases: {},
         actionBoard: null,
         requestPlan: null,
@@ -499,6 +500,7 @@
     const ACTION_BOARD_STORAGE_KEY = "natm-action-board-v1";
     const REQUEST_PLAN_STORAGE_KEY = "natm-sample-request-table-v1";
     const POP_PLAN_STORAGE_KEY = "natm-pop-plan-table-v1";
+    const SKU_MULTI_TREND_DEFAULT_LIMIT = 6;
     const ACTION_TODO_MODULE_ID = "top-action-1";
     const ACTION_PRIORITY_LEVELS = [
         {
@@ -586,6 +588,9 @@
         promoCalendarPanel: document.getElementById("promoCalendarPanel"),
         monthlySummaryBody: document.querySelector("#monthlySummaryTable tbody"),
         skuMatrixTable: document.getElementById("skuMatrixTable"),
+        skuMultiTrendPanel: document.getElementById("skuMultiTrendPanel"),
+        skuMultiTrendControls: document.getElementById("skuMultiTrendControls"),
+        skuMultiTrendChart: document.getElementById("skuMultiTrendChart"),
         skuSelect: document.getElementById("skuSelect"),
         skuMetricSelect: document.getElementById("skuMetricSelect"),
         skuDetailBody: document.querySelector("#skuDetailTable tbody"),
@@ -4035,6 +4040,151 @@
         ].join("");
     }
 
+    function getTrendableSkus(dashboard) {
+        const realSkus = dashboard.baseSkus.filter(sku => sku !== CONFIG.adjustmentLabel);
+        return realSkus.length ? realSkus : dashboard.baseSkus;
+    }
+
+    function getSkuQtyTotal(dashboard, sku) {
+        return sumMetrics(dashboard.skuMonthly[sku], dashboard.monthKeys).qty;
+    }
+
+    function getDefaultSkuTrendSelection(dashboard) {
+        return getTrendableSkus(dashboard)
+            .filter(sku => getSkuQtyTotal(dashboard, sku) > 0)
+            .sort((left, right) => getSkuQtyTotal(dashboard, right) - getSkuQtyTotal(dashboard, left))
+            .slice(0, SKU_MULTI_TREND_DEFAULT_LIMIT);
+    }
+
+    function getSelectedSkuTrendList(dashboard) {
+        const channelKey = dashboard.channel.key;
+        const hasStoredSelection = Object.prototype.hasOwnProperty.call(state.selectedSkuTrendByChannel, channelKey);
+        const trendableSkus = getTrendableSkus(dashboard);
+
+        if (!hasStoredSelection) {
+            state.selectedSkuTrendByChannel[channelKey] = getDefaultSkuTrendSelection(dashboard);
+        }
+
+        const previousSelection = Array.isArray(state.selectedSkuTrendByChannel[channelKey])
+            ? state.selectedSkuTrendByChannel[channelKey]
+            : [];
+        let nextSelection = previousSelection.filter(sku => trendableSkus.includes(sku));
+
+        if (previousSelection.length && !nextSelection.length) {
+            nextSelection = getDefaultSkuTrendSelection(dashboard);
+        }
+
+        state.selectedSkuTrendByChannel[channelKey] = nextSelection;
+        return nextSelection;
+    }
+
+    function renderSkuMultiTrend(dashboard) {
+        if (!els.skuMultiTrendPanel || !els.skuMultiTrendControls || !els.skuMultiTrendChart) {
+            return;
+        }
+
+        const trendableSkus = getTrendableSkus(dashboard);
+        const selectedSkus = getSelectedSkuTrendList(dashboard);
+        const selectedSkuSet = new Set(selectedSkus);
+
+        els.skuMultiTrendPanel.style.setProperty("--channel-accent", dashboard.channel.accent);
+        els.skuMultiTrendControls.innerHTML = trendableSkus.map(sku => {
+            const isActive = selectedSkuSet.has(sku);
+            return [
+                "<button class=\"sku-trend-chip" + (isActive ? " active" : "") + "\" type=\"button\"",
+                " data-sku-trend-toggle=\"" + escapeHtml(sku) + "\"",
+                " title=\"累计销量 " + formatNumber(getSkuQtyTotal(dashboard, sku)) + "\">",
+                escapeHtml(sku),
+                "</button>"
+            ].join("");
+        }).join("");
+
+        if (!state.charts.skuMultiTrend) {
+            state.charts.skuMultiTrend = echarts.init(els.skuMultiTrendChart);
+        }
+
+        const palette = [
+            dashboard.channel.accent,
+            "#2563eb",
+            "#d97706",
+            "#dc2626",
+            "#7c3aed",
+            "#0891b2",
+            "#16a34a",
+            "#ea580c",
+            "#be123c",
+            "#4f46e5"
+        ];
+
+        state.charts.skuMultiTrend.setOption({
+            animationDuration: 500,
+            color: palette,
+            title: selectedSkus.length ? { show: false } : {
+                text: "请选择 SKU",
+                subtext: "点击上方 SKU 标签后，这里会显示对应月度销量折线。",
+                left: "center",
+                top: "center",
+                textStyle: {
+                    color: CONFIG.colors.ink,
+                    fontSize: 18
+                },
+                subtextStyle: {
+                    color: CONFIG.colors.muted,
+                    fontSize: 12
+                }
+            },
+            tooltip: {
+                trigger: "axis",
+                valueFormatter: function(value) {
+                    return formatNumber(value);
+                }
+            },
+            legend: {
+                type: "scroll",
+                top: 0,
+                left: 10,
+                right: 10,
+                data: selectedSkus,
+                textStyle: { color: CONFIG.colors.muted }
+            },
+            grid: { left: 54, right: 28, top: 58, bottom: 54 },
+            xAxis: {
+                type: "category",
+                data: dashboard.monthKeys,
+                boundaryGap: false,
+                axisLine: { lineStyle: { color: "rgba(23,32,51,0.15)" } },
+                axisLabel: { color: CONFIG.colors.muted, rotate: dashboard.monthKeys.length > 20 ? 38 : 0 }
+            },
+            yAxis: {
+                type: "value",
+                name: "销量",
+                axisLabel: {
+                    color: CONFIG.colors.muted,
+                    formatter: function(value) {
+                        return formatNumber(value);
+                    }
+                },
+                splitLine: { lineStyle: { color: "rgba(23,32,51,0.08)" } }
+            },
+            series: selectedSkus.map((sku, index) => {
+                return {
+                    name: sku,
+                    type: "line",
+                    smooth: true,
+                    symbol: "circle",
+                    symbolSize: selectedSkus.length > 8 ? 5 : 7,
+                    lineStyle: { width: selectedSkus.length > 8 ? 2 : 3 },
+                    emphasis: { focus: "series" },
+                    itemStyle: { color: palette[index % palette.length] },
+                    data: dashboard.monthKeys.map(monthKey => {
+                        const item = dashboard.skuMonthly[sku][monthKey] || { qty: 0 };
+                        return item.qty;
+                    })
+                };
+            })
+        }, true);
+    }
+
     function renderSkuTrend(dashboard) {
         const selectedSku = state.selectedSkuByChannel[dashboard.channel.key];
         if (!selectedSku) {
@@ -4180,6 +4330,7 @@
         populateSkuSelector(dashboard);
         renderMonthlyOverview(dashboard);
         renderSkuMatrix(dashboard);
+        renderSkuMultiTrend(dashboard);
         renderSkuTrend(dashboard);
         renderSkuDetailTable(dashboard);
         renderSkuSummaryTable(dashboard);
@@ -4227,6 +4378,9 @@
         els.yearSummaryGrid.innerHTML = "";
         els.monthlySummaryBody.innerHTML = "";
         els.skuMatrixTable.innerHTML = "";
+        if (els.skuMultiTrendControls) {
+            els.skuMultiTrendControls.innerHTML = "";
+        }
         els.skuDetailBody.innerHTML = "";
         els.skuSummaryBody.innerHTML = "";
     }
@@ -4560,6 +4714,46 @@
         }
         setActiveChannel(nextChannel, { scrollToBusinessDetail: true });
     });
+
+    if (els.skuMultiTrendPanel) {
+        els.skuMultiTrendPanel.addEventListener("click", event => {
+            const dashboard = getActiveDashboard();
+            if (!dashboard) {
+                return;
+            }
+
+            const channelKey = dashboard.channel.key;
+            const topButton = event.target.closest("[data-sku-trend-preset]");
+            if (topButton) {
+                state.selectedSkuTrendByChannel[channelKey] = getDefaultSkuTrendSelection(dashboard);
+                renderSkuMultiTrend(dashboard);
+                return;
+            }
+
+            const clearButton = event.target.closest("[data-sku-trend-clear]");
+            if (clearButton) {
+                state.selectedSkuTrendByChannel[channelKey] = [];
+                renderSkuMultiTrend(dashboard);
+                return;
+            }
+
+            const chip = event.target.closest("[data-sku-trend-toggle]");
+            if (!chip) {
+                return;
+            }
+
+            const sku = chip.dataset.skuTrendToggle;
+            const currentSelection = getSelectedSkuTrendList(dashboard).slice();
+            const existingIndex = currentSelection.indexOf(sku);
+            if (existingIndex >= 0) {
+                currentSelection.splice(existingIndex, 1);
+            } else {
+                currentSelection.push(sku);
+            }
+            state.selectedSkuTrendByChannel[channelKey] = currentSelection;
+            renderSkuMultiTrend(dashboard);
+        });
+    }
 
     els.skuSelect.addEventListener("change", event => {
         const dashboard = getActiveDashboard();
