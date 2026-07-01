@@ -66,6 +66,64 @@
             ]
         }
     };
+    const PROMO_CALENDAR_UPDATES = {
+        nfm: {
+            source: "20260617 Shokz Q3 Promotion Calendar-NFM_Updated.xlsx",
+            rows: [
+                { month: "June", date: "6.23-6.26", product: "OpenRun Pro 2", discount: 0.3, priceAsIs: 179.95, priceToBe: 124.95, saving: 55, rebate: 30.69, models: ["S820-ST-BK", "S820-ST-OR", "S821-MN-BK", "S821-MN-OR"] },
+                { month: "June", date: "6.23-6.26", product: "OpenFit Air", discount: 0.3, priceAsIs: 119.95, priceToBe: 79.95, saving: 40, rebate: 22.32, models: ["T511-ST-BK", "T511-ST-PK", "T511-ST-WT"] },
+                { month: "June", date: "6.23-6.26", product: "OpenSwim Pro", discount: 0.2, priceAsIs: 229.95, priceToBe: 179.95, saving: 50, rebate: 27.9, models: ["S710-ST-GY", "S710-ST-RD"] },
+                { month: "June", date: "6.23-6.26", product: "OpenFit 2+", discount: 0.3, priceAsIs: 199.95, priceToBe: 139.95, saving: 60, rebate: 33.48, models: ["T921-ST-BK", "T921-ST-GY"] },
+                { month: "June", date: "6.23-6.26", product: "OpenComm 2025", discount: 0.2, priceAsIs: 159.95, priceToBe: 124.95, saving: 35, rebate: 19.53, models: ["C120-AN-BK"] },
+                { month: "June", date: "6.23-6.26", product: "OpenRun", discount: 0.3, priceAsIs: 129.95, priceToBe: 89.95, saving: 40, rebate: 22.32, models: ["S803-MN-BK", "S803-MN-BL", "S803-ST-BK", "S803-ST-BL", "S803-ST-RD"] },
+                { month: "June", date: "6.23-6.26", product: "OpenMove", discount: 0.3, priceAsIs: 79.95, priceToBe: 54.95, saving: 25, rebate: 13.95, models: ["S661-ST-BL", "S661-ST-PK"] },
+                { month: "June", date: "6.23-6.26", product: "OpenComm UC 2025", discount: 0.2, priceAsIs: 199.95, priceToBe: 159.95, saving: 40, rebate: 22.32, models: ["C120UC"] },
+                { month: "June", date: "6.23-6.26", product: "OpenDots ONE", discount: 0.3, priceAsIs: 199.95, priceToBe: 139.95, saving: 60, rebate: 33.48, models: ["E310-ST-BK", "E310-ST-GY", "E310-ST-PK"] },
+                { month: "June", date: "6.27-7.10", product: "OpenFit 2", discount: 0.2, priceAsIs: 179.95, priceToBe: 139.95, saving: 40, rebate: 22.32, models: ["T920-ST-BG", "T920-ST-BK"] },
+                { month: "July", date: "7.13-7.26", product: "OpenRun", discount: 0.25, priceAsIs: 129.95, priceToBe: 99.95, saving: 30, rebate: 16.74, models: ["S803-MN-BK", "S803-MN-BL", "S803-ST-BK", "S803-ST-BL", "S803-ST-RD"] }
+            ]
+        },
+        rcw: {
+            source: "20260618 Shokz Q3 Promotion Calendar-RCW_updated.xlsx",
+            rows: [
+                { month: "June", date: "6.23-6.26", product: "OpenRun Pro2", discount: 0.3, priceAsIs: 179.95, priceToBe: 124.95, saving: 55, rebate: 33, models: ["S820-ST-BK", "S820-ST-BL", "S820-ST-OR", "S821-MN-BK", "S821-MN-BL", "S821-MN-OR"] },
+                { month: "June", date: "6.23-6.26", product: "OpenSwim Pro", discount: 0.2, priceAsIs: 229.95, priceToBe: 179.95, saving: 50, rebate: 30, models: ["S710-ST-GY", "S710-ST-WT", "S710-ST-RD"] },
+                { month: "June", date: "6.23-6.26", product: "OpenFit 2+", discount: 0.3, priceAsIs: 199.95, priceToBe: 139.95, saving: 60, rebate: 36, models: ["T921-ST-BK", "T921-ST-GY"] },
+                { month: "June", date: "6.23-6.26", product: "OpenRun", discount: 0.3, priceAsIs: 129.95, priceToBe: 89.95, saving: 40, rebate: 24, models: ["S803-MN-BK", "S803-ST-RD", "S803-ST-BK", "S803-ST-BL", "S803-ST-GY"] },
+                { month: "June", date: "6.23-6.26", product: "OpenDots ONE", discount: 0.3, priceAsIs: 199.95, priceToBe: 139.95, saving: 60, rebate: 36, models: ["E310-ST-BK", "E310-ST-GY", "E310-ST-PK"] },
+                { month: "June", date: "6.27-7.10", product: "OpenFit2", discount: 0.2, priceAsIs: 179.95, priceToBe: 139.95, saving: 40, rebate: 24, models: ["T920-ST-BG", "T920-ST-BK"] },
+                { month: "July", date: "7.13-7.26", product: "OpenRun", discount: 0.25, priceAsIs: 129.95, priceToBe: 99.95, saving: 30, rebate: 18, models: ["S803-MN-BK", "S803-ST-RD", "S803-ST-BK", "S803-ST-BL", "S803-ST-GY"] }
+            ]
+        },
+        abt: {
+            source: "20260618 Shokz Q2 Promotion Calendar-Abt_updated.xlsx",
+            rows: [
+                { month: "June", date: "6.23-6.26", product: "OpenRun Pro2", discount: 0.3, priceAsIs: 179.95, priceToBe: 124.95, saving: 55, rebate: 33, models: ["S820-ST-BK", "S820-ST-OR", "S821-MN-BK", "S821-MN-OR"] },
+                { month: "June", date: "6.23-6.26", product: "OpenFit Air", discount: 0.3, priceAsIs: 119.95, priceToBe: 79.95, saving: 40, rebate: 24, models: ["T511-ST-BK", "T511-ST-PK", "T511-ST-WT"] },
+                { month: "June", date: "6.23-6.26", product: "OpenSwim Pro", discount: 0.2, priceAsIs: 229.95, priceToBe: 179.95, saving: 50, rebate: 30, models: ["S710-ST-GY", "S710-ST-RD"] },
+                { month: "June", date: "6.23-6.26", product: "OpenFit 2+", discount: 0.3, priceAsIs: 199.95, priceToBe: 139.95, saving: 60, rebate: 36, models: ["T921-ST-BK", "T921-ST-GY"] },
+                { month: "June", date: "6.23-6.26", product: "OpenComm 2025", discount: 0.2, priceAsIs: 159.95, priceToBe: 124.95, saving: 35, rebate: 21, models: ["C120-AN-BK"] },
+                { month: "June", date: "6.23-6.26", product: "OpenRun", discount: 0.3, priceAsIs: 129.95, priceToBe: 89.95, saving: 40, rebate: 24, models: ["S803-MN-BK", "S803-ST-RD", "S803-ST-BK", "S803-ST-BL"] },
+                { month: "June", date: "6.23-6.26", product: "OpenDots ONE", discount: 0.3, priceAsIs: 199.95, priceToBe: 139.95, saving: 60, rebate: 36, models: ["E310-ST-BK", "E310-ST-GY", "E310-ST-PK"] },
+                { month: "June", date: "6.27-7.10", product: "OpenFit2", discount: 0.2, priceAsIs: 179.95, priceToBe: 139.95, saving: 40, rebate: 24, models: ["T920-ST-BG", "T920-ST-BK"] },
+                { month: "July", date: "7.13-7.26", product: "OpenRun", discount: 0.25, priceAsIs: 129.95, priceToBe: 99.95, saving: 30, rebate: 18, models: ["S803-MN-BK", "S803-ST-RD", "S803-ST-BK", "S803-ST-BL"] }
+            ]
+        },
+        bsm: {
+            source: "20260618 Shokz Q2 Promotion Calendar-BSM_June_updated.xlsx",
+            rows: [
+                { month: "June", date: "6.23-6.26", product: "OpenRun Pro2", discount: 0.3, priceAsIs: 179.95, priceToBe: 124.95, saving: 55, rebate: 33, models: ["S820STBK", "S820STOR", "S821MNBK", "S821MNOR"] },
+                { month: "June", date: "6.23-6.26", product: "OpenSwim Pro", discount: 0.2, priceAsIs: 229.95, priceToBe: 179.95, saving: 50, rebate: 30, models: ["S710STRD", "S710STGY"] },
+                { month: "June", date: "6.23-6.26", product: "OpenFit 2+", discount: 0.3, priceAsIs: 199.95, priceToBe: 139.95, saving: 60, rebate: 36, models: ["T921STBK", "T921STGY"] },
+                { month: "June", date: "6.23-6.26", product: "OpenComm 2025", discount: 0.2, priceAsIs: 159.95, priceToBe: 124.95, saving: 35, rebate: 21, models: ["C120ANBK"] },
+                { month: "June", date: "6.23-6.26", product: "OpenRun", discount: 0.3, priceAsIs: 129.95, priceToBe: 89.95, saving: 40, rebate: 24, models: ["S803MNBK", "S803MNBL", "S803STBK", "S803STRD", "S803STBL"] },
+                { month: "June", date: "6.23-6.26", product: "OpenDots ONE", discount: 0.3, priceAsIs: 199.95, priceToBe: 139.95, saving: 60, rebate: 36, models: ["E310STBK", "E310STGY", "E310STPK"] },
+                { month: "June", date: "6.23-6.26", product: "OpenFit Air", discount: 0.3, priceAsIs: 119.95, priceToBe: 79.95, saving: 40, rebate: 24, models: ["T511-ST-BK", "T511-ST-PK"] },
+                { month: "June", date: "6.27-7.10", product: "OpenFit2", discount: 0.2, priceAsIs: 179.95, priceToBe: 139.95, saving: 40, rebate: 24, models: ["T920STBG", "T920STBK"] },
+                { month: "July", date: "7.13-7.26", product: "OpenRun", discount: 0.25, priceAsIs: 129.95, priceToBe: 99.95, saving: 30, rebate: 18, models: ["S803MNBK", "S803MNBL", "S803STBK", "S803STBL", "S803STRD"] }
+            ]
+        }
+    };
     const PROMO_MONTH_ORDER = {
         Jan: 1,
         Feb: 2,
@@ -81,6 +139,32 @@
         Nov: 11,
         Dec: 12
     };
+
+    function mergePromoCalendars(baseCalendars, updateCalendars) {
+        const merged = {};
+        Object.keys(baseCalendars).forEach(channelKey => {
+            const base = baseCalendars[channelKey] || { source: "", rows: [] };
+            const update = updateCalendars[channelKey] || { source: "", rows: [] };
+            const updateMonths = new Set((update.rows || []).map(row => row.month));
+            const baseRows = (base.rows || []).filter(row => !updateMonths.has(row.month));
+            const sources = [base.source, update.source].filter(Boolean);
+            merged[channelKey] = {
+                source: Array.from(new Set(sources)).join(" + "),
+                rows: baseRows.concat(update.rows || [])
+            };
+        });
+        Object.keys(updateCalendars).forEach(channelKey => {
+            if (merged[channelKey]) {
+                return;
+            }
+            const update = updateCalendars[channelKey] || { source: "", rows: [] };
+            merged[channelKey] = {
+                source: update.source || "",
+                rows: update.rows || []
+            };
+        });
+        return merged;
+    }
 
     const CONFIG = {
         workbookId: WORKBOOK_ID,
@@ -444,7 +528,7 @@
             { month: "8月", note: "关注 NFM POP 快闪店机会，以及 OpenDots Air / OpenRun 2 的上市与 POP 更新窗口" },
             { month: "9月+", note: "结合节庆和下半年促销节奏，继续补充重点活动节点" }
         ],
-        promoCalendars: PROMO_CALENDARS,
+        promoCalendars: mergePromoCalendars(PROMO_CALENDARS, PROMO_CALENDAR_UPDATES),
         executionModules: [
             {
                 kicker: "执行节奏",
