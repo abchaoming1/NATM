@@ -586,6 +586,14 @@
     const REQUEST_PLAN_STORAGE_KEY = "natm-sample-request-table-v1";
     const POP_PLAN_STORAGE_KEY = "natm-pop-plan-table-v1";
     const SKU_MULTI_TREND_DEFAULT_LIMIT = 6;
+    const SKU_ANNUAL_CHANNEL_ORDER = ["nfm", "abt", "bsm", "rcw"];
+    const SKU_SHARE_PALETTE = [
+        "#0f766e", "#2563eb", "#b45309", "#b42318", "#7c3aed",
+        "#0e7490", "#15803d", "#c2410c", "#be185d", "#4338ca",
+        "#475569", "#8b5c24", "#0f5964", "#5b7040", "#a34367",
+        "#6271a0", "#735046", "#596a7b", "#827035", "#876289",
+        "#22756f", "#547694", "#9b643d", "#6d6a91"
+    ];
     const ACTION_TODO_MODULE_ID = "top-action-1";
     const ACTION_PRIORITY_LEVELS = [
         {
@@ -679,6 +687,11 @@
         skuMultiTrendTitle: document.getElementById("skuMultiTrendTitle"),
         skuMultiTrendDescription: document.getElementById("skuMultiTrendDescription"),
         skuMultiTrendNote: document.getElementById("skuMultiTrendNote"),
+        skuAnnualShareChart: document.getElementById("skuAnnualShareChart"),
+        skuAnnualShareDescription: document.getElementById("skuAnnualShareDescription"),
+        skuAnnualShareNote: document.getElementById("skuAnnualShareNote"),
+        skuAnnualTotalBadge: document.getElementById("skuAnnualTotalBadge"),
+        skuAnnualShareBody: document.querySelector("#skuAnnualShareTable tbody"),
         skuSelect: document.getElementById("skuSelect"),
         skuMetricSelect: document.getElementById("skuMetricSelect"),
         skuDetailBody: document.querySelector("#skuDetailTable tbody"),
@@ -4172,6 +4185,180 @@
         return total > 0 ? qty / total * 100 : null;
     }
 
+    function buildAnnualSkuShareModel(dashboards) {
+        const rows = SKU_ANNUAL_CHANNEL_ORDER.map(channelKey => {
+            const dashboard = dashboards[channelKey];
+            const quantities = {};
+            Object.keys(dashboard.skuMonthly).forEach(sku => {
+                const displaySku = isBaseProductSku(sku) ? sku : "Other";
+                quantities[displaySku] = (quantities[displaySku] || 0) +
+                    sumMetrics(dashboard.skuMonthly[sku], dashboard.yearKeys[2026]).qty;
+            });
+            return {
+                key: channelKey,
+                label: dashboard.channel.label,
+                latestMonthKey: dashboard.latestMonthKey,
+                total: dashboard.yearlyTotals[2026].qty,
+                quantities: quantities,
+                isTotal: false
+            };
+        });
+
+        const allSkus = Array.from(new Set(rows.flatMap(row => Object.keys(row.quantities))));
+        const totalQuantities = {};
+        allSkus.forEach(sku => {
+            totalQuantities[sku] = rows.reduce((total, row) => total + (row.quantities[sku] || 0), 0);
+        });
+        const totalRow = {
+            key: "natm",
+            label: "NATM 总量",
+            latestMonthKey: rows.reduce((latest, row) => {
+                return !latest || monthIndex(row.latestMonthKey) > monthIndex(latest) ? row.latestMonthKey : latest;
+            }, ""),
+            total: rows.reduce((total, row) => total + row.total, 0),
+            quantities: totalQuantities,
+            isTotal: true
+        };
+
+        const visibleSkus = allSkus.filter(sku => {
+            return rows.some(row => Math.abs(row.quantities[sku] || 0) > 1e-9);
+        });
+
+        return {
+            rows: rows.concat(totalRow),
+            skus: visibleSkus.sort((left, right) => {
+                const qtyDiff = Math.abs(totalQuantities[right] || 0) - Math.abs(totalQuantities[left] || 0);
+                return qtyDiff || left.localeCompare(right);
+            }),
+            totalRow: totalRow
+        };
+    }
+
+    function getAnnualSkuShare(row, sku) {
+        return row.total > 0 ? (row.quantities[sku] || 0) / row.total * 100 : null;
+    }
+
+    function renderAnnualSkuShare() {
+        if (!els.skuAnnualShareChart || !els.skuAnnualShareBody || !Object.keys(state.dashboards).length) {
+            return;
+        }
+
+        const model = buildAnnualSkuShareModel(state.dashboards);
+        const rows = model.rows;
+        const skus = model.skus;
+        const totalRow = model.totalRow;
+        const cutoffMonths = Array.from(new Set(rows.filter(row => !row.isTotal).map(row => row.latestMonthKey)));
+        const cutoffCopy = cutoffMonths.length === 1
+            ? "统计范围：2026-01 至 " + cutoffMonths[0]
+            : "各渠道按自身最新月份统计：" + rows.filter(row => !row.isTotal).map(row => row.label + " " + row.latestMonthKey).join("、");
+
+        els.skuAnnualShareDescription.textContent = cutoffCopy + "；每条横柱为该渠道本年累计 sell-in SKU 销量结构。";
+        els.skuAnnualTotalBadge.textContent = "NATM 总量 " + formatNumber(totalRow.total, 1) + " 台";
+        els.skuAnnualShareNote.textContent = "占比口径：单个基础 SKU 2026 YTD 净销量 ÷ 对应渠道 2026 YTD 全部净销量；POP、收货差异及未归属调整合并为 Other，NATM 总量为四渠道直接汇总。图例可点击隐藏/显示 SKU，分母保持不变；退货按负数保留。";
+
+        els.skuAnnualShareBody.innerHTML = skus.map(sku => {
+            const cells = rows.map(row => {
+                const qty = row.quantities[sku] || 0;
+                const share = getAnnualSkuShare(row, sku);
+                const className = row.isTotal ? " class=\"sku-annual-total-column\"" : "";
+                return "<td" + className + ">" + formatNumber(qty, 1) + " / " + (share === null ? "—" : formatNumber(share, 1) + "%") + "</td>";
+            }).join("");
+            return "<tr><td><strong>" + escapeHtml(sku) + "</strong></td>" + cells + "</tr>";
+        }).join("");
+
+        if (!state.charts.skuAnnualShare) {
+            state.charts.skuAnnualShare = echarts.init(els.skuAnnualShareChart);
+        }
+
+        const series = skus.map((sku, skuIndex) => ({
+            name: sku,
+            type: "bar",
+            stack: "annual-share",
+            barWidth: 34,
+            emphasis: { focus: "series" },
+            itemStyle: { color: SKU_SHARE_PALETTE[skuIndex % SKU_SHARE_PALETTE.length] },
+            label: {
+                show: true,
+                position: "inside",
+                color: "#fff",
+                fontSize: 10,
+                fontWeight: 700,
+                formatter: params => Math.abs(params.value) >= 5 ? formatNumber(params.value, 1) + "%" : ""
+            },
+            labelLayout: { hideOverlap: true },
+            data: rows.map(row => ({
+                value: getAnnualSkuShare(row, sku),
+                qty: row.quantities[sku] || 0,
+                itemStyle: row.isTotal ? { borderColor: "rgba(255,255,255,0.78)", borderWidth: 1 } : undefined
+            }))
+        }));
+        const stackedBounds = rows.map((row, rowIndex) => series.reduce((bounds, item) => {
+            const value = Number(item.data[rowIndex].value) || 0;
+            bounds[value < 0 ? "min" : "max"] += value;
+            return bounds;
+        }, { min: 0, max: 0 }));
+
+        state.charts.skuAnnualShare.setOption({
+            animationDuration: 650,
+            animationDelay: index => index * 12,
+            legend: {
+                type: "scroll",
+                top: 0,
+                left: 8,
+                right: 8,
+                data: skus,
+                textStyle: { color: CONFIG.colors.muted }
+            },
+            tooltip: {
+                trigger: "axis",
+                axisPointer: { type: "shadow" },
+                confine: true,
+                formatter: params => {
+                    if (!params.length) return "";
+                    const row = rows[params[0].dataIndex];
+                    const visibleItems = params
+                        .filter(item => Math.abs(Number(item.data.qty) || 0) > 0)
+                        .sort((left, right) => Math.abs(right.data.qty) - Math.abs(left.data.qty));
+                    const detailRows = visibleItems.slice(0, 14).map(item => item.marker + escapeHtml(item.seriesName) + ": " +
+                        formatNumber(item.data.qty, 1) + " 台 · " + formatNumber(item.value, 1) + "%");
+                    if (visibleItems.length > 14) detailRows.push("其余 " + (visibleItems.length - 14) + " 个 SKU 请查看下方明细表");
+                    return ["<strong>" + escapeHtml(row.label) + " · 2026 YTD</strong>",
+                        "渠道总销量：" + formatNumber(row.total, 1) + " 台", ...detailRows].join("<br>");
+                }
+            },
+            grid: { left: 104, right: 34, top: 72, bottom: 28 },
+            xAxis: {
+                type: "value",
+                min: Math.floor((Math.min(0, ...stackedBounds.map(item => item.min)) + 1e-9) / 20) * 20,
+                max: Math.ceil((Math.max(100, ...stackedBounds.map(item => item.max)) - 1e-9) / 20) * 20,
+                axisLabel: { color: CONFIG.colors.muted, formatter: value => formatNumber(value) + "%" },
+                splitLine: { lineStyle: { color: "rgba(23,32,51,0.08)" } }
+            },
+            yAxis: {
+                type: "category",
+                inverse: true,
+                data: rows.map(row => row.label + "|" + formatNumber(row.total, 1)),
+                axisTick: { show: false },
+                axisLine: { show: false },
+                axisLabel: {
+                    color: CONFIG.colors.ink,
+                    margin: 16,
+                    formatter: value => {
+                        const parts = value.split("|");
+                        const style = parts[0] === "NATM 总量" ? "total" : "channel";
+                        return "{" + style + "|" + parts[0] + "}\n{qty|" + parts[1] + " 台}";
+                    },
+                    rich: {
+                        channel: { color: CONFIG.colors.ink, fontSize: 13, fontWeight: 700, lineHeight: 18 },
+                        total: { color: CONFIG.colors.qty, fontSize: 14, fontWeight: 800, lineHeight: 18 },
+                        qty: { color: CONFIG.colors.muted, fontSize: 10, lineHeight: 15 }
+                    }
+                }
+            },
+            series: series
+        }, true);
+    }
+
     function renderSkuMultiTrend(dashboard) {
         if (!els.skuMultiTrendPanel || !els.skuMultiTrendControls || !els.skuMultiTrendChart) {
             return;
@@ -4480,6 +4667,7 @@
         populateSkuSelector(dashboard);
         renderMonthlyOverview(dashboard);
         renderSkuMatrix(dashboard);
+        renderAnnualSkuShare();
         renderSkuMultiTrend(dashboard);
         renderSkuTrend(dashboard);
         renderSkuDetailTable(dashboard);
@@ -4530,6 +4718,9 @@
         els.skuMatrixTable.innerHTML = "";
         if (els.skuMultiTrendControls) {
             els.skuMultiTrendControls.innerHTML = "";
+        }
+        if (els.skuAnnualShareBody) {
+            els.skuAnnualShareBody.innerHTML = "";
         }
         els.skuDetailBody.innerHTML = "";
         els.skuSummaryBody.innerHTML = "";

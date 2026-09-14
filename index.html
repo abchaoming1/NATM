@@ -619,6 +619,119 @@
             box-shadow: 0 16px 36px rgba(23, 32, 51, 0.07);
         }
 
+        .sku-annual-share-block {
+            padding: 2px 0 20px;
+        }
+
+        .sku-annual-share-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 8px;
+        }
+
+        .sku-annual-share-head h3 {
+            margin: 0;
+            font-size: 20px;
+            line-height: 1.35;
+        }
+
+        .sku-annual-share-head p {
+            margin: 5px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .sku-annual-total-badge {
+            flex: 0 0 auto;
+            padding: 9px 13px;
+            border: 1px solid rgba(15, 118, 110, 0.16);
+            border-radius: 999px;
+            color: var(--teal);
+            background: rgba(15, 118, 110, 0.08);
+            font-family: "Barlow Condensed", sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+        }
+
+        .sku-annual-share-chart {
+            height: 390px;
+        }
+
+        .sku-section-divider {
+            height: 1px;
+            margin: 2px 0 20px;
+            background: linear-gradient(90deg, transparent, rgba(23, 32, 51, 0.12) 10%, rgba(23, 32, 51, 0.12) 90%, transparent);
+        }
+
+        .sku-annual-details {
+            margin-top: 12px;
+            border: 1px solid rgba(23, 32, 51, 0.08);
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.62);
+            overflow: hidden;
+        }
+
+        .sku-annual-details summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 14px;
+            color: var(--ink);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 700;
+            list-style: none;
+        }
+
+        .sku-annual-details summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .sku-annual-details summary::after {
+            content: "+";
+            color: var(--teal);
+            font-family: "Barlow Condensed", sans-serif;
+            font-size: 20px;
+            line-height: 1;
+        }
+
+        .sku-annual-details[open] summary::after {
+            content: "−";
+        }
+
+        .sku-annual-details-copy {
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .sku-annual-table-wrap {
+            max-height: 420px;
+            border-top: 1px solid rgba(23, 32, 51, 0.08);
+            overflow: auto;
+        }
+
+        .sku-annual-table-wrap table {
+            min-width: 760px;
+        }
+
+        .sku-annual-table-wrap thead th {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .sku-annual-total-column {
+            color: var(--teal);
+            font-weight: 800;
+            background: rgba(15, 118, 110, 0.045);
+        }
+
         .sku-multi-trend-head {
             display: flex;
             justify-content: space-between;
@@ -2799,6 +2912,14 @@
                 flex-direction: column;
             }
 
+            .sku-annual-share-head {
+                flex-direction: column;
+            }
+
+            .sku-annual-share-chart {
+                height: 430px;
+            }
+
             .sku-trend-toolbar {
                 justify-content: flex-start;
             }
@@ -3055,6 +3176,36 @@
                 </div>
             </div>
             <div class="sku-multi-trend-panel" id="skuMultiTrendPanel">
+                <div class="sku-annual-share-block" id="skuAnnualShareBlock">
+                    <div class="sku-annual-share-head">
+                        <div>
+                            <h3>2026 YTD · 四渠道 SKU 销量占比</h3>
+                            <p id="skuAnnualShareDescription">汇总今年各渠道 sell-in，横向比较 NFM、Abt、BSM、RCW 与 NATM 总量的 SKU 结构。</p>
+                        </div>
+                        <span class="sku-annual-total-badge" id="skuAnnualTotalBadge">NATM 总量加载中</span>
+                    </div>
+                    <div id="skuAnnualShareChart" class="chart sku-annual-share-chart"></div>
+                    <div class="table-note" id="skuAnnualShareNote"></div>
+                    <details class="sku-annual-details">
+                        <summary>查看 2026 YTD 本年累计占比明细 <span class="sku-annual-details-copy">每格显示：销量 / 渠道占比</span></summary>
+                        <div class="sku-annual-table-wrap">
+                            <table id="skuAnnualShareTable">
+                                <thead>
+                                    <tr>
+                                        <th>SKU</th>
+                                        <th>NFM</th>
+                                        <th>Abt</th>
+                                        <th>BSM</th>
+                                        <th>RCW</th>
+                                        <th class="sku-annual-total-column">NATM 总量</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </details>
+                </div>
+                <div class="sku-section-divider"></div>
                 <div class="sku-multi-trend-head">
                     <div>
                         <h3 id="skuMultiTrendTitle">SKU 月度销量占比</h3>
@@ -3347,7 +3498,7 @@
     </div>
     <script>
         window.NATM_MULTI_CHANNEL = true;
-        window.NATM_APP_VERSION = "2026-09-14-sku-share";
+        window.NATM_APP_VERSION = "2026-09-14-annual-sku-share";
         document.write('<script src="pricing-data.js?v=' + encodeURIComponent(window.NATM_APP_VERSION) + '&t=' + Date.now() + '"><\/script>');
         document.write('<script src="app.js?v=' + encodeURIComponent(window.NATM_APP_VERSION) + '&t=' + Date.now() + '"><\/script>');
     </script>
