@@ -574,6 +574,7 @@
         selectedPromoChannel: "all",
         selectedSkuByChannel: {},
         selectedSkuTrendByChannel: {},
+        skuTrendView: "share",
         expandedMixBases: {},
         actionBoard: null,
         requestPlan: null,
@@ -675,6 +676,9 @@
         skuMultiTrendPanel: document.getElementById("skuMultiTrendPanel"),
         skuMultiTrendControls: document.getElementById("skuMultiTrendControls"),
         skuMultiTrendChart: document.getElementById("skuMultiTrendChart"),
+        skuMultiTrendTitle: document.getElementById("skuMultiTrendTitle"),
+        skuMultiTrendDescription: document.getElementById("skuMultiTrendDescription"),
+        skuMultiTrendNote: document.getElementById("skuMultiTrendNote"),
         skuSelect: document.getElementById("skuSelect"),
         skuMetricSelect: document.getElementById("skuMetricSelect"),
         skuDetailBody: document.querySelector("#skuDetailTable tbody"),
@@ -4125,8 +4129,7 @@
     }
 
     function getTrendableSkus(dashboard) {
-        const realSkus = dashboard.baseSkus.filter(sku => sku !== CONFIG.adjustmentLabel);
-        return realSkus.length ? realSkus : dashboard.baseSkus;
+        return dashboard.baseSkus;
     }
 
     function getSkuQtyTotal(dashboard, sku) {
@@ -4135,7 +4138,7 @@
 
     function getDefaultSkuTrendSelection(dashboard) {
         return getTrendableSkus(dashboard)
-            .filter(sku => getSkuQtyTotal(dashboard, sku) > 0)
+            .filter(sku => sku !== CONFIG.adjustmentLabel && getSkuQtyTotal(dashboard, sku) > 0)
             .sort((left, right) => getSkuQtyTotal(dashboard, right) - getSkuQtyTotal(dashboard, left))
             .slice(0, SKU_MULTI_TREND_DEFAULT_LIMIT);
     }
@@ -4162,21 +4165,49 @@
         return nextSelection;
     }
 
+    function getSkuMonthlyShare(dashboard, sku, monthKey) {
+        const qty = (dashboard.skuMonthly[sku][monthKey] || { qty: 0 }).qty;
+        const total = (dashboard.monthlyTotals[monthKey] || { qty: 0 }).qty;
+        // Use the full channel total, never just the currently selected SKUs.
+        return total > 0 ? qty / total * 100 : null;
+    }
+
     function renderSkuMultiTrend(dashboard) {
         if (!els.skuMultiTrendPanel || !els.skuMultiTrendControls || !els.skuMultiTrendChart) {
             return;
         }
 
         const trendableSkus = getTrendableSkus(dashboard);
-        const selectedSkus = getSelectedSkuTrendList(dashboard);
-        const selectedSkuSet = new Set(selectedSkus);
+        const selectedSkuSet = new Set(getSelectedSkuTrendList(dashboard));
+        const selectedSkus = trendableSkus.filter(sku => selectedSkuSet.has(sku));
+        const showShare = state.skuTrendView === "share";
+        const palette = [
+            "#0f766e", "#2563eb", "#b45309", "#b42318", "#7c3aed",
+            "#0e7490", "#15803d", "#c2410c", "#be185d", "#4338ca",
+            "#475569", "#8b5c24", "#0f5964", "#5b7040", "#a34367",
+            "#6271a0", "#735046", "#596a7b", "#827035", "#876289"
+        ];
+        const colorForSku = sku => palette[trendableSkus.indexOf(sku) % palette.length];
 
         els.skuMultiTrendPanel.style.setProperty("--channel-accent", dashboard.channel.accent);
+        els.skuMultiTrendTitle.textContent = showShare ? "SKU 月度销量占比" : "SKU 月度销量趋势";
+        els.skuMultiTrendDescription.textContent = showShare
+            ? "横轴为月份，纵轴为当月销量占比；点击 SKU 标签可多选/取消，悬停查看占比与销量。"
+            : "横轴为月份，纵轴为销量；点击 SKU 标签可多选/取消，只看一个或多个 SKU 的销量变化。";
+        els.skuMultiTrendNote.textContent = showShare
+            ? "口径：SKU 当月净销量 ÷ 当前渠道当月全部净销量（含 POP、未归属调整），与月度总览一致；取消选择不改变分母。无销量或净销量≤0 的月份不计算占比；退货保留负值，可能出现负占比或超过100%。小色块占比请悬停查看。默认最近12个月（窄屏4个月），可拖动底部滑条回看历史。"
+            : "显示原始月度净销量，退货保留负数；切换“显示占比”可查看同月各 SKU 的销量贡献。可拖动底部滑条调整月份范围。";
+        els.skuMultiTrendPanel.querySelectorAll("[data-sku-trend-view]").forEach(button => {
+            const active = button.dataset.skuTrendView === state.skuTrendView;
+            button.classList.toggle("active", active);
+            button.setAttribute("aria-pressed", String(active));
+        });
         els.skuMultiTrendControls.innerHTML = trendableSkus.map(sku => {
             const isActive = selectedSkuSet.has(sku);
             return [
                 "<button class=\"sku-trend-chip" + (isActive ? " active" : "") + "\" type=\"button\"",
                 " data-sku-trend-toggle=\"" + escapeHtml(sku) + "\"",
+                " aria-pressed=\"" + isActive + "\" style=\"--sku-color:" + colorForSku(sku) + "\"",
                 " title=\"累计销量 " + formatNumber(getSkuQtyTotal(dashboard, sku)) + "\">",
                 escapeHtml(sku),
                 "</button>"
@@ -4185,27 +4216,52 @@
 
         if (!state.charts.skuMultiTrend) {
             state.charts.skuMultiTrend = echarts.init(els.skuMultiTrendChart);
+            state.charts.skuMultiTrend.on("legendselectchanged", event => {
+                state.selectedSkuTrendByChannel[state.activeChannelKey] = Object.keys(event.selected).filter(sku => event.selected[sku]);
+                renderSkuMultiTrend(getActiveDashboard());
+            });
         }
 
-        const palette = [
-            dashboard.channel.accent,
-            "#2563eb",
-            "#d97706",
-            "#dc2626",
-            "#7c3aed",
-            "#0891b2",
-            "#16a34a",
-            "#ea580c",
-            "#be123c",
-            "#4f46e5"
-        ];
+        const previousZoom = ((state.charts.skuMultiTrend.getOption() || {}).dataZoom || [])[0];
+        const defaultMonthCount = els.skuMultiTrendChart.clientWidth < 480 ? 4 : 12;
+        const zoomStart = previousZoom ? previousZoom.start
+            : Math.max(0, (dashboard.monthKeys.length - defaultMonthCount) / Math.max(1, dashboard.monthKeys.length - 1) * 100);
+
+        const series = selectedSkus.map(sku => ({
+            name: sku,
+            type: showShare ? "bar" : "line",
+            stack: showShare ? "monthly-share" : undefined,
+            barMaxWidth: 52,
+            smooth: true,
+            symbol: "circle",
+            symbolSize: selectedSkus.length > 8 ? 5 : 7,
+            lineStyle: { width: selectedSkus.length > 8 ? 2 : 3 },
+            emphasis: { focus: "series" },
+            itemStyle: { color: colorForSku(sku) },
+            label: {
+                show: showShare,
+                position: "inside",
+                color: "#fff",
+                fontSize: 10,
+                formatter: params => Math.abs(params.value) >= 5 ? formatNumber(params.value, 1) + "%" : ""
+            },
+            labelLayout: { hideOverlap: true },
+            data: dashboard.monthKeys.map(monthKey => showShare
+                ? getSkuMonthlyShare(dashboard, sku, monthKey)
+                : (dashboard.skuMonthly[sku][monthKey] || { qty: 0 }).qty)
+        }));
+        const stackedBounds = dashboard.monthKeys.map((monthKey, index) => series.reduce((bounds, item) => {
+            const value = item.data[index] || 0;
+            bounds[value < 0 ? "min" : "max"] += value;
+            return bounds;
+        }, { min: 0, max: 0 }));
 
         state.charts.skuMultiTrend.setOption({
             animationDuration: 500,
             color: palette,
             title: selectedSkus.length ? { show: false } : {
                 text: "请选择 SKU",
-                subtext: "点击上方 SKU 标签后，这里会显示对应月度销量折线。",
+                subtext: showShare ? "点击上方 SKU 标签或“全选”，查看月度销量占比。" : "点击上方 SKU 标签后，这里会显示对应月度销量折线。",
                 left: "center",
                 top: "center",
                 textStyle: {
@@ -4219,8 +4275,20 @@
             },
             tooltip: {
                 trigger: "axis",
-                valueFormatter: function(value) {
-                    return formatNumber(value);
+                confine: true,
+                axisPointer: { type: showShare ? "shadow" : "line" },
+                formatter: function(params) {
+                    if (!params.length) return "";
+                    const monthKey = params[0].axisValue;
+                    const total = (dashboard.monthlyTotals[monthKey] || { qty: 0 }).qty;
+                    const rows = params.slice().sort((a, b) => (Number(b.value) || 0) - (Number(a.value) || 0)).map(item => {
+                        const qty = (dashboard.skuMonthly[item.seriesName][monthKey] || { qty: 0 }).qty;
+                        const share = getSkuMonthlyShare(dashboard, item.seriesName, monthKey);
+                        return item.marker + escapeHtml(item.seriesName) + ": " + formatNumber(qty, 1) + " 台" +
+                            (showShare ? " · " + (share === null ? "不计算占比" : formatNumber(share, 1) + "%") : "");
+                    });
+                    return [escapeHtml(monthKey) + " · " + escapeHtml(dashboard.channel.label),
+                        "当月渠道总销量：" + formatNumber(total, 1) + " 台", ...rows].join("<br>");
                 }
             },
             legend: {
@@ -4231,41 +4299,39 @@
                 data: selectedSkus,
                 textStyle: { color: CONFIG.colors.muted }
             },
-            grid: { left: 54, right: 28, top: 58, bottom: 54 },
+            grid: { left: 54, right: 28, top: 58, bottom: 84 },
+            dataZoom: [{
+                type: "slider",
+                start: zoomStart,
+                end: previousZoom ? previousZoom.end : 100,
+                bottom: 0,
+                height: 22,
+                borderColor: "transparent",
+                fillerColor: "rgba(15,118,110,0.12)",
+                textStyle: { color: CONFIG.colors.muted },
+                brushSelect: false
+            }],
             xAxis: {
                 type: "category",
                 data: dashboard.monthKeys,
-                boundaryGap: false,
+                boundaryGap: showShare,
                 axisLine: { lineStyle: { color: "rgba(23,32,51,0.15)" } },
                 axisLabel: { color: CONFIG.colors.muted, rotate: dashboard.monthKeys.length > 20 ? 38 : 0 }
             },
             yAxis: {
                 type: "value",
-                name: "销量",
+                name: showShare ? "销量占比" : "销量",
+                min: showShare ? Math.floor((Math.min(0, ...stackedBounds.map(item => item.min)) + 1e-9) / 20) * 20 : undefined,
+                max: showShare ? Math.ceil((Math.max(100, ...stackedBounds.map(item => item.max)) - 1e-9) / 20) * 20 : undefined,
                 axisLabel: {
                     color: CONFIG.colors.muted,
                     formatter: function(value) {
-                        return formatNumber(value);
+                        return formatNumber(value) + (showShare ? "%" : "");
                     }
                 },
                 splitLine: { lineStyle: { color: "rgba(23,32,51,0.08)" } }
             },
-            series: selectedSkus.map((sku, index) => {
-                return {
-                    name: sku,
-                    type: "line",
-                    smooth: true,
-                    symbol: "circle",
-                    symbolSize: selectedSkus.length > 8 ? 5 : 7,
-                    lineStyle: { width: selectedSkus.length > 8 ? 2 : 3 },
-                    emphasis: { focus: "series" },
-                    itemStyle: { color: palette[index % palette.length] },
-                    data: dashboard.monthKeys.map(monthKey => {
-                        const item = dashboard.skuMonthly[sku][monthKey] || { qty: 0 };
-                        return item.qty;
-                    })
-                };
-            })
+            series: series
         }, true);
     }
 
@@ -4807,6 +4873,18 @@
             }
 
             const channelKey = dashboard.channel.key;
+            const viewButton = event.target.closest("[data-sku-trend-view]");
+            if (viewButton) {
+                state.skuTrendView = viewButton.dataset.skuTrendView === "qty" ? "qty" : "share";
+                renderSkuMultiTrend(dashboard);
+                return;
+            }
+            const allButton = event.target.closest("[data-sku-trend-all]");
+            if (allButton) {
+                state.selectedSkuTrendByChannel[channelKey] = getTrendableSkus(dashboard).slice();
+                renderSkuMultiTrend(dashboard);
+                return;
+            }
             const topButton = event.target.closest("[data-sku-trend-preset]");
             if (topButton) {
                 state.selectedSkuTrendByChannel[channelKey] = getDefaultSkuTrendSelection(dashboard);

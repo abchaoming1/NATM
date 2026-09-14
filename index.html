@@ -212,6 +212,7 @@
 
         .page-shell {
             width: 100%;
+            min-width: 0;
             margin: 0 auto;
             padding: 28px 0 44px;
         }
@@ -661,6 +662,41 @@
             padding: 8px 12px;
             font-size: 12px;
             font-weight: 700;
+        }
+
+        .sku-trend-view-toggle {
+            display: inline-flex;
+            padding: 3px;
+            border-radius: 999px;
+            background: rgba(23, 32, 51, 0.06);
+        }
+
+        .sku-trend-view-toggle .sku-trend-action {
+            border-color: transparent;
+            background: transparent;
+        }
+
+        .sku-trend-view-toggle .sku-trend-action.active {
+            color: #fff;
+            background: var(--ink);
+            box-shadow: 0 4px 12px rgba(23, 32, 51, 0.16);
+        }
+
+        .sku-trend-action:focus-visible,
+        .sku-trend-chip:focus-visible {
+            outline: 2px solid var(--channel-accent, var(--teal));
+            outline-offset: 3px;
+        }
+
+        .sku-trend-chip::before {
+            content: "";
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            margin-right: 6px;
+            border-radius: 50%;
+            background: var(--sku-color, var(--muted));
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.8);
         }
 
         .sku-trend-action:hover,
@@ -2646,7 +2682,7 @@
 
         @media (max-width: 1160px) {
             .layout-shell {
-                grid-template-columns: 1fr;
+                grid-template-columns: minmax(0, 1fr);
             }
 
             .page-nav {
@@ -3021,16 +3057,22 @@
             <div class="sku-multi-trend-panel" id="skuMultiTrendPanel">
                 <div class="sku-multi-trend-head">
                     <div>
-                        <h3>SKU 月度销量趋势</h3>
-                        <p>横轴为月份，纵轴为销量；点击 SKU 标签可多选/取消，只看一个或多个 SKU 的销量变化。</p>
+                        <h3 id="skuMultiTrendTitle">SKU 月度销量占比</h3>
+                        <p id="skuMultiTrendDescription">按月查看各 SKU 的销量贡献；点击标签可多选/取消，也可切换查看销量趋势。</p>
                     </div>
                     <div class="sku-trend-toolbar">
+                        <div class="sku-trend-view-toggle" role="group" aria-label="SKU 图表显示方式">
+                            <button class="sku-trend-action active" type="button" data-sku-trend-view="share" aria-pressed="true">显示占比</button>
+                            <button class="sku-trend-action" type="button" data-sku-trend-view="qty" aria-pressed="false">显示销量</button>
+                        </div>
                         <button class="sku-trend-action" type="button" data-sku-trend-preset="top">Top SKU</button>
+                        <button class="sku-trend-action" type="button" data-sku-trend-all="1">全选</button>
                         <button class="sku-trend-action" type="button" data-sku-trend-clear="1">清空</button>
                     </div>
                 </div>
                 <div id="skuMultiTrendControls" class="sku-trend-chip-row"></div>
                 <div id="skuMultiTrendChart" class="chart sku-multi-trend-chart"></div>
+                <div class="table-note" id="skuMultiTrendNote"></div>
             </div>
             <div class="table-wrap matrix-wrap">
                 <table id="skuMatrixTable"></table>
@@ -3305,7 +3347,7 @@
     </div>
     <script>
         window.NATM_MULTI_CHANNEL = true;
-        window.NATM_APP_VERSION = "2026-07-01-02";
+        window.NATM_APP_VERSION = "2026-09-14-sku-share";
         document.write('<script src="pricing-data.js?v=' + encodeURIComponent(window.NATM_APP_VERSION) + '&t=' + Date.now() + '"><\/script>');
         document.write('<script src="app.js?v=' + encodeURIComponent(window.NATM_APP_VERSION) + '&t=' + Date.now() + '"><\/script>');
     </script>
